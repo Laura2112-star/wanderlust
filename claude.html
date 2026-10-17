@@ -22,13 +22,15 @@
   <p id="tip" hidden>Para tener este acceso en tu iPhone, pulsa <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b>.<br><br><a href="https://claude.ai/artifact/XgfprBWxYYcFQcWyVBC6sV">Abrir Wanderlust</a></p>
 </div>
 <script>
-  // Opened from the home-screen icon: go straight to the artifact.
-  // Opened normally in Safari for the first time: show how to add it, so the redirect does not get in the way.
+  // The home-screen icon is saved with "?go=1" in its address, so only that launch redirects to Claude.
+  // Opening the plain address never redirects, so the page (and its icon) can always be added from Safari.
   var target = "https://claude.ai/artifact/XgfprBWxYYcFQcWyVBC6sV";
-  var fromHome = /[?&]go=1/.test(location.search) || (window.navigator.standalone === true);
-  var seen = false; try { seen = localStorage.getItem("wl-launch-seen") === "1"; localStorage.setItem("wl-launch-seen","1"); } catch(e){}
-  if (fromHome || seen) { location.replace(target); }
-  else { document.getElementById("msg").textContent = "Acceso a Wanderlust"; document.getElementById("tip").hidden = false; }
+  if (/[?&]go=1/.test(location.search)) { location.replace(target); }
+  else {
+    try { history.replaceState(null, "", location.pathname + "?go=1"); } catch(e){}
+    document.getElementById("msg").textContent = "Acceso a Wanderlust";
+    document.getElementById("tip").hidden = false;
+  }
 </script>
 </body>
 </html>
