@@ -5,11 +5,12 @@
   "use strict";
   const CLIENT_ID = "1001663742263-c8898sk2hg3pnrd967un6ed4sednge6a.apps.googleusercontent.com";
   const SCOPE = "https://www.googleapis.com/auth/drive.file";
-  const HINT = "laura.perezdelema@gmail.com";
+  const HINT = "perezdelemalaura@gmail.com";
   const API = "https://www.googleapis.com/drive/v3";
   const UPLOAD = "https://www.googleapis.com/upload/drive/v3";
   const DATA_NAME = "wanderlust-datos.json";
-  const LS = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
+  const NS = k => k.replace(/^wl\./, "wl2.");
+  const LS = { get(k){ try { return localStorage.getItem(NS(k)); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(NS(k),v); } catch(e){} }, del(k){ try { localStorage.removeItem(NS(k)); } catch(e){} } };
 
   let token = null, tokenExp = 0, tokenClient = null, pendingAuth = [];
   let folderId = LS.get("wl.folder"), filesFolderId = LS.get("wl.files"), dataId = LS.get("wl.data");
@@ -49,7 +50,7 @@
     return new Promise(async (res, rej) => {
       try { await initClient(); } catch(e){ return rej(e); }
       pendingAuth.push({ res, rej });
-      tokenClient.requestAccessToken({ prompt: LS.get("wl.consented") ? "" : "consent" });
+      tokenClient.requestAccessToken({ prompt: LS.get("wl.consented") ? "" : "select_account consent" });
     }).then(() => LS.set("wl.consented", "1"));
   }
   function waitForToken(){
@@ -63,7 +64,12 @@
     await waitForToken();
     const r = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: "Bearer " + token } });
     if (r.status === 401 && retry){ token = null; LS.del("wl.tok"); return api(url, opts, false); }
-    if (!r.ok){ const e = new Error("drive " + r.status); e.status = r.status; throw e; }
+    if (!r.ok){
+      const e = new Error("drive " + r.status); e.status = r.status;
+      try { const b = await r.json(); e.reason = b.error && b.error.errors && b.error.errors[0] && b.error.errors[0].reason; } catch(_){}
+      if (e.reason === "storageQuotaExceeded") quotaWarn();
+      throw e;
+    }
     return r;
   }
   const j = r => r.json();
@@ -181,6 +187,12 @@
   }
   new MutationObserver(() => document.querySelectorAll("img[data-dimg]:not([data-done])").forEach(fillImg))
     .observe(document.documentElement, { childList: true, subtree: true });
+
+  function quotaWarn(){
+    const msg = "Tu Google Drive está lleno. Libera espacio en one.google.com/storage para poder guardar en Wanderlust.";
+    if (!ready) return;
+    try { note(msg); } catch(_){}
+  }
 
   /* ---------- sign-in banner + account menu ---------- */
   const css = document.createElement("style");
@@ -319,7 +331,10 @@
       await ensureLayout(); await readRemote();
       ready = true; if (gate){ gate.remove(); gate = null; }
       mountAccount(); resolveReady(); emit();
-    })().catch(e => { started = null; console.error(e); if (gate){ gate.remove(); gate = null; } showGate("No se ha podido abrir tu Drive. Vuelve a entrar con Google."); });
+    })().catch(e => { started = null; console.error(e); if (gate){ gate.remove(); gate = null; }
+      showGate(e && e.reason === "storageQuotaExceeded"
+        ? "Tu Google Drive está lleno y no se puede guardar nada. Libera espacio en one.google.com/storage, o entra con otra cuenta de Google."
+        : "No se ha podido abrir tu Drive. Vuelve a entrar con Google."); });
     return started;
   }
   if (tokenOk()) start(); else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => showGate()); else showGate();
