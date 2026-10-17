@@ -1,0 +1,1766 @@
+<!doctype html><html><head><meta charset=utf8><title>Wanderlust</title><meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Wanderlust"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Wanderlust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;350;400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap">
+<style>
+/* Layout: sticky top bar with centred tabs, gradient hero, illustrated-cover trip cards; trip view = cover banner + scrollable section pills. Palette: fuchsia and green */
+:root{
+  --bg:#ffffff;--surf:#ffffff;--soft:#f4f8f9;--ink:#14181b;--ink2:#434b52;--mute:#6b747b;--line:#e3e9ec;--line2:#eef3f5;
+  --sea:#c2187a;--sea-ink:#9a0f5f;--sea-soft:#fde6f2;--sea-soft2:#f8c4df;
+  --green:#14a05a;--green-ink:#0b7a43;--green-soft:#dcf5e7;
+  --sun:#e0368f;--sun-ink:#a3195f;--sun-soft:#fde8f2;
+  --grad:linear-gradient(135deg,#e0368f 0%,#16b36a 100%);
+  --crit:#c83c28;--crit-soft:#fdebe6;--warn:#b5591c;--warn-soft:#fff3e8;--ok:#0b7a43;--ok-soft:#e1f6ea;--info:#3a6fb0;--info-soft:#eaf1fb;
+  --hero:radial-gradient(95% 125% at 40% 130%,#1fbf6e 0%,rgba(31,191,110,.6) 18%,rgba(31,191,110,.32) 36%,rgba(31,191,110,.12) 54%,rgba(31,191,110,0) 74%),radial-gradient(135% 155% at 96% 4%,#e0368f 0%,rgba(224,54,143,.58) 20%,rgba(224,54,143,.26) 38%,rgba(224,54,143,.07) 52%,rgba(224,54,143,0) 64%),linear-gradient(100deg,#fdf7fa 0%,#fbf1f6 30%,#f6e6ef 55%,#f0d6e5 80%,#ebc6db 100%);
+  --hero-ink:#1a1418;--hero-pill:#ffffff;--shade:rgba(30,10,24,.62);
+  --sans:"Figtree",Arial,Helvetica,sans-serif;--disp:"Fraunces",Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1418;--surf:#161d22;--soft:#1b242a;--ink:#eef4f6;--ink2:#c3ced3;--mute:#8f9ca3;--line:#2b363d;--line2:#212b31;
+  --sea:#ff5cb4;--sea-ink:#ff9dd2;--sea-soft:#3d1630;--sea-soft2:#561d43;
+  --green:#3fd98b;--green-ink:#86eab7;--green-soft:#123824;
+  --sun:#ff5cb4;--sun-ink:#ff9dd2;--sun-soft:#3d1630;
+  --grad:linear-gradient(135deg,#ff5cb4 0%,#3fd98b 100%);
+  --crit:#ff8a72;--crit-soft:#3d221d;--warn:#ffb27a;--warn-soft:#3a2a1d;--ok:#4fd88f;--ok-soft:#173a28;--info:#8fb6ff;--info-soft:#1c2740;
+  --hero:radial-gradient(95% 125% at 40% 130%,#12904f 0%,rgba(18,144,79,.55) 18%,rgba(18,144,79,.3) 36%,rgba(18,144,79,.1) 54%,rgba(18,144,79,0) 74%),radial-gradient(135% 155% at 96% 4%,#b81d73 0%,rgba(184,29,115,.58) 20%,rgba(184,29,115,.25) 38%,rgba(184,29,115,.07) 52%,rgba(184,29,115,0) 64%),linear-gradient(100deg,#171216 0%,#1d141b 30%,#261722 55%,#33192b 80%,#3d1a32 100%);
+  --hero-ink:#fbf2f8;--hero-pill:#2a1d27;--shade:rgba(0,0,0,.66);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1418;--surf:#161d22;--soft:#1b242a;--ink:#eef4f6;--ink2:#c3ced3;--mute:#8f9ca3;--line:#2b363d;--line2:#212b31;
+  --sea:#ff5cb4;--sea-ink:#ff9dd2;--sea-soft:#3d1630;--sea-soft2:#561d43;
+  --green:#3fd98b;--green-ink:#86eab7;--green-soft:#123824;
+  --sun:#ff5cb4;--sun-ink:#ff9dd2;--sun-soft:#3d1630;
+  --grad:linear-gradient(135deg,#ff5cb4 0%,#3fd98b 100%);
+  --crit:#ff8a72;--crit-soft:#3d221d;--warn:#ffb27a;--warn-soft:#3a2a1d;--ok:#4fd88f;--ok-soft:#173a28;--info:#8fb6ff;--info-soft:#1c2740;
+  --hero:radial-gradient(95% 125% at 40% 130%,#12904f 0%,rgba(18,144,79,.55) 18%,rgba(18,144,79,.3) 36%,rgba(18,144,79,.1) 54%,rgba(18,144,79,0) 74%),radial-gradient(135% 155% at 96% 4%,#b81d73 0%,rgba(184,29,115,.58) 20%,rgba(184,29,115,.25) 38%,rgba(184,29,115,.07) 52%,rgba(184,29,115,0) 64%),linear-gradient(100deg,#171216 0%,#1d141b 30%,#261722 55%,#33192b 80%,#3d1a32 100%);
+  --hero-ink:#fbf2f8;--hero-pill:#2a1d27;--shade:rgba(0,0,0,.66);color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--sea-ink)}
+:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,52px);font-weight:350;letter-spacing:-.045em;line-height:1.04;margin:8px 0 10px}
+h2{font-size:22px;font-weight:450;letter-spacing:-.02em}
+h3{font-size:16px;font-weight:550}
+.eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--ink2)}
+.muted{color:var(--mute)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
+.bar1{display:flex;align-items:center;justify-content:space-between;gap:12px;height:60px;padding-inline:24px;border-bottom:1px solid var(--line)}
+.wordmark{font-size:17px;font-weight:600;letter-spacing:-.02em;background:none;border:0;padding:0;display:flex;align-items:center;gap:8px}
+.wordmark .wl-a{color:var(--sea)}.wordmark .wl-b{color:var(--green)}
+.wordmark svg{width:22px;height:22px}
+.meta{display:flex;gap:18px;color:var(--mute);font-size:12px;text-align:right;line-height:1.25}
+.meta b{display:block;color:var(--ink);font-weight:500;font-size:16px}
+.tabs{display:flex;justify-content:center;gap:4px 26px;padding:12px 16px 0;flex-wrap:wrap;border-bottom:1px solid var(--line2)}
+.tab{background:none;border:0;padding:6px 6px 12px;color:var(--ink2);font-size:14px;position:relative}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--grad);border-radius:2px}
+.tab .cnt{font-size:11px;color:var(--sea-ink);margin-left:4px}
+
+.wrap{max-width:1100px;margin:0 auto;padding-inline:24px;padding-block:22px 110px;display:grid;gap:24px}
+.wrap>*{min-width:0}
+
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:14px;padding:30px 32px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 24px;align-items:end}
+.hero .eyebrow{color:var(--hero-ink);opacity:.8}
+.hero p{margin:0;font-size:16px;max-width:60ch;opacity:.9}
+.hpills{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.hpill{display:inline-flex;align-items:center;gap:8px;line-height:18px;white-space:nowrap;background:var(--hero-pill);color:var(--hero-ink);border:0;border-radius:999px;padding:9px 16px;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.hpill:hover{box-shadow:0 0 0 2px var(--sea)}
+.hpill i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+.hpill.s i{background:var(--sun)}.hpill.c i{background:var(--crit)}
+
+/* trip cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.tcard{border:1px solid var(--line);border-radius:12px;background:var(--surf);overflow:hidden;text-align:left;padding:0;display:grid;grid-template-rows:auto 1fr;min-width:0}
+.tcard:hover{border-color:var(--sea);box-shadow:0 6px 22px rgba(120,10,70,.10)}
+.cover{position:relative;aspect-ratio:16/10;max-width:100%;background:var(--soft);overflow:hidden}
+.cover img,.cover svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.cover .when{position:absolute;left:12px;top:12px;background:var(--surf);color:var(--ink);font-size:12px;font-weight:500;border-radius:999px;padding:3px 10px}
+.cover .flags{position:absolute;right:12px;top:12px;display:flex;gap:6px}
+.tbody{padding:14px 16px 16px;display:grid;gap:6px;align-content:start}
+.tbody h3{font-family:var(--disp);font-size:21px;font-weight:450;letter-spacing:-.01em;line-height:1.15}
+.tbody .pl{font-size:13px;color:var(--ink2)}
+.tbody .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:500;padding:4px 11px;border-radius:999px;white-space:nowrap;background:var(--soft);color:var(--ink2);max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.pill::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.crit{background:var(--crit-soft);color:var(--crit)}.pill.todo{background:var(--sea-soft);color:var(--sea-ink)}.pill.cancel{background:var(--crit-soft);color:var(--crit)}.pill.idea{background:var(--soft);color:var(--mute)}
+.newcard{border:1.5px dashed var(--line);border-radius:12px;background:none;display:grid;place-items:center;gap:6px;min-height:220px;color:var(--ink2);text-align:center;padding:20px}
+.newcard:hover{border-color:var(--sea);color:var(--sea-ink)}
+.newcard b{font-size:28px;font-weight:300;line-height:1}
+
+/* trip view */
+.banner{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:21/8;min-height:220px;max-width:100%;background:var(--soft)}
+.banner img,.banner svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,var(--shade) 100%)}
+.banner .txt{position:absolute;left:24px;right:24px;bottom:20px;z-index:1;color:#fff;display:grid;gap:4px}
+.banner .txt h1{color:#fff;font-family:var(--disp);font-weight:400;letter-spacing:-.02em;margin:0;font-size:clamp(28px,4.6vw,46px)}
+.banner .txt .s{font-size:14px;opacity:.92}
+.banner .bact{position:absolute;right:14px;top:14px;z-index:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.chipbtn{border:0;border-radius:999px;background:rgba(255,255,255,.92);color:#14181b;padding:6px 13px;font-size:12.5px;font-weight:500}
+.chipbtn:hover{background:#fff}
+.backbtn{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:6px 14px 6px 10px;font-size:13px;justify-self:start}
+.backbtn:hover{border-color:var(--sea)}
+.secnav{display:flex;flex-wrap:wrap;gap:8px 6px;padding-bottom:4px}
+.secnav button{flex:none;border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
+.secnav button:hover{border-color:var(--sea)}
+.secnav button[aria-pressed="true"]{background:var(--sea-soft);border-color:var(--sea-soft2);color:var(--sea-ink);font-weight:550}
+.secnav .n{font-size:11px;background:var(--surf);border-radius:999px;padding:0 6px;color:var(--mute)}
+.secnav button[aria-pressed="true"] .n{color:var(--sea-ink)}
+
+.card{border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:18px;min-width:0}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;flex-wrap:wrap;margin-bottom:12px}
+.sh .d{color:var(--mute);font-size:12.5px}
+.stack{display:grid;gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+.alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;border-radius:10px;padding:11px 14px;font-size:14px}
+.alert .ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--surf)}
+.alert.crit{background:var(--crit-soft)}.alert.crit .ic{background:var(--crit)}
+.alert.warn{background:var(--warn-soft)}.alert.warn .ic{background:var(--warn)}
+.alert.info{background:var(--info-soft)}.alert.info .ic{background:var(--info)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kv div{background:var(--soft);border-radius:10px;padding:10px 12px}
+.kv b{display:block;font-size:20px;font-weight:450;letter-spacing:-.02em}
+.kv span{font-size:12px;color:var(--mute)}
+
+.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 14px;align-items:start;padding:14px 0;border-top:1px solid var(--line2)}
+.item:first-child{border-top:0;padding-top:2px}
+.item .ico{width:36px;height:36px;border-radius:10px;background:var(--sea-soft);color:var(--sea-ink);display:grid;place-items:center}
+.item .ico svg{width:18px;height:18px}
+.hrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mini{width:30px;height:30px;border-radius:7px;object-fit:cover;flex:none}
+.hthumb{width:64px;height:64px;border-radius:10px;object-fit:cover;display:block}
+.score{display:inline-flex;align-items:center;gap:6px}
+.score b{background:#003b95;color:#fff;border-radius:6px 6px 6px 0;padding:1px 6px;font-weight:600;font-size:12px}
+.item.st-cancel .ico{background:var(--crit-soft);color:var(--crit)}
+.item.st-warn .ico{background:var(--warn-soft);color:var(--warn)}
+.item.st-todo .ico{background:var(--soft);color:var(--mute)}
+.item h4{margin:0;font-size:15.5px;font-weight:550}
+.item.st-cancel h4{text-decoration:line-through;text-decoration-color:var(--crit)}
+.item .w{font-size:13px;color:var(--sea-ink);font-weight:500}
+.item p{margin:4px 0 0;font-size:14px;color:var(--ink2);max-width:72ch;white-space:pre-line}
+.item .meta2{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:12.5px;color:var(--mute);align-items:center}
+.item .meta2 code{font-family:inherit;font-weight:600;color:var(--ink);background:var(--soft);padding:1px 7px;border-radius:6px;letter-spacing:.03em}
+.item .side{display:grid;justify-items:end;gap:6px;text-align:right}
+.item .price{font-weight:600;font-size:14px;white-space:nowrap}
+.iconbtn{border:1px solid transparent;background:none;border-radius:8px;padding:4px 8px;font-size:12px;color:var(--mute)}
+.iconbtn:hover{border-color:var(--line);color:var(--ink)}
+.iconbtn.danger{color:var(--crit)}
+
+.day{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid var(--line2)}
+.day:first-child{border-top:0;padding-top:4px}
+.day .dd{display:grid;align-content:start;gap:2px}
+.day .dd b{font-size:28px;font-weight:350;letter-spacing:-.04em;line-height:1;color:var(--sea-ink)}
+.day .dd span{font-size:12px;color:var(--mute);text-transform:capitalize}
+.day h4{margin:0 0 6px;font-size:16px;font-weight:550}
+.day .sleep{font-size:12px;color:var(--green-ink);font-weight:500}
+.day ul{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px}
+.day li{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;font-size:14px}
+.day li .t{color:var(--mute);font-size:12.5px;padding-top:1px}
+.day.today{background:var(--sea-soft);border-radius:10px;padding-inline:12px}
+
+.tdrow{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line2)}
+.tdrow:first-child{border-top:0}
+.tdrow input{width:20px;height:20px;accent-color:var(--green);margin-top:1px;flex:none}
+.tdrow label{flex:1;min-width:0}
+.tdrow.done label{color:var(--mute);text-decoration:line-through}
+.bar{height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--grad)}
+
+.reco{background:var(--sea-soft);border-color:var(--sea-soft2)}
+.optgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.opt{border:1px solid var(--line);border-radius:12px;background:var(--surf);padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.opt.chosen{border-color:var(--green);box-shadow:0 0 0 2px var(--green-soft)}
+.optHead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.optT{font-family:var(--disp);font-size:20px;font-weight:450;line-height:1.2}
+.optR{margin:0;font-size:13.5px;color:var(--ink2)}
+.scores{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;font-size:13px;color:var(--ink2);padding:8px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.stars{color:#e0a400;letter-spacing:1px;white-space:nowrap}.stars span{color:var(--line)}
+.pc{display:grid;gap:8px}
+.pc h4{margin:0 0 2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.pc h4.pro{color:var(--ok)}.pc h4.con{color:var(--crit)}
+.pc ul{margin:0;padding-left:18px;font-size:14px;color:var(--ink2);display:grid;gap:3px}
+.bestif{background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13.5px;color:var(--ink2)}
+.bestif b{color:var(--ink);font-weight:600}
+.tipgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.tip{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--surf);display:grid;gap:4px;align-content:start}
+.tip h4{margin:0;font-size:14px;font-weight:600;color:var(--green-ink)}
+.tip p{margin:0;font-size:14px;color:var(--ink2)}
+
+.btn{border:0;border-radius:999px;padding:9px 18px;font-weight:500;background:var(--ink);color:var(--bg);font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.btn.sea{background:var(--sea);color:#fff}
+.btn.ghost{background:var(--surf);color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--sea)}
+.btn.sm{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.4;cursor:default}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+form.add{display:grid;gap:10px;background:var(--soft);border-radius:10px;padding:14px;margin-top:10px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.f{display:grid;gap:4px;min-width:0}
+.f label{font-size:12px;color:var(--ink2)}
+.inp,select.inp,textarea.inp{width:100%;border:1px solid var(--line);background:var(--surf);border-radius:10px;padding:8px 12px;font-size:15px}
+textarea.inp{min-height:76px;resize:vertical}
+.inp:focus{border-color:var(--sea);outline:none}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.tchip{border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink2)}
+.tchip[aria-pressed="true"]{background:var(--sea-soft);border-color:var(--sea-soft2);color:var(--sea-ink);font-weight:500}
+
+.rest{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.rcard{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:6px;background:var(--surf);align-content:start}
+.rcard h4{margin:0;font-size:15.5px;font-weight:600}
+.rcard .tp{font-size:12.5px;color:var(--sun-ink);font-weight:500}
+.rcard p{margin:0;font-size:13.5px;color:var(--ink2)}
+.rcard .actions{margin-top:4px}
+
+.wx{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.wxd{background:var(--soft);border-radius:10px;padding:10px;display:grid;gap:2px;text-align:center}
+.wxd .d{font-size:12px;color:var(--mute);text-transform:capitalize}
+.wxd .e{font-size:26px;line-height:1.2}
+.wxd .t{font-weight:600}
+.wxd .t span{color:var(--mute);font-weight:400}
+.wxd .x{font-size:12px;color:var(--ink2)}
+
+.conv{display:grid;gap:10px}
+.convrow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.convrow .eq{color:var(--mute)}
+.big{font-size:22px !important;font-weight:450}
+
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.doc{border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surf);text-decoration:none;color:var(--ink)}
+.doc:hover{border-color:var(--sea)}
+.doc .ft{width:38px;height:38px;border-radius:8px;background:var(--sun-soft);color:var(--sun-ink);display:grid;place-items:center;font-size:10.5px;font-weight:700;letter-spacing:.05em}
+.doc .ft.img{background:var(--green-soft);color:var(--green-ink)}
+.doc .ft.lnk{background:var(--sea-soft);color:var(--sea-ink)}
+.doc b{display:block;font-size:14px;font-weight:550;overflow-wrap:anywhere}
+.doc span{font-size:12px;color:var(--mute)}
+
+/* assistant */
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:30;border:0;border-radius:999px;background:var(--grad);color:#fff;padding:13px 20px;font-weight:600;font-size:14.5px;box-shadow:0 8px 24px rgba(160,20,100,.3);display:flex;align-items:center;gap:8px}
+.fab svg{width:18px;height:18px}
+.drawer{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;width:min(440px,calc(100vw - 32px));height:min(640px,calc(100dvh - 100px));background:var(--surf);border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.22);display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.dh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.dh b{font-size:15px}
+.dh small{display:block;color:var(--mute);font-size:12px}
+.msgs{overflow-y:auto;padding:14px;display:grid;gap:10px;align-content:start}
+.msg{max-width:88%;padding:9px 13px;border-radius:14px;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.u{justify-self:end;background:var(--sea);color:#fff;border-bottom-right-radius:4px}
+.msg.a{justify-self:start;background:var(--soft);border-bottom-left-radius:4px}
+.msg.a .say{display:block;margin-top:6px;border:0;background:none;color:var(--sea-ink);font-size:12px;padding:0}
+.sugg{display:flex;flex-wrap:wrap;gap:6px}
+.dfoot{border-top:1px solid var(--line);padding:10px;display:grid;gap:8px}
+.dfoot form{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:end}
+.dfoot textarea{min-height:44px;max-height:120px;border-radius:12px}
+.roundbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surf);display:grid;place-items:center;padding:0;color:var(--ink2)}
+.roundbtn.send{background:var(--sea);border-color:var(--sea);color:#fff}
+.roundbtn svg{width:18px;height:18px}
+.dnote{font-size:11.5px;color:var(--mute);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.dnote label{display:flex;gap:6px;align-items:center}
+.thumb{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink2)}
+.thumb img{width:42px;height:42px;object-fit:cover;border-radius:8px}
+
+.empty{text-align:center;color:var(--mute);padding:28px 12px;font-size:14px}
+.att{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.attc{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:3px 4px 3px 4px;font-size:12.5px;max-width:100%;min-width:0}
+.attc:hover{border-color:var(--sea)}
+.attc a{display:inline-flex;gap:6px;align-items:center;color:var(--ink);text-decoration:none;min-width:0;padding:0 4px}
+.attc a span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attc .ft{flex:none;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:var(--sun-ink);background:var(--sun-soft);border-radius:999px;padding:2px 6px}
+.attc .ft.img{color:var(--green-ink);background:var(--green-soft)}
+.attc .x{border:0;background:none;color:var(--mute);padding:0 6px;font-size:12px;border-radius:999px}
+.attc .x:hover{color:var(--crit)}
+.attbtn{display:inline-flex;align-items:center;gap:5px;border:1px dashed var(--line);border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--ink2);cursor:pointer;background:none}
+.attbtn:hover{border-color:var(--sea);color:var(--sea-ink)}
+.attbtn svg{width:14px;height:14px}
+#secbody{display:grid;gap:16px}
+.dur{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--green-ink);background:var(--green-soft);border-radius:999px;padding:2px 10px;margin-top:5px;font-weight:500}
+.dur .tzd{color:var(--ink2);font-weight:400}
+.plugs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:12px}
+.plug{display:grid;justify-items:center;gap:6px;text-align:center;background:var(--soft);border-radius:12px;padding:12px 8px}
+.plug svg{width:92px;height:92px}
+.plug b{font-size:14px;font-weight:600}
+.plug span{font-size:12px;color:var(--mute)}
+.fitnote{margin:12px 0 0;font-size:13.5px;border-radius:10px;padding:9px 12px}
+.fitnote.ok{background:var(--ok-soft);color:var(--ok)}.fitnote.no{background:var(--warn-soft);color:var(--warn)}
+.packhead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.packtypes{display:flex;gap:6px;flex-wrap:wrap}
+.packtypes button{border:1px solid var(--line);background:var(--surf);border-radius:999px;padding:6px 13px;font-size:13px;color:var(--ink2)}
+.packtypes button[aria-pressed="true"]{background:var(--sea-soft);border-color:var(--sea-soft2);color:var(--sea-ink);font-weight:550}
+.packgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:14px}
+.packcat{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surf);min-width:0}
+.packcat h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:15px;margin-bottom:4px}
+.packcat h3 span{font-size:12px;color:var(--mute);font-weight:400}
+.pk{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line2);font-size:14.5px;min-height:40px}
+.pk:first-of-type{border-top:0}
+.pk input{width:22px;height:22px;accent-color:var(--green);flex:none;margin:0}
+.pk label{flex:1;min-width:0;cursor:pointer}
+.pk.done label{color:var(--mute);text-decoration:line-through}
+.pk .x{border:0;background:none;color:var(--mute);font-size:13px;padding:4px 6px;border-radius:6px}
+.pk .x:hover{color:var(--crit);background:var(--crit-soft)}
+.pk .tag{font-size:11px;color:var(--sea-ink);background:var(--sea-soft);border-radius:999px;padding:1px 7px;white-space:nowrap}
+.packadd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,150px) auto;gap:8px;align-items:end;margin-top:14px}
+@media (max-width:560px){.packadd{grid-template-columns:minmax(0,1fr) auto}.packadd .f:nth-child(2){grid-column:1/-1;grid-row:2}}
+.cxtag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 10px}
+.cxtag.soon{color:var(--crit);background:var(--crit-soft)}
+.cxtag.old{color:var(--mute);background:var(--soft)}
+.cxrow{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line2)}
+.cxrow:first-of-type{border-top:0}
+.cxd{display:grid;line-height:1.1;font-size:11.5px;color:var(--mute)}.cxd b{font-size:17px;font-weight:500;color:var(--ink)}
+.cxrow.soon .cxd b{color:var(--crit)}#secbody>*{min-width:0}
+.attrow{display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:10px 0;border-top:1px solid var(--line2)}
+.attrow:first-child{border-top:0;padding-top:2px}
+.attrow b{font-weight:550;font-size:14px}.attrow span{font-size:12.5px;color:var(--mute)}
+
+.pdfbar{display:flex;justify-content:flex-end;margin-top:-12px}
+.pdfdoc{width:720px;padding:0;background:#fff;color:#14181b;font-family:var(--sans);font-size:13.5px;line-height:1.45;
+  --bg:#ffffff;--surf:#ffffff;--soft:#f4f8f9;--ink:#14181b;--ink2:#434b52;--mute:#6b747b;--line:#e3e9ec;--line2:#eef3f5;
+  --sea:#c2187a;--sea-ink:#9a0f5f;--sea-soft:#fde6f2;--sea-soft2:#f8c4df;--green:#14a05a;--green-ink:#0b7a43;--green-soft:#dcf5e7;
+  --sun:#e0368f;--sun-ink:#a3195f;--sun-soft:#fde8f2;--crit:#c83c28;--crit-soft:#fdebe6;--warn:#b5591c;--warn-soft:#fff3e8;--ok:#0b7a43;--ok-soft:#e1f6ea;--info:#3a6fb0;--info-soft:#eaf1fb}
+.pdfdoc .pdfhead{border-bottom:2px solid #c2187a;padding-bottom:10px;margin-bottom:16px}
+.pdfdoc .pdfhead .wl{font-weight:600;font-size:13px}.pdfdoc .wl-a{color:#c2187a}.pdfdoc .wl-b{color:#14a05a}
+.pdfdoc .pdfhead h1{font-family:var(--disp);font-size:26px;font-weight:450;letter-spacing:-.01em;margin:6px 0 2px}
+.pdfdoc .pdfhead p{margin:0;color:#6b747b;font-size:12.5px}
+.pdfdoc .two{grid-template-columns:1fr}
+.pdfdoc .card{border:0;padding:0;margin-bottom:14px}
+.pdfdoc .stack{gap:14px}
+.pdfdoc a{text-decoration:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:13.5px;z-index:60}
+.loading{display:flex;gap:10px;align-items:center;color:var(--mute);font-size:14px}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--sea);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+@media (max-width:760px){
+  .bar1{padding-inline:16px}.meta{display:none}
+  .wrap{padding-inline:16px}
+  .hero{grid-template-columns:1fr;padding:24px 20px}.hpills{justify-content:flex-start}
+  .two{grid-template-columns:1fr}
+  .day{grid-template-columns:1fr;gap:6px}.day .dd{display:flex;gap:8px;align-items:baseline}
+  .day li{grid-template-columns:62px minmax(0,1fr)}
+  .item{grid-template-columns:auto minmax(0,1fr)}.item .side{grid-column:2;justify-items:start;text-align:left;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .banner{aspect-ratio:auto;min-height:240px}
+  .convrow{grid-template-columns:1fr}.convrow .eq{display:none}
+}
+</style>
+
+<div class="top">
+  <div class="bar1">
+    <button class="wordmark" id="home" type="button" aria-label="Ir a todos los viajes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9.2" style="stroke:var(--sea)"/><path d="M3.5 12h17M12 2.8c2.6 2.6 3.8 5.6 3.8 9.2s-1.2 6.6-3.8 9.2c-2.6-2.6-3.8-5.6-3.8-9.2S9.4 5.4 12 2.8z" style="stroke:var(--green)"/></svg>
+      <span class="wl"><span class="wl-a">Wander</span><span class="wl-b">lust</span></span>
+    </button>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+</div>
+
+<main class="wrap" id="main">
+  <div class="loading"><span class="spin"></span>Cargando tus viajes…</div>
+</main>
+
+<button class="fab" id="fab" type="button" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
+  Pregúntame
+</button>
+<section class="drawer" id="drawer" hidden aria-label="Asistente de viaje">
+  <div class="dh">
+    <div><b>Asistente de viaje</b><small id="dctx">Todos tus viajes</small></div>
+    <div class="actions"><button class="iconbtn" id="dclear" type="button">Nueva conversación</button><button class="iconbtn" id="dclose" type="button" aria-label="Cerrar asistente">✕</button></div>
+  </div>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="dfoot">
+    <div class="thumb" id="thumb" hidden></div>
+    <form id="askf">
+      <label class="roundbtn" id="photobtn" title="Añadir una foto (carta, cartel, billete...)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span class="sr">Añadir foto</span>
+        <input type="file" id="photo" accept="image/*" capture="environment" hidden>
+      </label>
+      <textarea class="inp" id="q" rows="1" placeholder="Escribe o dicta con el micrófono del teclado…"></textarea>
+      <button class="roundbtn send" type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></button>
+    </form>
+    <div class="dnote"><span>Para hablar, usa el micro del teclado de tu móvil o el dictado de Windows (Win + H).</span><label><input type="checkbox" id="speak"> Leer respuestas en voz alta</label></div>
+  </div>
+</section>
+
+<script src="drive-shim.js"></script>
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => "i" + Math.random().toString(36).slice(2, 9);
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+
+let db = null, assets = null, sample = null, canWrite = false;
+let trips = {}, weather = {}, loaded = false;
+let view = "home", tripId = null, sec = store.get("sec") || "resumen", filter = "proximos";
+let chat = [], pendingImg = null, adding = null, delArm = null, editingMeta = false;
+const restState = {};
+const propState = {};
+
+const MONTHS = ["ene","feb","mar","abr","may","jun","jul","ago","sept","oct","nov","dic"];
+const DOW = ["dom","lun","mar","mié","jue","vie","sáb"];
+const pd = s => { const [y,m,d] = String(s).split("-").map(Number); return new Date(y, (m||1)-1, d||1); };
+const today = () => { const t = new Date(); t.setHours(0,0,0,0); return t; };
+const daysTo = s => Math.round((pd(s) - today()) / 864e5);
+const fmtRange = (a,b) => { const A = pd(a), B = pd(b); const same = A.getFullYear() === B.getFullYear();
+  return `${A.getDate()} ${MONTHS[A.getMonth()]}${same ? "" : " " + A.getFullYear()} – ${B.getDate()} ${MONTHS[B.getMonth()]} ${B.getFullYear()}`; };
+const nights = t => Math.max(0, Math.round((pd(t.end) - pd(t.start)) / 864e5));
+const nightsTxt = t => { const n = nights(t); return n === 0 ? "en el día" : n === 1 ? "1 noche" : n + " noches"; };
+const status = t => { const a = daysTo(t.start), b = daysTo(t.end); return b < 0 ? "pasado" : a <= 0 ? "en curso" : "proximo"; };
+const countdown = t => { const a = daysTo(t.start), b = daysTo(t.end);
+  if (b < 0){ const A = pd(t.start); return MONTHS[A.getMonth()].replace(/^./,c=>c.toUpperCase()) + " " + A.getFullYear(); } if (a <= 0) return "En curso"; if (a === 1) return "Mañana"; if (a < 60) return `En ${a} días`;
+  const m = Math.round(a / 30.4); return `En ${m} meses`; };
+
+/* ---------- icons & cover art ---------- */
+const ICON = {
+  vuelo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 13.5l7-2.2L14 4.5c.5-.8 1.8-.6 1.9.4l-.9 6.2 5 1.6c.9.3.9 1.6 0 1.9l-5 1.6.9 3.6-2.3.7-2.4-3.5-7.7.6z"/></svg>',
+  coche:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16v-4l2-5h12l2 5v4z"/><circle cx="7.5" cy="16.5" r="1.8"/><circle cx="16.5" cy="16.5" r="1.8"/><path d="M4 12h16"/></svg>',
+  barco:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 15h18l-2.5 4h-13zM12 4v11M12 5l6 8h-6"/></svg>',
+  tren:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="3" width="12" height="13" rx="3"/><path d="M6 10h12M9 20l-2 2M15 20l2 2M9 16v4M15 16v4"/></svg>',
+  cama:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18V7M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-7v3"/><circle cx="7" cy="10.5" r="1.8"/></svg>',
+  excursion:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 19l6-10 4 6 3-4 5 8z"/><circle cx="16.5" cy="6" r="2"/></svg>',
+  seguro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  contacto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-3.5 3.6-5 7-5s6 1.5 7 5"/></svg>'
+};
+function artOld(key, onlyKnown){
+  const S = (b) => `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">${b}</svg>`;
+  if (key === "marche") return S(`<defs><linearGradient id="mk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c79a"/><stop offset=".6" stop-color="#f3e2c8"/></linearGradient></defs>
+    <rect width="400" height="250" fill="url(#mk)"/><circle cx="300" cy="78" r="30" fill="#ff9a4a" opacity=".85"/>
+    <g fill="#c9845a"><rect x="128" y="102" width="62" height="56"/><rect x="140" y="76" width="14" height="30"/><rect x="170" y="86" width="12" height="20"/><path d="M124 104 L159 88 L194 104Z" fill="#a8603e"/></g>
+    <g fill="#e9c9a3"><rect x="136" y="116" width="7" height="10"/><rect x="152" y="116" width="7" height="10"/><rect x="168" y="116" width="7" height="10"/></g>
+    <path d="M0 150 Q80 110 170 140 T400 120 V250 H0Z" fill="#9db37a"/><path d="M0 185 Q110 150 220 178 T400 165 V250 H0Z" fill="#6f8f55"/>
+    <g fill="#36502f"><path d="M262 178 q6 -40 6 -54 q0 14 6 54z"/><path d="M282 182 q5 -34 5 -46 q0 12 5 46z"/><path d="M60 196 q6 -38 6 -50 q0 12 6 50z"/></g>
+    <path d="M0 222 Q120 200 240 218 T400 210 V250 H0Z" fill="#4f6f3f"/>`);
+  if (key === "baja") return S(`<defs><linearGradient id="bk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb070"/><stop offset=".55" stop-color="#ffd9a6"/><stop offset=".56" stop-color="#1aa7b8"/><stop offset="1" stop-color="#05607a"/></linearGradient></defs>
+    <clipPath id="bkc"><rect width="400" height="139"/></clipPath><rect width="400" height="250" fill="url(#bk)"/><circle cx="110" cy="128" r="34" fill="#ff6a1a" opacity=".9" clip-path="url(#bkc)"/><path d="M60 146 h100 M78 154 h64 M94 162 h32" stroke="#ffb27a" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M220 138 L262 110 L300 126 L340 104 L400 120 V139 H220Z" fill="#b5653f"/>
+    <path d="M179 204 C181 192 183 184 185 178 C172 175 158 166 150 150 C163 157 175 160 186 163 C197 160 209 157 222 150 C214 166 200 175 187 178 C189 184 191 192 193 204 Z" fill="#0d3442"/>
+    <ellipse cx="186" cy="205" rx="34" ry="5" fill="#bff0f2" opacity=".75"/><path d="M140 214 q46 -8 92 0" stroke="#bff0f2" stroke-width="2" fill="none" opacity=".6"/>
+    <g fill="#2f6a3a"><rect x="34" y="150" width="9" height="60" rx="4"/><path d="M34 176 h-10 v-16 a4 4 0 0 1 8 0 v8 h2z M43 168 h8 v-14 a4 4 0 0 1 8 0 v20 h-16z"/></g>
+    <path d="M0 210 Q60 200 90 215 L90 250 H0Z" fill="#e9c08a"/>`);
+  if (key === "brasil") return S(`<defs><linearGradient id="rk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd6e6"/><stop offset=".7" stop-color="#d9f3ef"/></linearGradient></defs>
+    <rect width="400" height="250" fill="url(#rk)"/><circle cx="330" cy="60" r="22" fill="#ea4c9b"/>
+    <path d="M150 190 C160 120 190 70 215 66 C240 70 262 130 268 190Z" fill="#2c6e4f"/><path d="M250 190 C258 160 272 140 288 138 C304 142 316 170 320 190Z" fill="#3f8a5f"/>
+    <path d="M0 175 C40 150 80 160 120 180 L120 250 H0Z" fill="#1f5a3e"/>
+    <path d="M213 70 Q252 108 288 139" stroke="#3a4a4f" stroke-width="1.6" fill="none"/><path d="M247 102 v7" stroke="#3a4a4f" stroke-width="1.4"/><rect x="240" y="108" width="14" height="10" rx="2" fill="#c2187a"/><rect x="242.5" y="110" width="9" height="4" rx="1" fill="#fde6f2"/>
+    <rect y="188" width="400" height="62" fill="#1683a3"/><path d="M0 204 q50 -8 100 0 t100 0 t100 0 t100 0" stroke="#9fe3ea" stroke-width="2" fill="none" opacity=".7"/>
+    <g fill="#14532d"><path d="M60 188 q-14 -40 4 -70 q-4 30 -4 70z"/><path d="M64 120 q22 -6 34 8 q-20 -4 -34 -8z M64 120 q-24 -4 -34 10 q20 -6 34 -10z M64 120 q10 -20 30 -22 q-18 8 -30 22z"/></g>`);
+  if (key === "napoli") return S(`<defs><linearGradient id="nk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8f2"/><stop offset=".62" stop-color="#e8f5f8"/><stop offset=".63" stop-color="#1b8fc4"/><stop offset="1" stop-color="#0a5d8c"/></linearGradient></defs>
+    <rect width="400" height="250" fill="url(#nk)"/><path d="M150 158 L230 74 Q244 66 258 74 L340 158Z" fill="#6c7a8a"/><path d="M228 76 Q244 60 260 76 L250 84 Q244 78 238 84Z" fill="#4c5966"/>
+    <path d="M238 60 q6 -14 18 -18 q-8 8 -6 18z" fill="#fff" opacity=".8"/>
+    <g fill="#f2c14e"><rect x="20" y="132" width="26" height="26"/><rect x="50" y="122" width="22" height="36"/></g><g fill="#e46aa8"><rect x="76" y="136" width="24" height="22"/><rect x="104" y="128" width="18" height="30"/></g>
+    <path d="M20 132 l13 -8 13 8z M76 136 l12 -8 12 8z" fill="#b5523b"/>
+    <path d="M210 205 h70 l-10 12 h-50z" fill="#fff"/><path d="M228 205 v-26 l22 26" fill="#fff" opacity=".9"/>
+    <path d="M0 225 q50 -8 100 0 t100 0 t100 0 t100 0" stroke="#bfe8f5" stroke-width="2" fill="none" opacity=".6"/>`);
+  const sky = (id,a,b) => `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="400" height="250" fill="url(#${id})"/>`;
+  const sea = (y,c1,c2) => `<rect y="${y}" width="400" height="${250-y}" fill="${c1}"/><path d="M0 ${y+18} q50 -8 100 0 t100 0 t100 0 t100 0" stroke="${c2}" stroke-width="2" fill="none" opacity=".7"/>`;
+  const ART2 = {
+  andalucia: sky("anK","#9fd3f0","#fdf3e3")+`<circle cx="320" cy="55" r="24" fill="#ffc94d"/><path d="M0 140 L70 90 L130 120 L210 70 L290 115 L360 85 L400 105 V250 H0Z" fill="#b7a58c"/><path d="M0 170 Q100 140 200 165 T400 160 V250 H0Z" fill="#a9b77a"/><g fill="#ffffff" stroke="#e6ddd0" stroke-width="1"><rect x="60" y="140" width="40" height="30"/><rect x="104" y="132" width="34" height="38"/><rect x="142" y="144" width="40" height="26"/><rect x="186" y="126" width="30" height="44"/><rect x="220" y="140" width="44" height="30"/></g><g fill="#d9774a"><path d="M58 140 l22 -10 22 10z M102 132 l19 -9 19 9z M140 144 l22 -10 22 10z M218 140 l24 -11 24 11z"/></g><rect x="194" y="104" width="14" height="22" fill="#fff"/><path d="M192 104 l9 -12 9 12z" fill="#d9774a"/><rect x="250" y="196" width="110" height="26" rx="6" fill="#4cc3e0"/><path d="M262 209 q12 -6 24 0 t24 0 t24 0" stroke="#d6f4fb" stroke-width="2" fill="none"/><g><path d="M40 230 v-60" stroke="#6b4a2f" stroke-width="4"/><path d="M40 170 q-24 -4 -34 8 q18 -4 34 -8z M40 170 q24 -6 32 6 q-16 -2 -32 -6z M40 170 q-4 -18 8 -28 q-4 16 -8 28z" fill="#3f8a4f"/></g>`,
+  venecia: sky("vk","#ffc9a8","#fde9d6")+`<circle cx="320" cy="70" r="26" fill="#ff8a5c" opacity=".85"/><g fill="#d98a5f"><rect x="20" y="90" width="50" height="90"/><rect x="74" y="70" width="40" height="110"/><rect x="250" y="80" width="60" height="100"/><rect x="314" y="100" width="70" height="80"/></g><g fill="#b5623f"><rect x="140" y="40" width="22" height="140"/><path d="M136 42 L151 18 L166 42Z"/></g><g fill="#f6dfc4"><rect x="30" y="105" width="8" height="14"/><rect x="50" y="105" width="8" height="14"/><rect x="84" y="90" width="8" height="14"/><rect x="262" y="100" width="8" height="14"/><rect x="286" y="100" width="8" height="14"/><rect x="330" y="118" width="8" height="14"/><rect x="356" y="118" width="8" height="14"/></g>`+sea(178,"#2f8fa8","#bfe8ef")+`<path d="M120 212 q60 14 130 -2 l-8 8 q-60 12 -114 0z" fill="#1d2430"/><path d="M236 196 v-26" stroke="#1d2430" stroke-width="2"/>`,
+  corfu: sky("ck","#9fdcf0","#e8f7fb")+`<circle cx="70" cy="60" r="22" fill="#ffd166"/><path d="M0 150 C60 90 120 110 170 150 L170 250 H0Z" fill="#3e7f4f"/><path d="M240 150 C290 100 350 95 400 125 V250 H240Z" fill="#2f6b42"/><g fill="#fff"><rect x="40" y="118" width="18" height="14"/><rect x="64" y="110" width="16" height="12"/></g><g fill="#e07a5f"><path d="M38 118 l11 -7 11 7z M62 110 l10 -6 10 6z"/></g>`+sea(160,"#14a3c7","#bdf0f7")+`<path d="M190 200 h50 l-8 10 h-34z" fill="#fff"/><path d="M212 200 v-30 l18 30" fill="#fff"/>`,
+  panama: sky("pk","#ffb3a1","#ffe9d9")+`<circle cx="320" cy="60" r="24" fill="#ff7a59"/><g fill="#5a6b7c"><rect x="200" y="70" width="18" height="100"/><rect x="222" y="50" width="14" height="120"/><rect x="240" y="80" width="20" height="90"/><rect x="264" y="60" width="12" height="110"/><path d="M280 170 V70 q10 -20 20 0 V170z"/></g>`+sea(170,"#1b8fa6","#a9e6ee")+`<path d="M40 190 h120 v-14 h-90 v-10 h-20 z" fill="#c0392b"/><rect x="60" y="160" width="10" height="10" fill="#f4d35e"/><g fill="#1f5a3a"><path d="M370 250 v-90" stroke="#5b3a29" stroke-width="5"/><path d="M370 160 q-30 -6 -44 10 q24 -4 44 -10z M370 160 q30 -8 42 8 q-22 -2 -42 -8z M370 160 q-6 -24 10 -36 q-4 20 -10 36z"/></g>`,
+  matera: sky("mk2","#f7d7b5","#fbefe0")+`<circle cx="330" cy="60" r="22" fill="#f4a259"/><path d="M0 250 V170 L60 140 L140 120 L220 110 L300 125 L400 150 V250Z" fill="#c9a77c"/><g fill="#e4cba5" stroke="#b08a5e" stroke-width="1"><rect x="40" y="150" width="30" height="24"/><rect x="74" y="140" width="34" height="30"/><rect x="112" y="128" width="30" height="30"/><rect x="150" y="120" width="40" height="34"/><rect x="196" y="112" width="30" height="40"/><rect x="232" y="122" width="36" height="30"/><rect x="274" y="132" width="30" height="28"/><rect x="60" y="180" width="40" height="26"/><rect x="110" y="168" width="36" height="30"/><rect x="200" y="160" width="40" height="30"/><rect x="250" y="168" width="36" height="28"/></g><path d="M200 112 V84 l10 -10 10 10 V112" fill="#d8bb92"/><g fill="#5e4632"><rect x="50" y="160" width="6" height="8"/><rect x="88" y="152" width="6" height="8"/><rect x="164" y="134" width="6" height="8"/><rect x="214" y="172" width="6" height="8"/><rect x="262" y="178" width="6" height="8"/></g>`,
+  paris: sky("pa","#c9d9f2","#f3ecf4")+`<circle cx="80" cy="70" r="20" fill="#f7b267"/><path d="M0 200 H400 V250 H0Z" fill="#9fb58a"/><g stroke="#4a4e69" stroke-width="3" fill="none"><path d="M200 30 L170 200 M200 30 L230 200 M180 140 h40 M187 100 h26 M176 170 h48"/><path d="M170 200 q30 -40 60 0"/></g><g fill="#b8b3c9"><rect x="20" y="160" width="40" height="40"/><rect x="300" y="150" width="60" height="50"/><rect x="340" y="140" width="30" height="60"/></g>`,
+  escocia: sky("ek","#b9cfe0","#eef3f6")+`<path d="M0 160 L80 100 L150 150 L230 90 L320 150 L400 120 V250 H0Z" fill="#7d8f9e"/><path d="M0 190 Q100 160 200 190 T400 185 V250 H0Z" fill="#6f8f55"/><g fill="#8a8178"><rect x="240" y="120" width="70" height="50"/><rect x="232" y="104" width="18" height="66"/><rect x="300" y="104" width="18" height="66"/></g><g fill="#6d655e"><path d="M232 104 h18 v-6 h-4 v4 h-3 v-4 h-4 v4 h-3 v-4 h-4z M300 104 h18 v-6 h-4 v4 h-3 v-4 h-4 v4 h-3 v-4 h-4z"/><rect x="268" y="148" width="14" height="22"/></g><path d="M0 225 Q120 205 240 222 T400 215 V250 H0Z" fill="#4f6f3f"/><g fill="#9b6fb0"><circle cx="60" cy="215" r="3"/><circle cx="74" cy="220" r="3"/><circle cx="330" cy="210" r="3"/></g>`,
+  nyboston: sky("nk","#b8d8f0","#f4eef0")+`<circle cx="330" cy="55" r="20" fill="#ffd166"/><g fill="#6b7a8f"><rect x="40" y="90" width="26" height="110"/><rect x="70" y="60" width="22" height="140"/><path d="M96 200 V70 l10 -30 10 30 V200z"/><rect x="120" y="100" width="28" height="100"/><rect x="152" y="80" width="20" height="120"/></g><g fill="#a4553f"><rect x="230" y="140" width="50" height="60"/><rect x="284" y="130" width="40" height="70"/><path d="M226 140 l29 -18 29 18z"/></g><g fill="#f3e3c3"><rect x="240" y="152" width="8" height="10"/><rect x="258" y="152" width="8" height="10"/><rect x="294" y="146" width="8" height="10"/><rect x="310" y="146" width="8" height="10"/></g>`+sea(200,"#2d7fa6","#bfe3f2"),
+  islandia: sky("ik","#0f2a45","#3a5f7d")+`<path d="M0 90 C80 40 160 120 240 60 S360 70 400 40" stroke="#5ff2b0" stroke-width="18" fill="none" opacity=".45"/><path d="M0 110 C90 70 170 140 260 90 S370 100 400 80" stroke="#c77dff" stroke-width="10" fill="none" opacity=".35"/><path d="M0 200 L90 120 L170 180 L260 110 L400 190 V250 H0Z" fill="#283a4a"/><path d="M90 120 L110 138 L70 138Z M260 110 L285 132 L238 132Z" fill="#e8f1f5"/><rect x="180" y="160" width="10" height="70" fill="#cfe9f5" opacity=".85"/><path d="M0 225 Q100 210 200 228 T400 220 V250 H0Z" fill="#1d2b36"/><g fill="#fff"><circle cx="40" cy="30" r="1.5"/><circle cx="120" cy="20" r="1.2"/><circle cx="300" cy="25" r="1.5"/><circle cx="370" cy="50" r="1.2"/></g>`,
+  angkor: sky("ak","#ffc59e","#ffeedd")+`<circle cx="70" cy="70" r="26" fill="#ff7b39" opacity=".9"/><g fill="#7a6a58"><path d="M200 50 l14 30 v80 h-28 v-80z"/><path d="M150 90 l11 24 v46 h-22 v-46z"/><path d="M250 90 l11 24 v46 h-22 v-46z"/><rect x="110" y="160" width="180" height="14"/><rect x="96" y="174" width="208" height="12"/></g><g fill="#5c4f42"><path d="M200 50 l4 -14 4 14z"/></g>`+sea(186,"#5c8f7a","#cfe8d9")+`<g fill="#2f5d3e"><path d="M40 186 q-10 -40 6 -64 q-2 30 -6 64z M360 186 q-10 -40 6 -64 q-2 30 -6 64z"/></g>`,
+  zanzibar: sky("zk","#8fe0ec","#effbf8")+`<circle cx="320" cy="55" r="22" fill="#ffd166"/>`+sea(150,"#19b5c4","#c9f5f5")+`<rect y="205" width="400" height="45" fill="#f5e3b8"/><path d="M120 190 q50 10 110 0 l-10 12 h-90z" fill="#7b4a2c"/><path d="M168 190 L168 100 L230 182Z" fill="#fff8ea"/><g><path d="M50 210 v-90" stroke="#6b4a2f" stroke-width="5"/><path d="M50 120 q-30 -6 -44 10 q24 -4 44 -10z M50 120 q30 -8 42 8 q-22 -2 -42 -8z M50 120 q-6 -24 10 -36 q-4 20 -10 36z" fill="#2c7a43"/></g>`,
+  singapur: sky("sk","#ffbfd3","#fdeef3")+`<circle cx="80" cy="60" r="20" fill="#ff8fab"/><g fill="#5a6b7c"><rect x="200" y="80" width="22" height="100"/><rect x="240" y="80" width="22" height="100"/><rect x="280" y="80" width="22" height="100"/></g><path d="M190 76 q60 -14 122 0 v6 h-122z" fill="#3d4a57"/><g fill="#2f7d55"><rect x="90" y="120" width="8" height="60"/><path d="M80 120 l14 -40 14 40z"/><rect x="130" y="110" width="8" height="70"/><path d="M120 110 l14 -44 14 44z"/></g>`+sea(180,"#2b88b8","#bfe2f2"),
+  porto: sky("ptk","#cfe3f2","#fbf0e2")+`<circle cx="330" cy="55" r="20" fill="#f4a259"/><g fill="#e2a46b"><rect x="20" y="90" width="40" height="80"/><rect x="64" y="100" width="34" height="70"/><rect x="290" y="96" width="40" height="74"/><rect x="334" y="86" width="50" height="84"/></g><path d="M60 120 Q200 30 340 120" stroke="#5a5f66" stroke-width="7" fill="none"/><path d="M40 120 H360" stroke="#5a5f66" stroke-width="6"/><g stroke="#5a5f66" stroke-width="2"><path d="M100 120 V92 M140 120 V72 M180 120 V64 M220 120 V64 M260 120 V72 M300 120 V92"/></g>`+sea(170,"#3f7d9c","#c6e4ef")+`<path d="M150 200 h60 l-8 8 h-44z" fill="#6b3f26"/>`,
+  taormina: sky("tk","#ffd1b0","#fff0e4")+`<path d="M180 140 L270 50 Q282 42 294 50 L380 140Z" fill="#7d6f73"/><path d="M270 50 Q282 36 294 50 L288 56 Q282 50 276 56Z" fill="#fff"/><path d="M276 44 q4 -14 14 -18 q-6 8 -4 18z" fill="#c9c2c4"/><path d="M0 170 C60 120 120 130 170 160 L170 250 H0Z" fill="#7a9a5a"/><g fill="#f2d3a5"><rect x="40" y="140" width="20" height="16"/><rect x="64" y="132" width="18" height="16"/><rect x="88" y="138" width="20" height="16"/></g>`+sea(170,"#1f8fc0","#c3ecf8"),
+  alsacia: sky("alk","#d6e6f2","#f8f1ea")+`<g><rect x="30" y="100" width="70" height="90" fill="#f4e1c1"/><path d="M24 102 l41 -40 41 40z" fill="#b5523b"/><rect x="110" y="110" width="60" height="80" fill="#f6c9b1"/><path d="M104 112 l36 -34 36 34z" fill="#9c4a33"/><rect x="180" y="96" width="70" height="94" fill="#e9eef0"/><path d="M174 98 l41 -40 41 40z" fill="#8a3e2c"/></g><g stroke="#6b3a24" stroke-width="3"><path d="M30 130 h70 M65 100 v90 M30 160 h70 M110 140 h60 M140 110 v80 M180 128 h70 M215 96 v94 M180 160 h70"/><path d="M30 100 l35 30 M100 100 l-35 30 M180 96 l35 32 M250 96 l-35 32"/></g><g fill="#c0392b"><rect x="270" y="80" width="12" height="110"/><path d="M266 82 l10 -40 10 40z"/></g>`+sea(190,"#5c8fa6","#d3e8f0"),
+  canyon: sky("cyk","#ffc49b","#ffe9d2")+`<circle cx="320" cy="60" r="22" fill="#ff7b39"/><path d="M0 120 H120 V100 H180 V130 H260 V110 H320 V125 H400 V250 H0Z" fill="#c0603a"/><path d="M0 160 H90 V150 H200 V170 H300 V158 H400 V250 H0Z" fill="#a24c2e"/><path d="M140 250 Q170 200 200 180 Q230 200 260 250Z" fill="#7a3620"/><path d="M175 250 Q190 215 200 205 Q210 215 225 250Z" fill="#3a8aa3"/><g fill="#5f7a3a"><rect x="40" y="190" width="6" height="30"/><path d="M40 202 h-8 v-10 a3 3 0 0 1 6 0 v4 h2z"/></g>`,
+  inglaterra: sky("ink","#cfe0ea","#f1f4ef")+`<path d="M0 160 Q100 120 200 150 T400 140 V250 H0Z" fill="#8fb36b"/><path d="M0 200 Q120 170 240 195 T400 190 V250 H0Z" fill="#6f9550"/><g><rect x="140" y="130" width="110" height="60" fill="#f3ead8"/><path d="M132 132 h126 l-12 -22 h-102z" fill="#6b4a3a"/><rect x="186" y="160" width="18" height="30" fill="#4a3b2f"/><g fill="#2f4e6a"><rect x="152" y="146" width="16" height="12"/><rect x="220" y="146" width="16" height="12"/></g><rect x="236" y="104" width="8" height="18" fill="#8a6a55"/></g><g fill="#3e6b37"><circle cx="70" cy="170" r="18"/><circle cx="330" cy="160" r="22"/></g>`,
+  tailandia: sky("thk","#ffd0a8","#fff2e2")+`<circle cx="320" cy="60" r="24" fill="#ff8c42"/><g fill="#3e7a55"><path d="M40 170 C40 110 70 90 90 100 C110 110 110 150 110 170Z"/><path d="M250 170 C250 120 280 100 300 110 C320 120 325 150 325 170Z"/><path d="M330 170 C335 140 350 130 365 136 C380 142 382 160 382 170Z"/></g>`+sea(168,"#1aa6b7","#c6f0f2")+`<path d="M130 205 q60 12 120 -6 l-12 12 q-50 10 -98 2z" fill="#7b4a2c"/><path d="M140 205 l-20 -18" stroke="#c0392b" stroke-width="3"/><path d="M230 198 v-14" stroke="#7b4a2c" stroke-width="3"/>`,
+  taj: sky("tjk","#ffd4c2","#fff1e8")+`<rect y="180" width="400" height="70" fill="#9fb58a"/><rect x="190" y="185" width="20" height="60" fill="#7fc3d6"/><g fill="#f7f3ee" stroke="#d9cfc4" stroke-width="1"><rect x="130" y="110" width="140" height="70"/><path d="M160 110 Q200 40 240 110Z"/><rect x="196" y="36" width="8" height="12"/><path d="M140 110 q10 -20 20 0z M240 110 q10 -20 20 0z"/><rect x="96" y="80" width="10" height="100"/><rect x="294" y="80" width="10" height="100"/><path d="M93 80 q8 -14 16 0z M291 80 q8 -14 16 0z"/></g><path d="M185 180 v-34 q15 -16 30 0 v34z" fill="#e6ddd3"/>`,
+  bolonia: sky("bok","#f5c7a9","#fdeee2")+`<circle cx="320" cy="60" r="22" fill="#f08a5d"/><g fill="#b5653f"><rect x="160" y="30" width="22" height="170"/><rect x="196" y="70" width="20" height="130"/></g><g fill="#d9824f"><rect x="0" y="140" width="400" height="60"/></g><g fill="#a24f2f"><path d="M10 200 v-30 q15 -16 30 0 v30z M60 200 v-30 q15 -16 30 0 v30z M110 200 v-30 q15 -16 30 0 v30z M240 200 v-30 q15 -16 30 0 v30z M290 200 v-30 q15 -16 30 0 v30z M340 200 v-30 q15 -16 30 0 v30z"/></g><rect y="200" width="400" height="50" fill="#c9b49a"/>`,
+  piramides: sky("pyk","#ffd29b","#fff0d6")+`<circle cx="80" cy="60" r="26" fill="#ff9f43"/><path d="M130 190 L210 70 L290 190Z" fill="#d9a35f"/><path d="M210 70 L290 190 L250 190Z" fill="#b9853f"/><path d="M260 190 L320 110 L380 190Z" fill="#d9a35f"/><path d="M320 110 L380 190 L350 190Z" fill="#b9853f"/><path d="M40 190 L80 140 L120 190Z" fill="#cf9957"/><rect y="188" width="400" height="62" fill="#ecc98a"/><path d="M60 230 q40 -10 80 0" stroke="#d8ae6a" stroke-width="3" fill="none"/>`,
+  belgrado: sky("blk","#c8dcef","#f6efe8")+`<circle cx="70" cy="60" r="20" fill="#f4a259"/><path d="M0 150 Q120 110 240 140 L240 250 H0Z" fill="#7e9a63"/><g fill="#9c8f82"><rect x="60" y="100" width="120" height="40"/><rect x="50" y="86" width="22" height="54"/><rect x="168" y="86" width="22" height="54"/></g><g fill="#7a6f64"><path d="M50 86 h22 v-6 h-5 v4 h-4 v-4 h-4 v4 h-4 v-4 h-5z M168 86 h22 v-6 h-5 v4 h-4 v-4 h-4 v4 h-4 v-4 h-5z"/></g><g fill="#8aa0b0"><rect x="270" y="100" width="30" height="60"/><path d="M285 70 q20 15 0 30 q-20 -15 0 -30z" fill="#c9a24a"/></g>`+sea(170,"#4c86a6","#c9e2ee"),
+  dubrovnik: sky("dk","#9fd6f0","#effafd")+`<circle cx="330" cy="55" r="20" fill="#ffd166"/><path d="M0 120 L120 60 L220 110 L400 70 V160 H0Z" fill="#8a9a8c"/><g fill="#d8c3a2"><rect x="60" y="120" width="260" height="50"/></g><g fill="#e07a5f"><path d="M70 120 l15 -12 15 12z M110 120 l15 -12 15 12z M150 120 l15 -12 15 12z M190 120 l15 -12 15 12z M230 120 l15 -12 15 12z M270 120 l15 -12 15 12z"/></g><g fill="#c9b08c"><rect x="40" y="110" width="26" height="70"/><rect x="310" y="104" width="30" height="76"/></g>`+sea(178,"#1693c0","#c3ecf8"),
+  munich: sky("mnk","#cfe0ef","#f3f2ef")+`<path d="M0 140 L70 70 L130 120 L200 60 L280 120 L340 80 L400 120 V250 H0Z" fill="#a9b8c6"/><path d="M70 70 L85 85 L55 85Z M200 60 L218 78 L182 78Z M340 80 L354 94 L326 94Z" fill="#fff"/><g fill="#b56b46"><rect x="150" y="100" width="34" height="110"/><rect x="200" y="100" width="34" height="110"/><rect x="140" y="160" width="104" height="50"/></g><g fill="#3e6b4f"><path d="M150 100 q17 -36 34 0z M200 100 q17 -36 34 0z"/></g><rect y="208" width="400" height="42" fill="#8fae7a"/>`,
+  parque: sky("prk","#2b2d5c","#6a5ea8")+`<g fill="#ffd166"><circle cx="90" cy="60" r="3"/><circle cx="300" cy="40" r="3"/></g><g stroke="#ff7eb6" stroke-width="2"><path d="M100 70 l-14 -14 M100 70 l14 -14 M100 70 l0 -20 M100 70 l-20 0 M100 70 l20 0 M100 70 l-14 14 M100 70 l14 14"/></g><g stroke="#7ee8fa" stroke-width="2"><path d="M300 60 l-12 -12 M300 60 l12 -12 M300 60 l0 -18 M300 60 l-18 0 M300 60 l18 0 M300 60 l-12 12 M300 60 l12 12"/></g><circle cx="200" cy="140" r="60" fill="none" stroke="#f4e1ff" stroke-width="4"/><g stroke="#f4e1ff" stroke-width="2"><path d="M200 80 V200 M140 140 H260 M158 98 L242 182 M242 98 L158 182"/></g><g fill="#ffb3c7"><circle cx="200" cy="80" r="6"/><circle cx="260" cy="140" r="6"/><circle cx="140" cy="140" r="6"/><circle cx="200" cy="200" r="6"/></g><path d="M160 250 L200 140 L240 250Z" fill="#3b3570"/><rect y="230" width="400" height="20" fill="#1d1b3a"/>`,
+  cordoba: sky("cdk","#f7d9b0","#fff3e3")+`<circle cx="320" cy="60" r="22" fill="#f4a259"/><rect x="40" y="90" width="320" height="120" fill="#efe1c6"/><g fill="#b5523b"><path d="M60 210 v-70 q20 -30 40 0 v70z M120 210 v-70 q20 -30 40 0 v70z M180 210 v-70 q20 -30 40 0 v70z M240 210 v-70 q20 -30 40 0 v70z M300 210 v-70 q20 -30 40 0 v70z"/></g><g fill="#efe1c6"><path d="M66 210 v-64 q14 -22 28 0 v64z M126 210 v-64 q14 -22 28 0 v64z M186 210 v-64 q14 -22 28 0 v64z M246 210 v-64 q14 -22 28 0 v64z M306 210 v-64 q14 -22 28 0 v64z"/></g><g stroke="#b5523b" stroke-width="4"><path d="M66 160 h28 M126 160 h28 M186 160 h28 M246 160 h28 M306 160 h28"/></g><rect y="210" width="400" height="40" fill="#d8c7a6"/><rect x="190" y="40" width="20" height="50" fill="#e4d2b1"/>`,
+  vietnam: sky("vnk","#cfe6e0","#f4f7ee")+`<g fill="#5f8a74"><path d="M30 170 C30 100 60 80 80 90 C100 100 100 150 100 170Z"/><path d="M120 170 C125 120 150 100 170 110 C190 120 192 150 192 170Z"/><path d="M280 170 C280 110 310 90 330 100 C350 110 355 150 355 170Z"/></g>`+sea(168,"#5aa7a0","#d4efe9")+`<path d="M190 200 h70 l-10 12 h-50z" fill="#7b4a2c"/><path d="M205 200 V150 q20 10 0 26 q20 6 0 24" fill="#e07a5f"/><path d="M230 200 V158 q16 8 0 20 q16 6 0 22" fill="#e07a5f"/>`
+  };
+  if (ART2[key]) return S(ART2[key]);
+  if (onlyKnown) return null;
+  const h = Array.from(String(key)).reduce((a,c) => a + c.charCodeAt(0), 0) % 360;
+  return S(`<rect width="400" height="250" fill="hsl(${h} 60% 82%)"/><circle cx="300" cy="70" r="28" fill="hsl(${(h+40)%360} 90% 65%)"/><path d="M0 170 L90 90 L170 160 L250 70 L400 180 V250 H0Z" fill="hsl(${h} 35% 45%)"/><path d="M0 205 Q120 180 240 200 T400 195 V250 H0Z" fill="hsl(${h} 40% 32%)"/>`);
+}
+/* ---------- cover illustrations v2: every landmark is anchored to its ground line ---------- */
+const NEWART = (() => {
+  const R = (x,y,w,h,f,o="") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${o}/>`;
+  const P = (d,f,o="") => `<path d="${d}" fill="${f}" ${o}/>`;
+  const C = (x,y,r,f,o="") => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${o}/>`;
+  const sky = (id,a,b,c) => `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/>${c?`<stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/>`:`<stop offset="1" stop-color="${b}"/>`}</linearGradient></defs><rect width="400" height="250" fill="url(#${id})"/>`;
+  const sun = (x,y,r,c,g=.22) => C(x,y,r*1.9,c,`opacity="${g}"`)+C(x,y,r,c);
+  const cloud = (x,y,s=1,f="#fff",o=.85) => `<g fill="${f}" opacity="${o}" transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="26" ry="8"/><ellipse cx="-8" cy="-6" rx="12" ry="9"/><ellipse cx="8" cy="-8" rx="14" ry="11"/></g>`;
+  const sea = (y,c,w1,w2) => R(0,y,400,250-y,c)+(w2?R(0,y+(250-y)*.55,400,250,w2,'opacity=".35"'):"")+`<path d="M20 ${y+14} q22 -5 44 0 M150 ${y+24} q26 -6 52 0 M280 ${y+12} q22 -5 44 0 M90 ${y+40} q24 -5 48 0 M300 ${y+44} q24 -5 48 0" stroke="${w1}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>`;
+  const land = (y,c) => R(0,y,400,250-y,c);
+  const bld = (x,G,w,h,f) => R(x,G-h,w,h,f);
+  const roof = (x,y,w,h,f) => P(`M${x-2} ${y} L${x+w/2} ${y-h} L${x+w+2} ${y}Z`,f);
+  const wins = (x,y,cols,rows,dx,dy,w,h,f) => { let s=""; for(let i=0;i<cols;i++) for(let j=0;j<rows;j++) s+=R(x+i*dx,y+j*dy,w,h,f); return s; };
+  const cypress = (x,G,h,c="#2f5b3a") => P(`M${x} ${G} C${x-7} ${G-h*.35} ${x-5} ${G-h*.8} ${x} ${G-h} C${x+5} ${G-h*.8} ${x+7} ${G-h*.35} ${x} ${G}Z`,c);
+  const pine = (x,G,h,c="#2e5d3f") => P(`M${x} ${G-h} L${x+h*.32} ${G-h*.3} L${x+h*.12} ${G-h*.3} L${x+h*.38} ${G} L${x-h*.38} ${G} L${x-h*.12} ${G-h*.3} L${x-h*.32} ${G-h*.3}Z`,c);
+  const umbrella = (x,G,h,c="#3f6b3a",t="#6b4a33") => R(x-1.5,G-h,3,h,t)+`<ellipse cx="${x}" cy="${G-h}" rx="${h*.55}" ry="${h*.2}" fill="${c}"/>`;
+  const tree = (x,G,r,c="#4f8a4a",t="#6b4a33") => R(x-2,G-r*1.3,4,r*1.3,t)+C(x,G-r*1.5,r,c);
+  const palm = (x,G,h,c="#2f7a4a",t="#7a5a3a") => `<path d="M${x} ${G} Q${x+4} ${G-h*.5} ${x+2} ${G-h}" stroke="${t}" stroke-width="4" fill="none" stroke-linecap="round"/><g fill="${c}" transform="translate(${x+2} ${G-h})"><path d="M0 0 Q-18 -10 -30 4 Q-16 -2 0 0Z"/><path d="M0 0 Q18 -12 32 2 Q16 -3 0 0Z"/><path d="M0 0 Q-8 -20 -22 -20 Q-10 -12 0 0Z"/><path d="M0 0 Q10 -22 24 -18 Q10 -10 0 0Z"/><path d="M0 0 Q2 -22 -2 -26 Q4 -14 0 0Z"/></g>`;
+  const boat = (x,y,s=1,hull="#7a3f2a",sail) => `<g transform="translate(${x} ${y}) scale(${s})">${sail?P("M2 -2 L2 -26 L16 -4Z",sail):""}${P("M-14 -2 H18 L13 4 H-10Z",hull)}</g>`;
+  const refl = (x,y,w,h,f) => R(x,y,w,h,f,'opacity=".18"');
+  const S = b => `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true">${b}</svg>`;
+
+  const A = {};
+
+  /* ---- Alsacia: half-timbered houses on a canal quay, Strasbourg spire behind ---- */
+  A.alsacia = () => { const G=172; let h=sky("al1","#bcdcf2","#f4efe6")+sun(320,52,18,"#ffd27a")+cloud(90,48,1)+cloud(250,70,.8);
+    h+=P("M226 "+G+" V96 L232 82 L236 40 L240 82 L246 96 V"+G+"Z","#b97b6a")+R(220,118,32,G-118,"#c58c7a")+R(232,128,8,14,"#8e5546");
+    const H=[[20,52,64,"#f6dfb8","#b24b32"],[74,46,74,"#f3c7a5","#8f3a2b"],[122,54,58,"#fbe8c8","#b85a3b"],[178,40,70,"#e9cfa0","#9a3f2c"],[260,56,66,"#f7d6c0","#a8452f"],[318,48,76,"#f1e3bf","#8a3a2a"],[368,40,60,"#f6c9a8","#b24b32"]];
+    H.forEach(([x,w,ht,f,r])=>{ h+=bld(x,G,w,ht,f)+roof(x,G-ht,w,30,r);
+      const t="#6b3b24"; h+=`<g stroke="${t}" stroke-width="2.4" fill="none"><path d="M${x} ${G-ht} H${x+w} M${x} ${G-ht*.5} H${x+w} M${x+w*.33} ${G-ht} V${G} M${x+w*.66} ${G-ht} V${G} M${x} ${G-ht} L${x+w*.33} ${G-ht*.5} M${x+w} ${G-ht} L${x+w*.66} ${G-ht*.5}"/></g>`;
+      h+=R(x+w*.4,G-16,w*.2,16,"#5a3a28")+R(x+w*.08,G-ht*.42,w*.18,10,"#7aa9c9")+R(x+w*.74,G-ht*.42,w*.18,10,"#7aa9c9"); });
+    h+=R(0,G,400,10,"#b9a891")+sea(G+10,"#5f9bb5","#d6eef6","#3e7891");
+    H.forEach(([x,w,ht,f])=>{ h+=refl(x,G+10,w,ht*.55,f); });
+    h+=boat(150,G+34,1.1,"#6b3b24");
+    return h; };
+
+  /* ---- Andalucía: white village on terraces, mountains, olive trees ---- */
+  A.andalucia = () => { let h=sky("an1","#8fcdf0","#fdf3e3")+sun(330,50,20,"#ffc94d")+cloud(110,42,.9);
+    h+=P("M0 120 L60 80 L120 108 L200 62 L280 104 L340 78 L400 96 V250 H0Z","#c9b48f");
+    const T=[[60,150,"#d9c79f"],[0,176,"#cbb98f"],[0,204,"#b5ad6e"]];
+    h+=P("M40 150 H330 V250 H40Z","#dccaa3")+P("M0 176 H400 V250 H0Z","#cfbd92")+P("M0 206 H400 V250 H0Z","#a7aa62");
+    const top=[[70,30,26],[104,26,34],[134,34,24],[172,22,40],[198,36,28],[238,30,22],[272,40,30]];
+    top.forEach(([x,w,ht])=>{ h+=bld(x,150,w,ht,"#fbfaf5")+P(`M${x-2} ${150-ht} H${x+w+2} L${x+w-2} ${150-ht-6} H${x+2}Z`,"#d9774a")+R(x+w*.35,150-ht*.55,5,8,"#6a8fb3"); });
+    h+=bld(178,150,14,70,"#fbfaf5")+P("M176 80 L185 66 L194 80Z","#d9774a")+R(182,92,6,10,"#6a8fb3");
+    const mid=[[20,34,22],[58,28,30],[90,40,20],[300,36,26],[340,30,20],[366,34,28]];
+    mid.forEach(([x,w,ht])=>{ h+=bld(x,176,w,ht,"#ffffff")+P(`M${x-2} ${176-ht} H${x+w+2} L${x+w-2} ${176-ht-6} H${x+2}Z`,"#d06c42")+R(x+w*.4,176-ht*.55,5,8,"#6a8fb3"); });
+    [[30,206],[80,212],[140,208],[230,214],[300,207],[360,212]].forEach(([x,G])=>{ h+=R(x-1.5,G-12,3,12,"#6b5a3e")+`<ellipse cx="${x}" cy="${G-16}" rx="14" ry="8" fill="#7d8b4a"/>`; });
+    h+=`<path d="M0 238 Q100 228 200 236 T400 232" stroke="#8b8a4f" stroke-width="3" fill="none" opacity=".5"/>`;
+    return h; };
+
+  /* ---- Belgrado: Kalemegdan fortress on the hill, Pobednik column, two rivers ---- */
+  A.belgrado = () => { const T=118; let h=sky("be1","#c8dcef","#f6efe6")+sun(80,52,18,"#f6a25a")+cloud(300,46,.9);
+    h+=P(`M0 170 L0 ${T+6} Q40 ${T-4} 90 ${T} H300 Q350 ${T+2} 380 140 L400 170Z`,"#7f9a5b")+P(`M0 170 Q120 150 260 160 T400 170 V250 H0Z`,"#6b8a4c");
+    h+=bld(110,T,140,30,"#a89a86")+wins(118,T-24,13,1,10,0,4,6,"#7e705e");
+    [110,150,190,230].forEach(x=>h+=R(x,T-36,14,6,"#a89a86")+R(x+4,T-40,6,4,"#a89a86"));
+    h+=bld(96,T,24,46,"#9b8c77")+R(96,T-50,6,5,"#9b8c77")+R(105,T-50,6,5,"#9b8c77")+R(114,T-50,6,5,"#9b8c77");
+    h+=bld(250,T,22,42,"#9b8c77")+R(250,T-46,6,5,"#9b8c77")+R(258,T-46,6,5,"#9b8c77")+R(266,T-46,6,5,"#9b8c77");
+    h+=bld(306,T+1,7,64,"#cfc6b4")+R(303,T-63,13,4,"#cfc6b4")+P(`M309 ${T-63} l-3 -8 h1 l1 -10 h2 l1 10 h1 l-3 8z`,"#3e5a6a")+C(309.5,T-80,2.4,"#3e5a6a");
+    h+=sea(178,"#4f86a8","#cfe6f2","#336a8b")+P("M0 178 L180 178 L250 250 H0Z","#5a8e8a","opacity=\".45\"");
+    h+=boat(290,206,1.2,"#f3f0e8")+R(282,196,16,6,"#f3f0e8")+R(285,192,10,4,"#2f6b8f");
+    return h; };
+
+  /* ---- Corfú: Pontikonisi islet with monastery and cypresses, turquoise bay ---- */
+  A.corfu = () => { let h=sky("co1","#7fd0ef","#e6f7fb")+sun(330,48,18,"#ffd166")+cloud(90,40,.9)+cloud(220,64,.7);
+    h+=P("M0 140 Q60 110 130 126 Q170 132 200 140 H0Z","#5d9d6a")+P("M250 140 Q300 104 360 116 Q390 122 400 128 V140Z","#4d8a5c");
+    h+=sea(140,"#1fb0c6","#d9f6fb","#11879c");
+    h+=P("M150 186 Q170 158 205 156 Q240 158 262 186Z","#c9b48a")+P("M162 168 Q190 150 230 154 Q244 158 250 168Z","#4a7a4d");
+    h+=cypress(184,160,46,"#2c5537")+cypress(196,158,58,"#2c5537")+cypress(240,162,40,"#2c5537");
+    h+=bld(206,166,26,18,"#fbf8f1")+P("M204 148 H234 L219 140Z","#c96a3f")+bld(214,148,10,10,"#fbf8f1")+P("M213 138 L219 130 L225 138Z","#c96a3f")+R(217,156,4,6,"#7a6a5a");
+    h+=R(150,186,112,4,"#9fd8e2","opacity=\".6\"");
+    h+=boat(80,210,1.2,"#ffffff","#ffffff")+boat(320,200,.9,"#d8574a");
+    return h; };
+
+  /* ---- Córdoba: Mezquita horseshoe arches with red and white voussoirs ---- */
+  A.cordoba = () => { const G=212; let h=sky("cd1","#f8e3c6","#efd6b2")+R(0,0,400,G,"#f4e4c8");
+    h+=R(0,G,400,250-G,"#d3b993")+`<path d="M0 ${G+14} H400 M0 ${G+28} H400" stroke="#c4a882" stroke-width="1.5"/>`;
+    for(let i=0;i<6;i++){ const x=10+i*68; h+=R(x+29,G-110,10,110,"#c9a87e")+R(x+26,G-114,16,6,"#b8946a"); }
+    for(let i=0;i<5;i++){ const x=44+i*68, cx=x+34, top=G-170;
+      for(let k=0;k<12;k++){ const a1=Math.PI*(1.1+k*0.07), a2=Math.PI*(1.1+(k+1)*0.07); const r1=40,r2=26, cy=G-112;
+        const p=(r,a)=>`${(cx+r*Math.cos(a)).toFixed(1)} ${(cy+r*Math.sin(a)).toFixed(1)}`;
+        h+=P(`M${p(r1,a1)} A${r1} ${r1} 0 0 1 ${p(r1,a2)} L${p(r2,a2)} A${r2} ${r2} 0 0 0 ${p(r2,a1)}Z`, k%2?"#f3e6d0":"#b6402e"); } }
+    h+=R(0,0,400,30,"#8c5a3a","opacity=\".85\"")+`<path d="M0 30 H400" stroke="#6e4329" stroke-width="3"/>`;
+    h+=`<ellipse cx="200" cy="${G+6}" rx="160" ry="6" fill="#a88560" opacity=".25"/>`;
+    return h; };
+
+  /* ---- Dubrovnik: walled old town on a rocky promontory ---- */
+  A.dubrovnik = () => { let h=sky("du1","#9fd3f0","#eaf6fb")+sun(70,46,18,"#ffd166")+cloud(300,40,.8);
+    h+=P("M0 120 L80 74 L170 104 L260 70 L400 112 V150 H0Z","#8ea58a");
+    h+=sea(150,"#1e8fc4","#d3eef8","#11699a");
+    h+=P("M60 150 L70 128 H320 L345 150Z","#b9a98d")+P("M66 140 H330 L345 150 H60Z","#a79677");
+    const W=128; h+=bld(80,W,230,26,"#e2d3b4")+wins(86,W-20,23,1,10,0,4,4,"#cbb995");
+    [[96,40],[120,30],[146,44],[176,34],[206,48],[236,32],[262,42],[288,30]].forEach(([x,ht])=>{ h+=bld(x,W-26,22,ht-26>0?ht-26:6,"#efe4cf")+P(`M${x-2} ${W-26-(ht-26>0?ht-26:6)} L${x+11} ${W-26-(ht-26>0?ht-26:6)-10} L${x+24} ${W-26-(ht-26>0?ht-26:6)}Z`,"#d46a3e"); });
+    h+=bld(196,W-26,8,40,"#efe4cf")+P(`M195 ${W-66} L200 ${W-78} L205 ${W-66}Z`,"#7a8c95");
+    h+=bld(66,W+8,26,58,"#d8c7a4")+`<ellipse cx="79" cy="${W-50}" rx="13" ry="4" fill="#c9b690"/>`+R(66,W-54,4,5,"#d8c7a4")+R(74,W-54,4,5,"#d8c7a4")+R(82,W-54,4,5,"#d8c7a4")+R(88,W-54,4,5,"#d8c7a4");
+    h+=bld(306,W+8,26,42,"#d8c7a4")+R(306,W-38,5,5,"#d8c7a4")+R(316,W-38,5,5,"#d8c7a4")+R(326,W-38,5,5,"#d8c7a4");
+    h+=refl(60,152,285,26,"#e2d3b4")+boat(150,200,1.1,"#f4f0e8","#ffffff")+boat(290,214,.9,"#c2502e");
+    return h; };
+
+  /* ---- Múnich: Frauenkirche onion domes over rooftops, Alps behind ---- */
+  A.munich = () => { const G=176; let h=sky("mu1","#c3dcf0","#f3f0ea")+sun(320,46,16,"#ffd27a");
+    h+=P("M0 140 L50 92 L90 118 L150 76 L210 120 L260 86 L320 116 L370 84 L400 100 V176 H0Z","#a9b9c9")+P("M150 76 L166 90 L140 92Z M370 84 L384 94 L358 95Z M50 92 L62 102 L40 104Z","#ffffff");
+    const H=[[0,40,38,"#f1d7b3"],[38,34,30,"#e9c39a"],[72,40,42,"#f4e1c3"],[250,40,36,"#efcfa6"],[290,34,44,"#f4e1c3"],[324,44,32,"#e6bb92"],[368,32,40,"#f1d7b3"]];
+    H.forEach(([x,w,ht,f])=>{ h+=bld(x,G,w,ht,f)+roof(x,G-ht,w,18,"#b75b3b")+wins(x+6,G-ht+8,Math.floor((w-6)/12),2,12,12,6,7,"#8aa8c0"); });
+    h+=bld(122,G,128,62,"#b8644a")+P(`M118 ${G-62} L186 ${G-92} L254 ${G-62}Z`,"#9c4f39");
+    [134,206].forEach(x=>{ h+=bld(x,G,34,136,"#bf6a4c")+wins(x+8,G-124,2,6,12,18,6,10,"#8a4836")+`<path d="M${x-2} ${G-136} Q${x+17} ${G-178} ${x+36} ${G-136}Z" fill="#3f8c6a"/>`+R(x+16,G-186,2,10,"#3f8c6a")+C(x+17,G-188,3,"#d7b04a"); });
+    h+=land(G,"#d9cfc0")+R(0,G+22,400,250,"#cbbfae")+tree(40,G+40,12,"#5f8f4f")+tree(360,G+42,14,"#5f8f4f");
+    return h; };
+
+  /* ---- Salzburgo: Hohensalzburg fortress on its hill over the Salzach ---- */
+  A.salzburgo = () => { let h=sky("sa1","#bcd9ef","#f2efe8")+sun(70,48,16,"#ffd27a");
+    h+=P("M0 120 L60 70 L120 100 L190 60 L260 96 L330 64 L400 92 V150 H0Z","#a8b8c6")+P("M190 60 L204 74 L178 74Z M330 64 L344 76 L318 76Z","#fff");
+    const T=96; h+=P(`M140 160 Q170 ${T} 210 ${T} H300 Q340 ${T} 370 160Z`,"#6f915a");
+    h+=bld(216,T,80,26,"#ece4d2")+bld(240,T-26,40,22,"#ece4d2")+bld(252,T-48,16,18,"#ece4d2")+P(`M250 ${T-66} L260 ${T-76} L270 ${T-66}Z`,"#8a4c3c")+bld(212,T,12,40,"#e2d8c2")+bld(290,T,12,34,"#e2d8c2");
+    h+=wins(222,T-18,7,1,10,0,4,6,"#a99a80");
+    const G=168; h+=land(G-8,"#cfc3ae");
+    [[0,36,40,"#f2e2c4"],[36,30,48,"#efd3b0"],[66,40,36,"#f5e8cf"],[300,34,42,"#efd3b0"],[334,30,34,"#f2e2c4"],[364,36,46,"#f5e8cf"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G,w,ht,f)+roof(x,G-ht,w,12,"#8f9aa3")+wins(x+6,G-ht+6,Math.floor((w-6)/10),2,10,12,5,7,"#7f9db5"); });
+    h+=bld(110,G,70,46,"#efe6d6")+`<path d="M126 ${G-46} Q145 ${G-80} 164 ${G-46}Z" fill="#5f9b86"/>`+R(144,G-86,2,8,"#5f9b86")+bld(104,G,16,70,"#efe6d6")+`<path d="M102 ${G-70} Q112 ${G-92} 122 ${G-70}Z" fill="#5f9b86"/>`+bld(170,G,16,70,"#efe6d6")+`<path d="M168 ${G-70} Q178 ${G-92} 188 ${G-70}Z" fill="#5f9b86"/>`;
+    h+=sea(G,"#5d97a8","#d6ecf2","#3f7889")+P(`M0 ${G} H400 V${G+4} H0Z`,"#9aa89a");
+    return h; };
+
+  /* ---- Nueva York + Boston: skyline across the river, brownstones in front ---- */
+  A.nyboston = () => { let h=sky("nb1","#a9d2ef","#f1ece6")+sun(330,44,16,"#ffd27a"); const S1=140;
+    [[10,22,58],[34,18,80],[54,26,64],[84,20,98],[106,30,72],[140,16,110],[158,24,84],[186,20,62],[210,28,92],[242,18,70],[262,22,56]].forEach(([x,w,ht],i)=>{ h+=bld(x,S1,w,ht,i%2?"#7d8fa6":"#6a7c95")+wins(x+4,S1-ht+6,Math.floor((w-4)/7),Math.floor(ht/12),7,12,3,5,"#c7d6e6"); });
+    h+=P(`M146 ${S1-110} L148 ${S1-128} L150 ${S1-110}Z`,"#6a7c95")+R(147.2,S1-140,1.6,14,"#6a7c95");
+    h+=sea(S1,"#4f86a8","#cfe6f2")+land(176,"#9b8e7e");
+    const G=212; h+=R(0,G,400,38,"#8a8378")+R(0,G-4,400,4,"#b8afa2");
+    [[150,48,64,"#9b4a36"],[198,44,72,"#a8553e"],[242,48,60,"#8e4231"],[290,44,70,"#a0503a"],[334,48,64,"#93462f"],[382,40,70,"#a8553e"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G-4,w,ht,f)+R(x-2,G-4-ht,w+4,5,"#6e3326")+wins(x+8,G-4-ht+12,3,3,12,16,6,10,"#f2d9a6")+R(x+w*.5-6,G-24,12,20,"#4a2a20")+P(`M${x+w*.5-12} ${G-4} h24 l-3 -8 h-18z`,"#7a6a5a"); });
+    h+=tree(40,G,16,"#5f8f4f")+tree(100,G,13,"#6c9a55");
+    return h; };
+
+  /* ---- Nueva York: Manhattan with the Empire State, Liberty on her island ---- */
+  A.nuevayork = () => { let h=sky("ny1","#ffc7a1","#fbe7d6","#e9eef5")+sun(300,60,22,"#ff8f5a",.25); const S1=150;
+    [[0,24,60],[22,20,86],[44,30,70],[76,18,104],[96,26,80],[124,22,62],[226,24,76],[252,18,96],[272,28,66],[302,22,88],[326,30,58],[358,20,82],[380,24,64]].forEach(([x,w,ht],i)=>{ h+=bld(x,S1,w,ht,i%2?"#8b8fa8":"#777c98")+wins(x+4,S1-ht+6,Math.floor((w-4)/7),Math.floor(ht/12),7,12,3,5,"#ffe1b8"); });
+    const E=[[160,36,70],[166,24,98],[170,16,118],[174,8,128]]; E.forEach(([x,w,ht])=>h+=bld(x,S1,w,ht,"#646a8a")); h+=R(177,S1-152,2,24,"#646a8a")+wins(166,S1-64,4,5,7,11,3,6,"#ffe1b8");
+    h+=bld(196,S1,26,84,"#7d82a0")+P(`M196 ${S1-84} L209 ${S1-112} L222 ${S1-84}Z`,"#9aa0bc")+R(208.5,S1-124,1.6,14,"#9aa0bc");
+    h+=sea(S1,"#5a86a8","#d7e8f3","#3f6b8f");
+    const I=214; h+=P(`M30 ${I} Q90 ${I-10} 150 ${I} V250 H30Z`,"#7f9a6a");
+    h+=bld(78,I-6,26,16,"#a39a86")+bld(84,I-22,14,18,"#b5ab95")+`<g fill="#5fa596"><path d="M86 ${I-40} h10 v-24 h-10z"/><path d="M88 ${I-64} l3 -6 l3 6z"/><circle cx="91" cy="${I-72}" r="4"/><path d="M95 ${I-62} l6 -20 l3 1 l-6 20z"/><path d="M86 ${I-72} l-3 -4 M91 ${I-77} v-5 M96 ${I-72} l3 -4" stroke="#5fa596" stroke-width="1.6"/></g>`+C(101,I-84,2.4,"#ffcf5a");
+    h+=boat(270,210,1.3,"#f2a33a")+R(258,198,22,8,"#f2a33a");
+    return h; };
+
+  /* ---- Panamá: city skyline over the bay, beach and palm in front ---- */
+  A.panama = () => { let h=sky("pa1","#ffb38f","#ffe2c4","#fff1df")+sun(110,70,24,"#ff7a59",.25); const S1=150;
+    [[200,18,70],[220,22,96],[244,16,80],[262,24,108],[290,18,74],[310,22,90],[336,16,64],[354,24,84],[380,20,70]].forEach(([x,w,ht],i)=>{ h+=bld(x,S1,w,ht,i%2?"#7d6f8f":"#6c5f80")+wins(x+4,S1-ht+6,Math.floor((w-4)/7),Math.floor(ht/12),7,12,3,5,"#ffd9a8"); });
+    h+=`<g fill="#5d5272">${[0,1,2,3,4,5,6,7,8].map(i=>`<rect x="${166+(i%2?5:0)}" y="${S1-13*(i+1)}" width="22" height="13.5"/>`).join("")}</g>`+R(176,S1-128,2,12,"#5d5272");
+    h+=sea(S1,"#2e9bb0","#d3f1f6","#1d7488")+boat(70,180,1.6,"#c2452f")+R(52,166,40,10,"#e2e2e2")+R(60,158,12,8,"#c2452f");
+    h+=P("M0 214 Q160 200 400 216 V250 H0Z","#f1d9a8")+palm(330,238,96)+palm(366,240,74,"#3a8a54");
+    return h; };
+
+  /* ---- Oporto: Dom Luís I bridge springing from both banks, Ribeira houses, rabelo boats ---- */
+  A.porto = () => { let h=sky("po1","#a9d4ef","#f5ece0")+sun(330,44,16,"#ffc56b"); const D=98, Wt=180;
+    h+=P(`M0 ${D} H118 L132 ${Wt} H0Z`,"#9a7a5e")+P(`M282 ${D} H400 V${Wt} H268Z`,"#8f7257");
+    [[4,24,36,"#e9a94f"],[28,20,30,"#d9624a"],[48,24,40,"#f3d38a"],[72,22,32,"#5f9bb5"],[94,22,26,"#e9876a"]].forEach(([x,w,ht,f])=>{ h+=bld(x,D,w,ht,f)+R(x,D-ht-4,w,4,"#b14e34")+wins(x+5,D-ht+6,2,2,8,10,4,6,"#fff7e6"); });
+    [[4,34,40,"#e9876a"],[38,28,48,"#f3d38a"],[66,30,36,"#5f9bb5"],[96,30,44,"#e9a94f"]].forEach(([x,w,ht,f])=>{ h+=bld(x,Wt,w,ht,f)+R(x,Wt-ht-4,w,4,"#b14e34")+wins(x+5,Wt-ht+8,3,2,9,14,4,7,"#fff7e6"); });
+    [[292,30,38,"#e4c99a"],[324,40,30,"#d9b483"],[366,34,42,"#ead5b0"]].forEach(([x,w,ht,f])=>{ h+=bld(x,D,w,ht,f)+R(x,D-ht-4,w,4,"#a85c3c"); });
+    h+=sea(Wt,"#3f7f9a","#d5ebf2","#2c6178");
+    h+=`<path d="M132 ${Wt} Q200 ${D-6} 268 ${Wt}" stroke="#4f5560" stroke-width="7" fill="none"/>`+R(118,D-6,164,7,"#4f5560")+R(118,Wt-60,14,4,"#4f5560")+R(268,Wt-60,14,4,"#4f5560");
+    for(let x=146;x<=254;x+=12){ const t=(x-132)/136, y=(1-t)*(1-t)*Wt+2*(1-t)*t*(D-6)+t*t*Wt; h+=R(x-1,D,2,Math.max(0,y-D),"#4f5560"); }
+    h+=R(118,Wt-60,164,4,"#4f5560","opacity=\".0\"");
+    h+=boat(170,212,1.4,"#5a3a22","#efe6d2")+boat(240,226,1.1,"#5a3a22","#efe6d2");
+    return h; };
+
+  /* ---- Lisboa: tram 28 climbing past tiled facades, castle on the hill ---- */
+  A.lisboa = () => { let h=sky("li1","#9fd1ef","#fbefe0")+sun(70,44,16,"#ffcf6b");
+    h+=P("M180 92 Q260 60 400 70 V140 H180Z","#9db57a")+bld(270,72,60,16,"#c8b896")+[270,284,298,312,326].map(x=>R(x,52,6,4,"#c8b896")).join("")+bld(300,72,14,10,"#c8b896");
+    const steps=[[0,150,[[0,40,38,"#f2c14e"],[40,34,30,"#e98f6f"],[74,36,44,"#7fb6d6"],[110,40,34,"#f6e3b4"],[150,34,40,"#e57c5a"],[184,38,30,"#a8d5c2"],[222,40,42,"#f2c14e"],[262,36,34,"#f1a8b6"],[298,40,38,"#7fb6d6"],[338,62,30,"#f6e3b4"]]],[0,196,[]]];
+    h+=land(150,"#cdbda4");
+    steps[0][2].forEach(([x,w,ht,f])=>{ h+=bld(x,150,w,ht,f)+R(x,150-ht-5,w,5,"#b5543a")+wins(x+6,150-ht+7,Math.floor((w-6)/11),2,11,13,5,7,"#fbf6ec"); });
+    h+=R(0,180,400,70,"#9a9187")+`<path d="M0 214 L400 196 M0 222 L400 204" stroke="#6d665e" stroke-width="2"/>`;
+    const tx=150, ty=200; h+=`<g transform="rotate(-2.6 ${tx+50} ${ty})"><rect x="${tx}" y="${ty-46}" width="100" height="40" rx="6" fill="#f2c230"/><rect x="${tx}" y="${ty-12}" width="100" height="8" fill="#e8e1d0"/>${wins(tx+8,ty-40,6,1,15,0,11,14,"#6b8fa6")}<rect x="${tx+40}" y="${ty-56}" width="22" height="6" fill="#4b4b4b"/><path d="M${tx+51} ${ty-56} L${tx+64} ${ty-80}" stroke="#4b4b4b" stroke-width="1.6"/><circle cx="${tx+20}" cy="${ty-2}" r="5" fill="#3d3d3d"/><circle cx="${tx+80}" cy="${ty-2}" r="5" fill="#3d3d3d"/></g>`;
+    h+=`<path d="M0 104 L400 86" stroke="#3d3d3d" stroke-width="1" opacity=".5"/>`;
+    return h; };
+
+  /* ---- Valencia: Ciudad de las Artes y las Ciencias over its pools ---- */
+  A.valencia = () => { let h=sky("va1","#86c9ee","#e8f5fb")+sun(330,46,18,"#ffd166")+cloud(90,44,.9); const W=170;
+    h+=R(0,W-6,400,6,"#e9e6df");
+    h+=P(`M20 ${W-6} Q120 ${W-120} 230 ${W-6}Z`,"#f4f4f2")+P(`M40 ${W-6} Q120 ${W-100} 210 ${W-6}Z`,"#e3e7ea")+`<path d="M60 ${W-6} Q120 ${W-122} 190 ${W-24}" stroke="#ffffff" stroke-width="10" fill="none" stroke-linecap="round"/>`+wins(70,W-40,9,1,14,0,8,30,"#a6c3d4");
+    h+=`<ellipse cx="300" cy="${W-6}" rx="70" ry="30" fill="#eef1f2"/>`+`<ellipse cx="300" cy="${W-6}" rx="34" ry="18" fill="#9cc4d8"/>`+R(228,W-6,144,6,"#e9e6df");
+    h+=palm(250,W-6,50)+palm(380,W-6,60);
+    h+=sea(W,"#4cb0d6","#e3f5fb","#2f8fb8")+refl(20,W,210,40,"#ffffff")+refl(230,W,140,24,"#ffffff");
+    return h; };
+
+  /* ---- Costa Rica: Arenal volcano, rainforest, river and a toucan ---- */
+  A.costarica = () => { let h=sky("cr1","#9ad3e8","#e6f6ef")+sun(320,44,16,"#ffe08a"); const B=160;
+    h+=P(`M90 ${B} L190 52 Q200 46 210 52 L320 ${B}Z`,"#6c7a6a")+P(`M175 72 L190 52 Q200 46 210 52 L225 72 Q200 64 175 72Z`,"#57645a");
+    h+=`<g fill="#e9eeee" opacity=".9"><ellipse cx="204" cy="38" rx="14" ry="8"/><ellipse cx="216" cy="26" rx="16" ry="9"/><ellipse cx="232" cy="14" rx="18" ry="9"/></g>`;
+    h+=P(`M0 ${B} Q60 ${B-30} 120 ${B-6} Q200 ${B-26} 280 ${B-4} Q340 ${B-28} 400 ${B-8} V250 H0Z`,"#3f8f52");
+    h+=P(`M0 196 Q100 176 200 190 Q300 204 400 186 V250 H0Z`,"#2f7a44")+P(`M150 250 Q200 214 250 206 Q300 200 330 210 Q260 222 230 250Z`,"#5fb2c9");
+    [[30,190,22],[70,194,18],[340,190,24],[380,196,18],[120,200,14]].forEach(([x,G,r])=>h+=tree(x,G,r,"#2c6b3d","#5a4330"));
+    h+=`<path d="M0 120 Q60 116 110 126" stroke="#5a4330" stroke-width="5" fill="none"/>`+`<g transform="translate(78 120)"><ellipse cx="0" cy="-10" rx="8" ry="11" fill="#1f1f1f"/><circle cx="2" cy="-18" r="6" fill="#1f1f1f"/><ellipse cx="2" cy="-12" rx="5" ry="5" fill="#ffd34d"/><path d="M6 -20 Q24 -20 26 -14 Q16 -12 6 -14Z" fill="#f28a2e"/><circle cx="4" cy="-19" r="1.4" fill="#fff"/><path d="M-6 -2 l-6 10 l4 0z" fill="#1f1f1f"/></g>`;
+    return h; };
+
+  /* ---- Pisa: leaning tower beside the cathedral on the Campo dei Miracoli ---- */
+  A.pisa = () => { const G=192; let h=sky("pi1","#a8d6f2","#f4efe4")+sun(70,44,16,"#ffd27a")+cloud(190,40,.8);
+    h+=P("M0 150 Q100 136 200 146 T400 140 V200 H0Z","#9fbf86");
+    h+=bld(40,G,180,56,"#f5efe3")+P(`M36 ${G-56} H224 L214 ${G-66} H46Z`,"#d6c8ae")+bld(100,G-56,60,26,"#f5efe3")+P(`M96 ${G-82} L130 ${G-100} L164 ${G-82}Z`,"#d6c8ae");
+    h+=`<path d="M160 ${G-100} q0 -26 24 -26 q24 0 24 26z" fill="#c9b893"/>`.replace("M160","M166").replace("q24 0 24 26z","q18 0 18 26z")+bld(166,G-56,36,44,"#f5efe3");
+    for(let i=0;i<14;i++) h+=`<path d="M${48+i*12} ${G-6} v-22 a4 4 0 0 1 8 0 v22" fill="none" stroke="#d9cdb6" stroke-width="1.5"/>`;
+    h+=`<g transform="rotate(5.5 ${290} ${G})">${bld(270,G,40,150,"#f7f2e7")}${[0,1,2,3,4,5,6].map(i=>`<rect x="268" y="${G-20-i*19}" width="44" height="3" fill="#ddd1bb"/>${[0,1,2,3].map(k=>`<rect x="${274+k*9}" y="${G-34-i*19}" width="5" height="12" rx="2.5" fill="#d9cdb6"/>`).join("")}`).join("")}${bld(278,G-150,24,14,"#f7f2e7")}</g>`;
+    h+=land(G,"#7fb069")+R(0,G+18,400,40,"#6a9c56")+`<ellipse cx="290" cy="${G+2}" rx="30" ry="4" fill="#5f8f4b" opacity=".5"/>`;
+    return h; };
+
+  /* ---- Florencia: Brunelleschi's dome, Giotto's campanile, Ponte Vecchio on the Arno ---- */
+  A.florencia = () => { let h=sky("fl1","#f9c99c","#fbe8d2","#f4efe6")+sun(320,58,20,"#ff9a52",.25); const G=166;
+    h+=P("M0 120 Q60 98 120 112 T240 104 T400 110 V166 H0Z","#8ea06a")+cypress(40,118,30)+cypress(56,116,24)+cypress(352,114,30)+cypress(368,116,22);
+    [[0,40,30],[40,34,22],[74,30,34],[250,36,26],[286,34,34],[320,40,24],[360,40,30]].forEach(([x,w,ht])=>{ h+=bld(x,G,w,ht,"#ecd4ae")+R(x-2,G-ht-5,w+4,5,"#c0623d")+wins(x+6,G-ht+8,Math.floor((w-6)/10),1,10,0,4,7,"#8c6a4c"); });
+    h+=bld(110,G,130,44,"#f0e2c8")+bld(140,G-44,70,18,"#f0e2c8")+`<path d="M138 ${G-62} Q138 ${G-122} 175 ${G-124} Q212 ${G-122} 212 ${G-62}Z" fill="#c8643f"/>`+`<path d="M175 ${G-124} V${G-62} M156 ${G-116} Q150 ${G-90} 150 ${G-62} M194 ${G-116} Q200 ${G-90} 200 ${G-62}" stroke="#f3e6d0" stroke-width="2.4" fill="none"/>`+bld(169,G-124,12,12,"#f3e6d0")+P(`M168 ${G-136} L175 ${G-146} L182 ${G-136}Z`,"#c9a24a");
+    h+=bld(222,G,22,110,"#f3e6d0")+wins(226,G-104,2,6,8,16,4,10,"#c8a58a")+R(220,G-114,26,6,"#e8d9bf")+R(224,G-120,18,6,"#e8d9bf");
+    h+=bld(80,G,20,96,"#d6bd94")+R(76,G-104,28,10,"#c9ad82")+bld(84,G-116,12,12,"#d6bd94")+[76,84,92,100].map(x=>R(x,G-108,4,4,"#c9ad82")).join("");
+    h+=sea(200,"#7aa38f","#e6efe6","#5f8a76");
+    h+=R(120,182,180,18,"#e3b26a")+wins(126,186,8,1,22,0,10,6,"#c9864a")+R(116,178,188,4,"#b5683e")+[140,200,260].map(x=>`<path d="M${x-22} 200 v12 a22 14 0 0 1 44 0 v-12z" fill="#e3b26a"/>`).join("")+R(116,200,188,4,"#d4a160");
+    return h; };
+
+  /* ---- Roma: the Colosseum among umbrella pines ---- */
+  A.roma = () => { const G=196; let h=sky("ro1","#f6c08f","#fbe3c4","#f4ece0")+sun(320,52,20,"#ff9a52",.25)+cloud(90,46,.8,"#fff3e6");
+    h+=P("M0 160 Q100 146 200 152 T400 150 V200 H0Z","#c7b98a");
+    h+=`<path d="M60 ${G} V${G-96} Q200 ${G-118} 330 ${G-96} L330 ${G-70} Q310 ${G-60} 300 ${G-82} V${G}Z" fill="#d9b98a"/>`;
+    for(let r=0;r<3;r++){ const y=G-20-r*28; for(let i=0;i<10;i++){ const x=72+i*24; if(r==2 && i>8) continue; h+=`<path d="M${x} ${y} v-14 a7 7 0 0 1 14 0 v14z" fill="#9c7a52"/>`; } h+=R(60,y+2,r==2?240:270,4,"#c7a676"); }
+    h+=R(60,G-100,270,6,"#c7a676","opacity=\".9\"")+P(`M300 ${G-82} L330 ${G-96} V${G-70} Q310 ${G-60} 300 ${G-82}Z`,"#c9a77a");
+    h+=land(G,"#b9ad7f")+R(0,G+20,400,40,"#a89c6e");
+    h+=umbrella(28,G+4,58,"#476b3a")+umbrella(370,G+6,66,"#476b3a")+umbrella(344,G+8,44,"#557a43")+cypress(12,G+6,40);
+    return h; };
+
+  /* ---- Turín: Mole Antonelliana with the Alps behind, the Po in front ---- */
+  A.turin = () => { const G=178; let h=sky("tu1","#bcd9f0","#f5efe6")+sun(80,46,16,"#ffd27a");
+    h+=P("M0 120 L50 70 L100 100 L160 56 L230 98 L300 60 L360 92 L400 76 V150 H0Z","#9fb0c6")+P("M160 56 L176 72 L146 74Z M300 60 L316 74 L286 75Z M50 70 L62 82 L38 83Z","#fff");
+    [[0,40,40,"#ead2b0"],[40,36,30,"#f1dfc2"],[76,42,46,"#e4c49a"],[260,40,36,"#f1dfc2"],[300,44,42,"#ead2b0"],[344,56,34,"#e4c49a"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G,w,ht,f)+R(x-2,G-ht-5,w+4,5,"#b8693f")+wins(x+6,G-ht+8,Math.floor((w-6)/10),2,10,13,4,7,"#8f9db0"); });
+    h+=bld(150,G,96,52,"#e7dcc8")+wins(158,G-44,8,2,11,18,5,10,"#b4a58c")+bld(160,G-52,76,14,"#e7dcc8");
+    h+=P(`M164 ${G-66} L198 ${G-118} L232 ${G-66}Z`,"#c9c3b5")+`<path d="M174 ${G-66} L198 ${G-112} L222 ${G-66} M186 ${G-66} L198 ${G-104} L210 ${G-66}" stroke="#a8a294" stroke-width="1.5" fill="none"/>`;
+    h+=bld(190,G-118,16,18,"#e7dcc8")+P(`M190 ${G-136} L198 ${G-172} L206 ${G-136}Z`,"#d8d0c0")+R(197.3,G-182,1.4,12,"#a8a294")+C(198,G-183,2,"#c9a24a");
+    h+=land(G,"#cdbfa7")+sea(G+12,"#6c9aa8","#dcecf0","#4e7b8a")+R(0,G,400,12,"#b9ab92");
+    return h; };
+
+  /* ---- Viena: St. Stephen's tiled roof and spire ---- */
+  A.viena = () => { const G=188; let h=sky("vi1","#c6dcef","#f4efe7")+sun(80,46,16,"#ffd27a")+cloud(320,40,.8);
+    [[0,46,64,"#efe3c9"],[46,40,54,"#e8d6b6"],[300,46,60,"#efe3c9"],[346,54,70,"#e8d6b6"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G,w,ht,f)+R(x-2,G-ht-6,w+4,6,"#8a9aa5")+wins(x+7,G-ht+8,Math.floor((w-7)/11),3,11,15,5,9,"#8ba5bb"); });
+    h+=bld(96,G,200,64,"#d9cdb4")+wins(108,G-52,9,1,20,0,8,30,"#a99a7c");
+    h+=P(`M90 ${G-64} L170 ${G-134} L230 ${G-134} L300 ${G-64}Z`,"#3f6f6a");
+    let z=""; for(let r=0;r<4;r++) for(let i=0;i<12;i++){ const y=G-74-r*15, x=118+r*12+i*13-(r*2); if(x>282-r*14) continue; z+=`<path d="M${x} ${y} l6.5 -8 l6.5 8z" fill="${(i+r)%2?"#e3b54a":"#c84c3c"}"/>`; } h+=z;
+    h+=bld(256,G-64,30,30,"#d9cdb4")+bld(260,G-94,22,34,"#d9cdb4")+bld(264,G-128,14,28,"#d9cdb4")+P(`M262 ${G-128} L271 ${G-172} L280 ${G-128}Z`,"#cfc2a6")+wins(266,G-124,1,2,0,14,6,9,"#a99a7c")+C(271,G-174,2.4,"#c9a24a");
+    h+=land(G,"#cfc6b6")+R(0,G+18,400,44,"#beb4a2")+`<path d="M0 ${G+30} H400" stroke="#ada392" stroke-width="2"/>`;
+    return h; };
+
+  /* ---- Praga: the castle on its hill, Charles Bridge over the Vltava ---- */
+  A.praga = () => { let h=sky("pr1","#f7c6a2","#fae4d0","#eef0f4")+sun(80,56,20,"#ff9a5f",.25); const T=110;
+    h+=P(`M120 168 Q150 ${T} 200 ${T} H360 Q390 ${T} 400 ${T+10} V168Z`,"#7f9a63");
+    h+=bld(200,T,160,26,"#efe4cf")+wins(206,T-20,15,1,10,0,4,8,"#b5a587")+R(198,T-30,164,4,"#7c8a8f");
+    h+=bld(250,T-26,60,38,"#c9bba1")+bld(262,T-64,10,24,"#c9bba1")+bld(288,T-64,10,24,"#c9bba1")+P(`M260 ${T-88} L267 ${T-108} L274 ${T-88}Z M286 ${T-88} L293 ${T-108} L300 ${T-88}Z`,"#4d6f6c")+bld(304,T-26,20,56,"#c9bba1")+`<path d="M302 ${T-82} Q314 ${T-104} 326 ${T-82}Z" fill="#4d6f6c"/>`;
+    h+=R(260,T-88,14,0,"#000")+bld(258,T-64,18,0,"#000");
+    [[0,40,46],[40,34,38],[74,40,52]].forEach(([x,w,ht],i)=>{ h+=bld(x,168,w,ht,["#ecd1ad","#f2e2c6","#e6c49d"][i])+roof(x,168-ht,w,14,"#b85e3c")+wins(x+6,168-ht+8,Math.floor((w-6)/10),2,10,12,4,6,"#8f7a62"); });
+    h+=sea(168,"#5f8ea3","#dcebf1","#406e84");
+    const D=176; h+=R(0,D,400,8,"#a39684")+[30,110,190,270,350].map(x=>`<path d="M${x-30} ${D+8} a30 22 0 0 1 60 0" fill="#5f8ea3"/>`).join("")+[0,80,160,240,320,400].map(x=>R(x-6,D+8,12,30,"#a39684")).join("");
+    h+=bld(18,D,30,46,"#8f8270")+P(`M16 ${D-46} L33 ${D-70} L50 ${D-46}Z`,"#4b5458")+R(26,D-24,10,24,"#5f5546");
+    h+=[70,130,250,330].map(x=>R(x,D-16,2,16,"#5f5546")+C(x+1,D-18,3,"#5f5546")).join("");
+    return h; };
+
+  /* ---- Cracovia y Praga: St. Mary's two unequal towers over the Cloth Hall ---- */
+  A.cracovia = () => { const G=196; let h=sky("kr1","#bad7ef","#f4ede4")+sun(320,46,16,"#ffd27a")+cloud(110,40,.8);
+    h+=bld(40,G,120,108,"#b25c40")+P(`M36 ${G-108} L100 ${G-140} L164 ${G-108}Z`,"#7f3f2c")+R(86,G-90,28,70,"#7aa0bf")+`<path d="M86 ${G-90} a14 14 0 0 1 28 0" fill="#7aa0bf"/>`;
+    h+=bld(40,G,32,150,"#b8634a")+wins(48,G-140,2,5,10,22,5,12,"#7f3f2c")+P(`M36 ${G-150} L56 ${G-190} L76 ${G-150}Z`,"#3f7a6a")+C(56,G-192,2.4,"#c9a24a")+[36,70].map(x=>P(`M${x} ${G-150} l3 -12 l3 12z`,"#3f7a6a")).join("");
+    h+=bld(128,G,30,128,"#b8634a")+wins(136,G-118,2,4,10,22,5,12,"#7f3f2c")+`<path d="M126 ${G-128} Q143 ${G-156} 160 ${G-128}Z" fill="#3f7a6a"/>`+R(142,G-166,2,12,"#3f7a6a");
+    h+=bld(196,G,190,52,"#efe2c6")+wins(208,G-30,9,1,20,0,10,22,"#c9a982")+R(192,G-60,198,8,"#e4d4b4");
+    for(let i=0;i<9;i++) h+=P(`M${200+i*21} ${G-60} q5 -12 10 -16 q5 4 10 16z`,"#efe2c6");
+    h+=bld(278,G-52,26,30,"#efe2c6")+P(`M276 ${G-82} L291 ${G-98} L306 ${G-82}Z`,"#c26a46");
+    h+=land(G,"#d8ccb6")+`<path d="M0 ${G+14} H400 M0 ${G+30} H400" stroke="#c8baa0" stroke-width="2"/>`;
+    return h; };
+
+  /* ---- Nantes: the château and the great mechanical elephant ---- */
+  A.nantes = () => { const G=198; let h=sky("na1","#b9d7ee","#f3efe8")+sun(80,46,16,"#ffd27a")+cloud(300,40,.8);
+    h+=bld(150,170,220,52,"#ece6da")+[150,230,310].map(x=>bld(x,170,44,74,"#e5ddcc")+`<path d="M${x-2} ${96} L${x+22} ${78} L${x+46} ${96}Z" fill="#5f6f7f"/>`).join("")+wins(196,140,6,1,16,0,6,10,"#9aa7b3")+R(150,170,220,6,"#cfc6b4");
+    h+=sea(176,"#7ea3a8","#e2eef0")+R(0,G-22,400,22,"#9f9a8a","opacity=\".0\"")+land(G,"#b5ab98")+R(0,G-4,400,4,"#c9c0ae");
+    const E=`<g transform="translate(60 ${G})"><rect x="22" y="-70" width="96" height="44" rx="14" fill="#8a7a66"/><rect x="30" y="-80" width="80" height="12" rx="4" fill="#6f5f4e"/>${[30,50,90,110].map(x=>`<rect x="${x-6}" y="-30" width="12" height="30" fill="#6f5f4e"/><rect x="${x-8}" y="-4" width="16" height="4" fill="#4f4236"/>`).join("")}<path d="M118 -64 Q150 -66 150 -40 Q150 -16 138 -6 l-4 -4 Q142 -20 140 -40 Q138 -54 118 -50Z" fill="#8a7a66"/><path d="M118 -66 Q134 -84 140 -60 Q134 -48 118 -50Z" fill="#a69580"/><circle cx="128" cy="-58" r="2" fill="#2f2a24"/><path d="M60 -80 v-14 h22 v14" fill="none" stroke="#4f4236" stroke-width="2"/><path d="M44 -26 h56" stroke="#4f4236" stroke-width="2"/>${[40,60,80].map(x=>`<circle cx="${x}" cy="-48" r="4" fill="#b9a988"/>`).join("")}</g>`;
+    h+=E+tree(330,G,16,"#5f8f4f")+tree(370,G,12,"#6c9a55");
+    return h; };
+
+  /* ---- Bristol: Clifton Suspension Bridge over the Avon gorge, balloons ---- */
+  A.bristol = () => { let h=sky("br1","#a9d1ee","#f3ede4")+sun(320,40,14,"#ffd27a"); const D=110;
+    h+=P(`M0 ${D} H96 Q118 150 132 250 H0Z`,"#7b8f64")+P(`M400 ${D} H304 Q282 150 268 250 H400Z`,"#6f845a");
+    h+=P(`M96 ${D} Q118 150 132 250 H120 Q110 160 88 ${D}Z`,"#9a8a72")+P(`M304 ${D} Q282 150 268 250 H280 Q290 160 312 ${D}Z`,"#9a8a72");
+    h+=sea(214,"#6f8f8a","#d9e8e4");
+    [[70,24],[310,24]].forEach(([x,w])=>{ h+=bld(x,D,w,60,"#c9b99c")+R(x-3,D-64,w+6,6,"#b6a585")+R(x+7,D-40,10,40,"#a99878","opacity=\".5\""); });
+    h+=R(70,D,260,6,"#5f5a54")+`<path d="M82 ${D-58} Q200 ${D-4} 322 ${D-58}" stroke="#3f3b37" stroke-width="2.5" fill="none"/>`;
+    for(let x=100;x<=304;x+=12){ const t=(x-82)/240, y=(1-t)*(1-t)*(D-58)+2*(1-t)*t*(D-4)+t*t*(D-58); h+=R(x-.6,y,1.2,D-y,"#3f3b37"); }
+    h+=[[150,52,"#e94f4f","#f2c14e"],[230,36,"#4f8fe9","#ffffff"],[60,40,"#f28a2e","#5fb2c9"]].map(([x,y,a,b])=>`<g transform="translate(${x} ${y})"><path d="M0 -14 a12 14 0 0 1 12 14 q-2 8 -8 12 h-8 q-6 -4 -8 -12 a12 14 0 0 1 12 -14z" fill="${a}"/><path d="M0 -14 a5 14 0 0 1 4 14 q-1 8 -3 12 h-2 q-2 -4 -3 -12 a5 14 0 0 1 4 -14z" fill="${b}"/><rect x="-3" y="15" width="6" height="5" fill="#7a5a3a"/></g>`).join("");
+    return h; };
+
+  /* ---- Galicia: hórreo and cruceiro by a ría ---- */
+  A.galicia = () => { let h=sky("ga1","#b6d8ec","#eef4f2")+cloud(90,40,1,"#fff",.9)+cloud(280,56,.9,"#fff",.85)+sun(340,40,14,"#ffe08a");
+    h+=P("M0 120 Q80 96 160 110 T320 100 T400 108 V150 H0Z","#5f8f63")+sea(140,"#4f8fa8","#d6ebf2","#376f88");
+    h+=P("M0 176 Q120 160 260 170 T400 166 V250 H0Z","#6fa35a")+P("M0 206 Q140 194 400 204 V250 H0Z","#5c8f4b");
+    const G=196, x0=120; h+=[0,1,2,3].map(i=>R(x0+8+i*34,G-26,8,26,"#9a958a")+R(x0+4+i*34,G-30,16,5,"#8a857a")).join("");
+    h+=bld(x0,G-30,128,34,"#b5ab98")+wins(x0+6,G-60,12,1,10,0,3,24,"#8f8676")+P(`M${x0-6} ${G-64} L${x0+64} ${G-84} L${x0+134} ${G-64}Z`,"#a9533a")+R(x0+63,G-98,3,16,"#9a958a")+R(x0+58,G-93,13,3,"#9a958a")+R(x0-4,G-74,3,10,"#9a958a")+R(x0+129,G-74,3,10,"#9a958a");
+    h+=R(318,G-58,6,58,"#a8a296")+R(310,G-50,22,5,"#a8a296")+R(312,G-6,18,6,"#9a958a");
+    h+=[[40,190,26],[70,186,20],[360,188,24]].map(([x,G2,ht])=>R(x-1.5,G2-ht,3,ht,"#d9d2c4")+`<ellipse cx="${x}" cy="${G2-ht-8}" rx="10" ry="14" fill="#4a7a52"/>`).join("");
+    return h; };
+
+  /* ---- Creta: Chania's Venetian harbour and lighthouse ---- */
+  A.creta = () => { let h=sky("cr2","#85cdee","#eef8fb")+sun(80,44,18,"#ffd166")+cloud(300,36,.8);
+    h+=P("M0 110 L70 70 L140 96 L220 60 L300 92 L400 72 V140 H0Z","#b8b4a8")+P("M220 60 L232 70 L210 70Z","#fff");
+    const G=150; h+=land(G-6,"#d9c7a4");
+    [[0,40,40,"#f3d38a"],[40,36,30,"#e98f6f"],[76,40,44,"#f7efe0"],[116,34,34,"#9fd0e0"],[150,42,40,"#f2b97a"],[192,36,30,"#f7efe0"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G-6,w,ht,f)+R(x-1,G-6-ht-4,w+2,4,"#c46a42")+wins(x+6,G-6-ht+7,Math.floor((w-6)/10),2,10,12,4,7,"#3f7a9a"); });
+    h+=sea(G,"#2a9fc2","#d9f2f9","#17779a")+refl(0,G,230,30,"#f3d38a");
+    h+=P(`M240 ${G+4} H400 V${G+16} H232Z`,"#cdbb98")+bld(330,G+6,20,60,"#e8dcc4")+bld(326,G-54,28,10,"#d8caae")+bld(332,G-74,16,20,"#e8dcc4")+P(`M330 ${G-74} Q340 ${G-88} 350 ${G-74}Z`,"#d8caae")+R(339,G-50,2,40,"#c9b994","opacity=\".6\"");
+    h+=boat(130,198,1.2,"#2f6b8f","#ffffff")+boat(260,212,1,"#c2452f");
+    return h; };
+
+  /* ---- Dubái: Burj Khalifa over the marina, a dhow in front ---- */
+  A.dubai = () => { let h=sky("db1","#ffc68c","#fde3c4","#f7efe4")+sun(100,62,22,"#ff8f4a",.25); const S1=176;
+    h+=P("M0 150 Q60 136 120 146 T240 140 T400 146 V176 H0Z","#e9c896");
+    [[230,18,70],[250,16,92],[270,22,60],[296,14,104],[314,22,76],[340,18,88],[362,24,62],[30,20,56],[52,16,80],[72,22,48]].forEach(([x,w,ht],i)=>{ h+=bld(x,S1,w,ht,i%2?"#9fa7b8":"#8d95a8")+wins(x+3,S1-ht+6,Math.floor((w-3)/6),Math.floor(ht/12),6,12,3,5,"#fff1d6"); });
+    const x=180; h+=bld(x-18,S1,36,40,"#b7c0cc")+bld(x-13,S1-40,26,44,"#c3cbd5")+bld(x-9,S1-84,18,40,"#b7c0cc")+bld(x-6,S1-124,12,30,"#c3cbd5")+bld(x-3.5,S1-154,7,22,"#b7c0cc")+R(x-1,S1-200,2,46,"#b7c0cc");
+    h+=P(`M${x-18} ${S1} L${x-30} ${S1} L${x-18} ${S1-30}Z M${x+18} ${S1} L${x+30} ${S1} L${x+18} ${S1-30}Z`,"#a9b2bf");
+    h+=sea(S1,"#3f8fae","#d9eef5","#2a6f8d")+refl(x-18,S1,36,30,"#c3cbd5");
+    h+=`<g transform="translate(280 214)"><path d="M-34 -4 H34 L26 6 H-28Z" fill="#7a4a2a"/><path d="M-2 -4 V-44 L24 -8Z" fill="#f4ead6"/><path d="M-6 -4 V-34 L-26 -8Z" fill="#efe1c6"/></g>`;
+    return h; };
+
+  /* ---- Hong Kong: Victoria Harbour at dusk, skyline under the Peak, junk boat ---- */
+  A.hongkong = () => { let h=sky("hk1","#3b3f74","#a4648a","#f3a77d"); const S1=160;
+    h+=P("M0 110 Q60 70 120 86 Q170 60 230 80 Q300 56 360 78 Q390 84 400 90 V160 H0Z","#3f5a52");
+    [[0,20,52],[20,16,70],[36,22,58],[58,18,84],[76,24,64],[100,16,96],[150,20,74],[170,16,60],[186,22,88],[208,18,66],[226,24,104],[250,16,70],[266,22,82],[288,18,56],[306,24,92],[330,16,62],[346,22,78],[368,18,58],[386,14,72]].forEach(([x,w,ht],i)=>{ h+=bld(x,S1,w,ht,i%2?"#2f3358":"#383d66")+wins(x+3,S1-ht+5,Math.floor((w-3)/6),Math.floor(ht/10),6,10,3,4,i%3?"#ffd38a":"#9fd7ff"); });
+    h+=P(`M118 ${S1} V${S1-90} L128 ${S1-126} L140 ${S1-96} V${S1}Z`,"#4a5080")+`<path d="M118 ${S1-90} L140 ${S1-60} M140 ${S1-96} L118 ${S1-56} M118 ${S1-50} L140 ${S1-20}" stroke="#9fb4e8" stroke-width="1.5"/>`+R(127.3,S1-140,1.4,16,"#9fb4e8");
+    h+=sea(S1,"#2c3366","#f3a77d","#1f2550")+`<g opacity=".35">${[20,60,128,190,240,310,360].map((x,i)=>R(x,S1+4,6,40+(i%3)*10,i%2?"#ffd38a":"#9fd7ff")).join("")}</g>`;
+    h+=`<g transform="translate(250 222)"><path d="M-30 -2 H30 L24 6 H-26Z" fill="#3a2418"/><path d="M-8 -2 V-40 Q4 -30 6 -2Z" fill="#d6503a"/><path d="M10 -2 V-30 Q20 -22 22 -2Z" fill="#d6503a"/><path d="M-8 -30 H4 M-8 -20 H6 M-8 -10 H6 M10 -22 H19 M10 -12 H21" stroke="#9a3524" stroke-width="1"/></g>`;
+    return h; };
+
+  /* ---- Japón: Mount Fuji, a five-storey pagoda and a torii ---- */
+  A.japon = () => { let h=sky("jp1","#9fd0ef","#f6ece4")+sun(320,44,16,"#ff7a6b",.2); const B=170;
+    h+=P(`M70 ${B} L178 66 Q200 56 222 66 L340 ${B}Z`,"#7a8aa8")+P(`M164 80 L178 66 Q200 56 222 66 L236 80 L222 88 L210 80 L198 90 L186 80 L176 88Z`,"#ffffff");
+    h+=P(`M0 ${B} Q100 ${B-16} 200 ${B-6} T400 ${B-10} V250 H0Z`,"#6f9a5f");
+    const G=200, px=80; let y=G; [[44,30],[38,26],[32,24],[26,22],[20,20]].forEach(([w,ht],i)=>{ h+=bld(px-w/2+4,y,w-8,ht,"#c8423a")+P(`M${px-w/2-8} ${y-ht} L${px+w/2+8} ${y-ht} L${px+w/2} ${y-ht-8} L${px-w/2} ${y-ht-8}Z`,"#3d3a40"); y-=ht+8; });
+    h+=R(px-1,y-22,2,22,"#3d3a40")+[0,1,2,3].map(i=>C(px,y-6-i*5,2,"#3d3a40")).join("");
+    h+=land(G,"#7aa865")+R(0,G+22,400,40,"#6a9a58");
+    const tx=290; h+=R(tx-30,G-60,8,60,"#d4402f")+R(tx+22,G-60,8,60,"#d4402f")+P(`M${tx-44} ${G-66} Q${tx} ${G-58} ${tx+44} ${G-66} L${tx+40} ${G-74} Q${tx} ${G-66} ${tx-40} ${G-74}Z`,"#2f2a2a")+R(tx-36,G-62,72,6,"#d4402f")+R(tx-36,G-48,72,5,"#d4402f")+R(tx-2,G-58,4,10,"#d4402f");
+    h+=tree(160,G,16,"#5f8f4f")+tree(200,G,12,"#6c9a55")+tree(370,G,18,"#557f47");
+    return h; };
+
+  /* ---- Taormina: Etna rising from the plain, hill town over the bay ---- */
+  A.taormina = () => { let h=sky("ta1","#ffcfa6","#fde6d0","#f2efe8")+sun(90,52,18,"#ff9a52",.25); const B=140;
+    h+=P(`M150 ${B} L262 52 Q272 46 282 52 L390 ${B}Z`,"#8a7470")+P(`M252 62 L262 52 Q272 46 282 52 L292 62 L282 68 L272 60 L262 68Z`,"#fbf7f2");
+    h+=`<g fill="#e9e3dc" opacity=".85"><ellipse cx="276" cy="38" rx="12" ry="7"/><ellipse cx="290" cy="26" rx="15" ry="8"/><ellipse cx="308" cy="16" rx="17" ry="8"/></g>`;
+    h+=land(B,"#a5b07a")+sea(172,"#2a8fc0","#d6eef8","#18699a");
+    h+=P(`M0 104 Q60 92 120 112 Q150 128 160 172 H0Z`,"#7f9a5a");
+    [[10,104,30,22,"#f4e2c0"],[42,102,26,30,"#efd3a6"],[70,108,30,20,"#f7ead0"],[100,118,26,22,"#f1dcb6"],[20,138,34,24,"#f7ead0"],[60,140,30,30,"#efd3a6"],[96,144,30,22,"#f4e2c0"]].forEach(([x,G,w,ht,f])=>{ h+=R(x,G,w,172-G,"#7f9a5a")+bld(x,G,w,ht,f)+R(x-1,G-ht-4,w+2,4,"#c46a42")+R(x+w*.4,G-ht*.6,5,7,"#7a5a4a"); });
+    h+=cypress(130,140,26)+cypress(140,146,20);
+    h+=P(`M220 196 Q240 184 262 186 Q282 186 296 196Z`,"#7f9a5a")+boat(330,214,1,"#f4f0e8","#ffffff");
+    return h; };
+
+  /* ---- Paris: the Eiffel Tower on the Champ de Mars, the Seine below ---- */
+  A.paris = () => { const G=188; let h=sky("pa2","#c9d9f0","#f6eee8")+sun(320,46,16,"#ffc98a")+cloud(110,40,.8);
+    [[0,46,56],[46,40,48],[300,44,52],[344,56,60]].forEach(([x,w,ht])=>{ h+=bld(x,G,w,ht,"#efe4d0")+P(`M${x-2} ${G-ht} H${x+w+2} L${x+w-6} ${G-ht-14} H${x+6}Z`,"#7f8c9b")+wins(x+7,G-ht+8,Math.floor((w-7)/11),3,11,13,5,8,"#8ba5bb"); });
+    const x=200; h+=`<g fill="none" stroke="#5a4a44" stroke-linejoin="round"><path d="M${x-52} ${G} Q${x-24} ${G-60} ${x-10} ${G-118} L${x-4} ${G-176} M${x+52} ${G} Q${x+24} ${G-60} ${x+10} ${G-118} L${x+4} ${G-176}" stroke-width="5"/><path d="M${x-30} ${G} a30 26 0 0 1 60 0" stroke-width="3"/><path d="M${x-34} ${G-56} H${x+34} M${x-14} ${G-118} H${x+14}" stroke-width="5"/><path d="M${x-40} ${G-30} L${x+20} ${G-56} M${x+40} ${G-30} L${x-20} ${G-56} M${x-24} ${G-60} L${x+10} ${G-116} M${x+24} ${G-60} L${x-10} ${G-116} M${x-8} ${G-122} L${x+5} ${G-172} M${x+8} ${G-122} L${x-5} ${G-172}" stroke-width="1.4"/></g>`+R(x-1,G-196,2,22,"#5a4a44")+R(x-6,G-178,12,4,"#5a4a44");
+    h+=land(G,"#a9b98a")+R(0,G+10,400,8,"#d9cfbd")+sea(G+18,"#6d93ae","#dde9f2","#527a96")+tree(110,G,14,"#6c9a55")+tree(290,G,14,"#6c9a55")+tree(140,G,10,"#7aa863");
+    return h; };
+
+  /* ---- Singapur: Marina Bay Sands and the Supertrees ---- */
+  A.singapur = () => { let h=sky("si1","#ffb4c2","#ffdbe1","#f7ecef")+sun(80,56,18,"#ff7a8a",.25); const S1=168;
+    [[0,18,46],[18,14,60],[32,20,40]].forEach(([x,w,ht])=>h+=bld(x,S1,w,ht,"#8a8aa6"));
+    [210,256,302].forEach(x=>h+=`<path d="M${x} ${S1} L${x+6} ${S1-100} H${x+30} L${x+28} ${S1}Z" fill="#5f6b86"/>`+wins(x+10,S1-94,2,8,8,11,4,6,"#ffe2b8"));
+    h+=`<path d="M196 ${S1-104} Q270 ${S1-114} 352 ${S1-104} L350 ${S1-98} H198Z" fill="#4c5672"/>`+R(198,S1-104,154,5,"#4c5672");
+    h+=sea(S1,"#3a7fae","#dcebf5","#285f8a")+refl(210,S1,124,40,"#5f6b86");
+    const G=214; h+=P(`M0 ${G-10} Q120 ${G-20} 200 ${G-6} V250 H0Z`,"#4f8a5a");
+    [[50,G-12,74],[96,G-14,96],[140,G-10,64]].forEach(([x,b,ht])=>{ h+=P(`M${x-4} ${b} L${x-2} ${b-ht} H${x+2} L${x+4} ${b}Z`,"#7a4f8a")+`<path d="M${x-22} ${b-ht-6} Q${x} ${b-ht+14} ${x+22} ${b-ht-6}" fill="#9a5fae"/>`+`<g stroke="#c48ad6" stroke-width="1">${[-18,-9,0,9,18].map(d=>`<path d="M${x} ${b-ht+6} L${x+d} ${b-ht-4}"/>`).join("")}</g>`; });
+    return h; };
+
+
+  /* ---- Angkor Wat: five lotus towers over the moat, palms ---- */
+  A.angkor = () => { const G=156; let h=sky("ak1","#ffc49a","#fde4c8","#f5eadb")+sun(310,56,20,"#ff8f4a",.25);
+    h+=land(G-4,"#b7ae7a")+bld(70,G,260,22,"#a58e6c")+bld(90,G-22,220,16,"#b39a76")+wins(96,G-18,22,1,10,0,5,10,"#8a7458");
+    const tw=(x,ht,w)=>{ let s=""; for(let i=0;i<6;i++){ const ww=w*(1-i*.14), y=G-38-i*(ht/6); s+=R(x-ww/2,y-ht/6,ww,ht/6+1,i%2?"#a08766":"#b39a76"); } return s+P(`M${x-4} ${G-38-ht} L${x} ${G-48-ht} L${x+4} ${G-38-ht}Z`,"#8a7458"); };
+    h+=tw(120,44,30)+tw(280,44,30)+tw(160,60,32)+tw(240,60,32)+tw(200,84,38);
+    h+=sea(G,"#4f9aa0","#e6efe0","#3c7e86")+refl(70,G,260,40,"#a58e6c");
+    h+=P(`M0 214 Q50 204 110 212 L120 250 H0Z`,"#9fae6a")+P(`M290 250 L300 210 Q350 200 400 206 V250Z`,"#9fae6a")+palm(40,232,92)+palm(76,236,62,"#3a8a54")+palm(350,228,96)+palm(384,234,64,"#3a8a54")+`<g fill="#4f7a3f">${[150,190,230].map(x=>`<ellipse cx="${x}" cy="${G+40}" rx="10" ry="3"/>`).join("")}</g>`+[160,200,240].map(x=>C(x,G+37,3,"#f2a5c0")).join("");
+    return h; };
+
+  /* ---- Bolonia: the two towers over porticoed streets ---- */
+  A.bolonia = () => { const G=196; let h=sky("bo1","#f7c49c","#fbe4cc","#f5ede4")+sun(330,50,18,"#ff9a52",.25);
+    h+=bld(150,G,26,170,"#b35f3f")+R(146,G-176,34,8,"#9c5034")+wins(158,G-160,1,7,0,20,4,8,"#7c3f2a");
+    h+=`<g transform="rotate(3 ${196} ${G})">${bld(186,G,22,110,"#bf6b48")}${R(184,G-114,26,6,"#a8583a")}</g>`;
+    [[0,50,70,"#e8a77e"],[50,44,84,"#f0c49a"],[94,50,64,"#d9875e"],[220,48,78,"#efb88e"],[268,52,66,"#e09a6e"],[320,40,88,"#f2c9a2"],[360,40,72,"#d9875e"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G,w,ht,f)+R(x-2,G-ht-5,w+4,5,"#a8492f")+wins(x+7,G-ht+10,Math.floor((w-7)/12),Math.max(1,Math.floor((ht-40)/18)),12,18,5,9,"#7a4a34");
+      for(let k=0;k<Math.floor(w/16);k++) h+=`<path d="M${x+3+k*16} ${G} v-18 a6 6 0 0 1 12 0 v18z" fill="#8a4a32"/>`; });
+    h+=land(G,"#d9c2a2")+R(0,G+24,400,40,"#cbb08c");
+    return h; };
+
+  /* ---- Nápoles: Vesuvius over the bay, Castel dell'Ovo and colourful houses ---- */
+  A.napoli = () => { let h=sky("np1","#9fd0ef","#f2efe8")+sun(330,46,16,"#ffd27a"); const B=150;
+    h+=P(`M150 ${B} L250 70 Q262 62 274 70 Q286 66 300 78 L400 ${B}Z`,"#7d7f93")+P(`M236 82 L250 70 Q262 62 274 70 Q286 66 300 78 L310 88 Q270 80 236 82Z`,"#6a6c80");
+    h+=land(B-2,"#9fb07a")+sea(B,"#2a89c0","#d8eef8","#18659a");
+    const G=184; h+=P(`M0 ${G-34} H170 V${G} H0Z`,"#cdb796");
+    [[0,26,40,"#f2c14e"],[26,24,52,"#e98f6f"],[50,26,34,"#f6e3b4"],[76,24,46,"#d9624a"],[100,28,38,"#f1a8b6"],[128,24,50,"#f6e3b4"],[152,18,36,"#e9a94f"]].forEach(([x,w,ht,f])=>{ h+=bld(x,G-34,w,ht,f)+R(x-1,G-34-ht-3,w+2,3,"#a94f33")+wins(x+5,G-34-ht+6,Math.floor((w-5)/9),Math.floor(ht/14),9,14,4,6,"#fbf5ea"); });
+    h+=P(`M250 ${G+6} Q260 ${G-6} 290 ${G-8} H340 Q360 ${G-6} 366 ${G+6}Z`,"#c9b48e")+bld(276,G-6,74,26,"#d8c49e")+[276,290,304,318,332,346].map(x=>R(x,G-36,6,5,"#d8c49e")).join("")+bld(300,G-32,26,18,"#cdb890");
+    h+=boat(110,214,1.2,"#ffffff","#ffffff")+boat(200,226,1,"#2f6b8f");
+    return h; };
+
+  /* ---- Venecia: Grand Canal palazzi, the Rialto and a gondola ---- */
+  A.venecia = () => { const W=168; let h=sky("ve1","#f9c8a2","#fbe6d2","#f2eee8")+sun(200,58,20,"#ff9a52",.25);
+    [[0,46,90,"#e9b98f"],[46,40,72,"#f3d2ae"],[86,44,98,"#d98c6a"],[260,44,84,"#f0c69c"],[304,46,100,"#e2a27c"],[350,50,76,"#f3d9b8"]].forEach(([x,w,ht,f])=>{ h+=bld(x,W,w,ht,f)+R(x-2,W-ht-5,w+4,5,"#a8563a")+R(x,W-10,w,10,"#c9b9a0");
+      for(let r=0;r<Math.floor((ht-20)/24);r++) for(let k=0;k<Math.floor((w-6)/11);k++) h+=`<path d="M${x+6+k*11} ${W-ht+16+r*24} v12 h6 v-12 a3 3 0 0 0 -6 0z" fill="#fff6e8"/>`; });
+    h+=bld(140,W,16,120,"#c26a48")+R(136,W-128,24,8,"#a8563a")+P(`M138 ${W-128} L148 ${W-150} L158 ${W-128}Z`,"#4d7a6a")+wins(144,W-112,1,1,0,0,8,12,"#7c3f2a");
+    h+=sea(W,"#3e8fa0","#dcefee","#2a6f80")+refl(0,W,140,40,"#e9b98f")+refl(260,W,140,40,"#f0c69c");
+    h+=P(`M150 ${W} L170 ${W-16} Q208 ${W-30} 246 ${W-16} L266 ${W}Z`,"#d6c09c")+P(`M180 ${W} Q208 ${W-22} 236 ${W}Z`,"#3e8fa0")+`<path d="M150 ${W} L170 ${W-16} Q208 ${W-30} 246 ${W-16} L266 ${W}" stroke="#b89c74" stroke-width="2" fill="none"/>`+bld(190,W-26,36,14,"#e3cfac")+wins(194,W-38,4,1,8,0,4,8,"#b89c74")+P(`M188 ${W-40} L208 ${W-50} L228 ${W-40}Z`,"#b8563a");
+    h+=`<g transform="translate(220 214)"><path d="M-46 0 Q0 10 46 -6 Q50 -10 48 -14 Q40 -4 0 0 Q-30 2 -44 -6Z" fill="#1f1f24"/><path d="M28 -6 l14 -36" stroke="#3a2a20" stroke-width="2"/><rect x="24" y="-18" width="6" height="14" fill="#1f1f24"/><circle cx="27" cy="-21" r="3" fill="#1f1f24"/><rect x="22" y="-15" width="10" height="3" fill="#e4e4e4"/></g>`;
+    h+=[60,100,330].map(x=>R(x,W+2,3,20,"#3c4a6a")+R(x-1,W,5,3,"#d9d0bf")).join("");
+    return h; };
+
+  /* ---- Tailandia: limestone karsts, a longtail boat, a golden chedi ---- */
+  A.tailandia = () => { let h=sky("th1","#ffc4a0","#fde3cc","#eef3ee")+sun(320,56,20,"#ff8f52",.25); const W=170;
+    h+=P(`M60 ${W} Q56 92 92 86 Q122 84 120 ${W}Z`,"#4f7f5f")+P(`M126 ${W} Q130 120 150 116 Q168 118 170 ${W}Z`,"#5f8f6a")+P(`M280 ${W} Q272 80 312 74 Q350 76 344 ${W}Z`,"#4f7f5f")+P(`M350 ${W} Q356 128 376 124 Q396 128 398 ${W}Z`,"#5f8f6a");
+    h+=sea(W,"#22a3b0","#dff4f2","#147b88")+refl(60,W,60,30,"#4f7f5f")+refl(280,W,64,30,"#4f7f5f");
+    h+=P(`M0 216 Q60 206 140 214 V250 H0Z`,"#f2dcae")+palm(24,222,74)+palm(70,224,56,"#3a8a54");
+    h+=`<g transform="translate(240 206)"><path d="M-50 -2 Q-10 8 44 -2 Q52 -8 56 -20 Q46 -8 30 -6 H-46Z" fill="#7a4a2a"/><path d="M56 -20 l2 -6" stroke="#e94f6f" stroke-width="4"/><rect x="-36" y="-14" width="30" height="10" fill="#f2c14e"/><path d="M-36 -14 h30 l-4 -6 h-22z" fill="#2f6b8f"/></g>`;
+    return h; };
+
+  /* ---- Vietnam y Camboya: Ha Long karsts and junks with orange sails ---- */
+  A.vietnam = () => { let h=sky("vt1","#c9e3e6","#eef4ef","#f2efe6")+sun(80,52,16,"#ffe0a0"); const W=164;
+    h+=`<g fill="#a9c3bf">${[[20,72,40],[90,90,30],[150,80,34],[230,86,40],[300,70,36],[360,88,30]].map(([x,t,w])=>`<path d="M${x-w/2} ${W} Q${x-w/2-4} ${t+20} ${x} ${t} Q${x+w/2+4} ${t+20} ${x+w/2} ${W}Z"/>`).join("")}</g>`;
+    h+=`<g fill="#5f8a74">${[[60,100,46],[200,92,56],[330,104,50]].map(([x,t,w])=>`<path d="M${x-w/2} ${W} Q${x-w/2-6} ${t+20} ${x} ${t} Q${x+w/2+6} ${t+30} ${x+w/2} ${W}Z"/>`).join("")}</g>`;
+    h+=sea(W,"#5aa7a0","#e6f4f0","#3f8a84")+refl(30,W,60,30,"#5f8a74")+refl(170,W,60,30,"#5f8a74");
+    const junk=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-30 -2 Q0 6 30 -2 L34 -10 H-34Z" fill="#6b3f26"/><path d="M-14 -10 V-50 Q-2 -40 0 -10Z" fill="#e2763a"/><path d="M4 -10 V-42 Q16 -34 18 -10Z" fill="#e2763a"/><path d="M-14 -40 H-4 M-14 -30 H-2 M-14 -20 H-1 M4 -32 H13 M4 -22 H15" stroke="#b45526" stroke-width="1"/></g>`;
+    h+=junk(130,206,1.3)+junk(290,190,.8);
+    return h; };
+
+  /* ---- Zanzíbar: white beach, dhow under sail, palms ---- */
+  A.zanzibar = () => { let h=sky("zz1","#7fd3ee","#e9f8fb")+sun(330,46,18,"#ffd166")+cloud(110,44,.9); const W=160;
+    h+=sea(W,"#19b5c6","#e2fbfd","#0f8fa8")+R(0,W+18,400,10,"#5fd0d8","opacity=\".5\"");
+    h+=P(`M0 206 Q140 194 260 204 T400 200 V250 H0Z`,"#f6e6c4")+P(`M0 220 Q200 210 400 222 V250 H0Z`,"#efdab0");
+    h+=palm(40,212,92)+palm(80,214,64,"#3a8a54")+palm(370,206,80);
+    h+=`<g transform="translate(220 188)"><path d="M-40 -2 Q0 8 36 -4 L42 -12 H-40Z" fill="#7a4a2a"/><path d="M-6 -12 L-30 -70 Q20 -60 30 -12Z" fill="#fbf6ea"/><path d="M-6 -12 L-30 -70" stroke="#7a4a2a" stroke-width="2"/></g>`;
+    h+=`<g fill="#e7845e">${[[150,232],[300,236]].map(([x,y])=>`<path d="M${x} ${y} l3 -6 l3 6 l6 1 l-5 4 l2 6 l-6 -3 l-6 3 l2 -6 l-5 -4z"/>`).join("")}</g>`;
+    return h; };
+
+  /* ---- Pirámides de Guiza: three pyramids, the Sphinx, a camel ---- */
+  A.piramides = () => { let h=sky("gz1","#ffcf9e","#fde7c8","#f8efdf")+sun(90,56,22,"#ff9a4a",.25); const G=184;
+    const pyr=(x,w,ht,a,b)=>P(`M${x-w/2} ${G} L${x} ${G-ht} L${x+w/2} ${G}Z`,a)+P(`M${x} ${G-ht} L${x+w/2} ${G} L${x+w*.12} ${G}Z`,b);
+    h+=pyr(300,170,100,"#e1b06a","#c58f4f")+pyr(190,190,118,"#e8bc78","#cb9858")+pyr(90,110,66,"#e1b06a","#c58f4f")+P(`M190 ${G-118} L182 ${G-106} H198Z`,"#f3dcae");
+    h+=land(G,"#ecd09a")+P(`M0 ${G+20} Q120 ${G+10} 240 ${G+22} T400 ${G+18} V250 H0Z`,"#e2c084");
+    h+=`<g transform="translate(320 ${G+30})" fill="#c9a065"><path d="M-40 0 V-10 Q-40 -16 -30 -16 H6 V-30 Q6 -40 16 -40 Q26 -40 26 -30 V-18 L36 -14 V0Z"/><path d="M12 -40 L8 -24 H30 L26 -40Z" fill="#b48a52"/></g>`;
+    h+=`<g transform="translate(60 ${G+34})" fill="#8a5a3a"><path d="M0 0 v-14 q2 -10 12 -10 q6 -10 14 -2 q6 -6 12 2 v8 q8 -10 12 -14 l4 2 q-2 8 -10 16 v12 h-3 v-10 h-26 v10 h-3 v-10 h-6 v10z"/></g>`;
+    return h; };
+
+  /* ---- generic (new or unknown destinations): small town with church, plane overhead ---- */
+  A.__generic = (key) => { const hh = Array.from(String(key)).reduce((a,c) => a + c.charCodeAt(0), 0) % 360; const G=184;
+    const c=(l,s=55)=>`hsl(${hh} ${s}% ${l}%)`, c2=(l,s=60)=>`hsl(${(hh+30)%360} ${s}% ${l}%)`;
+    let h=sky("gx"+hh,c(88,60),c2(94,50))+sun(320,50,18,`hsl(${(hh+40)%360} 90% 66%)`)+cloud(110,44,.9);
+    h+=P(`M0 140 Q80 104 160 130 T320 116 T400 126 V${G} H0Z`,c(66,30))+P(`M0 160 Q120 140 240 156 T400 150 V${G} H0Z`,c(56,32));
+    [[96,30,34,82],[126,24,44,76],[150,34,30,84],[222,30,40,80],[252,26,30,86],[278,34,42,78]].forEach(([x,w,ht,l])=>{ h+=bld(x,G,w,ht,c2(l,40))+roof(x,G-ht,w,12,c2(46,45))+R(x+w*.4,G-ht*.6,5,8,c(40,25)); });
+    h+=bld(184,G,28,64,c2(86,30))+P(`M182 ${G-64} L198 ${G-98} L214 ${G-64}Z`,c2(44,45))+R(193,G-40,10,16,c(40,25));
+    h+=land(G,c(50,30))+R(0,G+22,400,50,c(44,30))+tree(50,G,14,c(36,35))+tree(350,G,16,c(36,35));
+    h+=`<g transform="translate(70 70) rotate(-12)" fill="#ffffff"><path d="M0 0 H36 Q42 0 42 3 Q42 6 36 6 H0Z"/><path d="M14 2 L6 -12 H12 L24 2Z M14 4 L6 16 H12 L24 4Z M0 2 L-4 -6 H2 L6 2Z"/></g><path d="M68 76 Q30 84 0 82" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 4" fill="none" opacity=".8"/>`;
+    return h; };
+
+  const ALIAS = {lisbon:"lisboa", oporto:"porto", florence:"florencia", florencia:"florencia", firenze:"florencia", pisa:"pisa", roma:"roma", rome:"roma", praga:"praga", prague:"praga", viena:"viena", vienna:"viena", turin:"turin", torino:"turin", nantes:"nantes", bristol:"bristol", dubai:"dubai", "hong kong":"hongkong", hongkong:"hongkong", japon:"japon", tokio:"japon", kioto:"japon", galicia:"galicia", creta:"creta", valencia:"valencia", "costa rica":"costarica", salzburgo:"salzburgo", cracovia:"cracovia", "nueva york":"nuevayork", paris:"paris", munich:"munich", corfu:"corfu", dubrovnik:"dubrovnik", belgrado:"belgrado", cordoba:"cordoba", angkor:"angkor", "siem reap":"angkor", bolonia:"bolonia", napoles:"napoli", venecia:"venecia", venice:"venecia", tailandia:"tailandia", bangkok:"tailandia", phuket:"tailandia", vietnam:"vietnam", zanzibar:"zanzibar", cairo:"piramides", egipto:"piramides", panama:"panama", singapur:"singapur", taormina:"taormina", catania:"taormina", sicilia:"taormina"};
+  return function(key, legacy){
+    const k = String(key||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+    if (A[k] && k !== "__generic") return S(A[k]());
+    const legacyOut = legacy(k, true); if (legacyOut) return legacyOut;
+    const hit = Object.keys(ALIAS).find(a => k.includes(a)); if (hit) return S(A[ALIAS[hit]]());
+    return S(A.__generic(k));
+  };
+})();
+
+function art(key){ return NEWART(key, artOld); }
+const blobUrl = id => window.__wlBlob ? window.__wlBlob(id) : "/_blob/" + id;
+const ftLab = d => /pdf/i.test(d.type||d.title||"") ? ["PDF",""] : /image|png|jpe?g|heic|webp|gif/i.test(d.type||d.title||"") ? ["IMG","img"] : ["DOC",""];
+const CLIP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg>';
+function attChips(list, delKey){
+  return (list||[]).map(f => { const [lab, cls] = ftLab(f); const k = delKey ? delKey + ":" + f.id : "";
+    return `<span class="attc"><a href="${esc(blobUrl(f.asset))}" target="_blank" rel="noopener" title="${esc(f.title)}"><span class="ft ${cls}">${lab}</span><span>${esc(f.title)}</span></a>${canWrite && delKey ? `<button class="x" type="button" data-delatt="${esc(k)}" aria-label="Quitar ${esc(f.title)}">${delArm === "att:" + k ? "¿Quitar?" : "✕"}</button>` : ""}</span>`; }).join("");
+}
+const attachBtn = (key, label) => assets && canWrite ? `<label class="attbtn">${CLIP}${label || "Adjuntar"}<input type="file" data-attach="${esc(key)}" accept="application/pdf,image/*,text/plain,text/csv" multiple hidden></label>` : "";
+const itemFiles = (x, field) => [...(x.doc ? [{id: "__doc", asset: x.doc, title: "Copia de la reserva", type: "application/pdf"}] : []), ...(x.files || [])];
+const attRow = (x, field) => { const fl = itemFiles(x, field); const b = attachBtn(field + ":" + x.id); return fl.length || b ? `<div class="att">${attChips(fl, field + ":" + x.id)}${b}</div>` : ""; };
+const linkLabel = u => /booking\.com\/mytrips/.test(u) ? "Ver viaje en Booking ↗" : /booking\.com/.test(u) ? "Ver reserva en Booking ↗" : "Ver reserva ↗";
+const SECNAME = {resumen:"Resumen", billetes:"Billetes", alojamiento:"Alojamiento", itinerario:"Itinerario", opciones:"Itinerarios posibles", excursiones:"Excursiones", restaurantes:"Restaurantes", tiempo:"Tiempo", util:"Útil", seguros:"Seguros", maleta:"Maleta", tips:"Tips", pendientes:"Pendientes"};
+function secDocs(t, s){
+  const list = (t.docs || []).filter(d => d.sec === s);
+  if (!list.length && !(assets && canWrite)) return "";
+  return `<section class="card"><div class="sh"><h2>Docs</h2><span class="d">Documentos de ${esc(SECNAME[s] || "esta pestaña")}; también salen en Reservas y documentos</span></div>
+    <div class="att">${attChips(list, "sec:" + s)}${attachBtn("sec:" + s, "Subir documento")}</div>${list.length ? "" : `<p class="muted" style="margin:8px 0 0;font-size:13px">Aún no hay documentos en esta pestaña.</p>`}</section>`;
+}
+const secFull = t => secHtml(t) + (sec !== "documentos" ? secDocs(t, sec) : "");
+const coverHtml = t => t.cover ? `<img data-dimg="${esc(t.cover)}" alt="">` : art(t.art || t.name || "x");
+
+/* ---------- data helpers ---------- */
+const sorted = () => Object.entries(trips).map(([id,t]) => ({id, ...t})).sort((a,b) => (a.start||"").localeCompare(b.start||""));
+const cur = () => trips[tripId] ? {id: tripId, ...trips[tripId]} : null;
+/* ---------- free-cancellation deadlines ---------- */
+const CX_DAYS = 7, CX_FIELDS = ["tickets","stays","excursions"];
+const cxDate = s => { const m = String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/); return m ? new Date(+m[1], +m[2]-1, +m[3], m[4] ? +m[4] : 23, m[5] ? +m[5] : 59) : null; };
+const cxFmt = s => { const D = cxDate(s); return D ? `${DOW[D.getDay()]} ${D.getDate()} ${MONTHS[D.getMonth()]} ${D.getFullYear()} · ${String(D.getHours()).padStart(2,"0")}:${String(D.getMinutes()).padStart(2,"0")}` : ""; };
+const cxLeft = s => { const D = cxDate(s); return D ? (D - new Date()) / 864e5 : null; };
+const cxLeftTxt = s => { const D = cxDate(s), d0 = today(); const days = Math.round((new Date(D.getFullYear(), D.getMonth(), D.getDate()) - d0) / 864e5); return days <= 0 ? "acaba hoy" : days === 1 ? "acaba mañana" : `quedan ${days} días`; };
+const cxItems = t => status(t) === "pasado" ? [] : CX_FIELDS.flatMap(f => (t[f]||[]).filter(x => x.cancelBy && x.status !== "cancel").map(x => ({t, f, x})));
+const cxAlerts = t => cxItems(t).filter(({x}) => { const l = cxLeft(x.cancelBy); return !x.cancelKeep && l > 0 && l <= CX_DAYS; })
+  .map(({f, x}) => ({id: "cx-" + x.id, auto: f + ":" + x.id, level: "crit", text: `Se acaba la cancelación gratis de ${x.title}: ${cxFmt(x.cancelBy)} (hora local), ${cxLeftTxt(x.cancelBy)}. Decide si la mantienes o la cancelas.`}));
+const allAlerts = t => [...cxAlerts(t), ...(t.alerts||[])];
+const cxTag = (t, x) => { if (!x.cancelBy || x.status === "cancel" || status(t) === "pasado") return "";
+  const l = cxLeft(x.cancelBy);
+  if (l <= 0) return `<span class="cxtag old">Cancelación gratis vencida (${esc(cxFmt(x.cancelBy))})</span>`;
+  if (x.cancelKeep) return `<span class="cxtag">Cancelación gratis hasta ${esc(cxFmt(x.cancelBy))} · decidido mantenerla</span>`;
+  return `<span class="cxtag ${l <= CX_DAYS ? "soon" : ""}">Cancelación gratis hasta ${esc(cxFmt(x.cancelBy))}${l <= CX_DAYS ? " · " + cxLeftTxt(x.cancelBy) : ""}</span>`; };
+const openCount = t => allAlerts(t).filter(a => a.level !== "info").length;
+const todoLeft = t => (t.todo||[]).filter(x => !x.done).length;
+let toastT;
+function toast(msg){ let el = $(".toast"); if (!el){ el = document.createElement("div"); el.className = "toast"; el.setAttribute("role","status"); document.body.append(el); }
+  el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 2600); }
+async function save(id, patch){
+  if (!db || !canWrite){ toast("Solo lectura: no se puede guardar desde esta vista"); return false; }
+  try { await db.doc("trips/" + id).update(patch); return true; }
+  catch(e){ toast(e && e.code === "not_granted" ? "No tienes permiso para editar" : "No se ha podido guardar. Inténtalo de nuevo."); return false; }
+}
+
+/* ---------- top bar ---------- */
+function renderTop(){
+  const list = sorted(); const up = list.filter(t => status(t) !== "pasado");
+  const next = up[0];
+  $("#meta").innerHTML = next ? `<div>Próximo viaje<b>${esc(next.name)}</b></div><div>Faltan<b>${Math.max(0,daysTo(next.start))} días</b></div>` : "";
+  const tabs = view === "home"
+    ? [["proximos","Próximos",up.length],["pasados","Pasados",list.length-up.length],["todos","Todos",list.length]]
+    : [];
+  $("#tabs").innerHTML = tabs.map(([k,l,n]) => `<button class="tab" role="tab" aria-selected="${filter===k}" data-f="${k}">${l}<span class="cnt">${n}</span></button>`).join("");
+  $("#tabs").hidden = !tabs.length;
+}
+
+/* ---------- home ---------- */
+function renderHome(){
+  const list = sorted();
+  let shown = list.filter(t => filter === "todos" ? true : filter === "pasados" ? status(t) === "pasado" : status(t) !== "pasado");
+  if (filter !== "proximos") shown = shown.slice().sort((a,b) => (status(a)==="pasado") - (status(b)==="pasado") || (status(a)==="pasado" ? b.start.localeCompare(a.start) : a.start.localeCompare(b.start)));
+  const up = list.filter(t => status(t) !== "pasado");
+  const alerts = up.reduce((a,t) => a + allAlerts(t).filter(x => x.level === "crit").length, 0);
+  const todos = up.reduce((a,t) => a + todoLeft(t), 0);
+  const next = up[0];
+  let h = `<section class="hero"><div><div class="eyebrow">Mis viajes ${new Date().getFullYear()} – ${new Date().getFullYear()+1}</div>
+    <h1>${next ? `${esc(next.name)}, ${countdown(next).toLowerCase()}` : "Tus viajes"}</h1>
+    <p>${up.length} viajes programados. Billetes, alojamientos, itinerario, excursiones y documentos de cada uno, en su ficha.</p></div>
+    <div class="hpills">${next ? `<button class="hpill" data-open="${esc(next.id)}"><i></i>Abrir ${esc(next.name)}</button>` : ""}
+    ${alerts ? `<button class="hpill c" data-jump="alerts"><i></i>${alerts} avisos importantes</button>` : ""}
+    ${todos ? `<span class="hpill s"><i></i>${todos} tareas pendientes</span>` : ""}</div></section>`;
+  if (!loaded){ h += `<div class="loading"><span class="spin"></span>Cargando tus viajes…</div>`; }
+  else if (!db){ h += `<div class="card empty">Esta vista no puede leer la base de datos de viajes. Abre la app desde claude.ai con tu cuenta para ver tus viajes.</div>`; }
+  else {
+    h += `<section class="grid">` + shown.map(t => {
+      const al = allAlerts(t).filter(a => a.level === "crit").length, tl = todoLeft(t);
+      return `<button class="tcard" data-open="${esc(t.id)}" type="button"><div class="cover">${coverHtml(t)}<span class="when">${esc(countdown(t))}</span></div>
+      <div class="tbody"><h3>${esc(t.name)}</h3><div class="pl">${esc(t.place||"")}</div><div class="pl muted">${esc(fmtRange(t.start,t.end))} · ${nightsTxt(t)}</div>
+      <div class="row">${status(t) === "pasado" ? `${(t.stays||[]).length ? `<span class="pill idea">${(t.stays||[]).length} alojamiento${(t.stays||[]).length>1?"s":""}</span>` : ""}${(t.excursions||[]).length ? `<span class="pill todo">${(t.excursions||[]).length} excursion${(t.excursions||[]).length>1?"es":""}</span>` : ""}` : `${al ? `<span class="pill crit">${al} aviso${al>1?"s":""}</span>` : `<span class="pill ok">Sin avisos</span>`}${tl ? `<span class="pill todo">${tl} pendiente${tl>1?"s":""}</span>` : ""}`}${t.travelers ? `<span class="pill idea">${esc(t.travelers)}</span>` : ""}</div></div></button>`;
+    }).join("") + (canWrite ? `<button class="newcard" id="newtrip" type="button"><b>+</b>Nuevo viaje<span class="muted" style="font-size:12.5px">Nombre, fechas y foto de portada</span></button>` : "") + `</section>`;
+    if (!shown.length && !canWrite) h += `<div class="card empty">No hay viajes en esta lista.</div>`;
+    if (adding === "trip") h += newTripForm();
+    const crit = up.flatMap(t => allAlerts(t).filter(a => a.level === "crit").map(a => ({t, a})));
+    if (crit.length && filter === "proximos") h += `<section class="card" id="alerts"><div class="sh"><h2>Revisa esto primero</h2><span class="d">Avisos detectados al cruzar tus reservas</span></div><div class="stack">${crit.map(({t,a}) => `<div class="alert crit"><span class="ic">!</span><div><b>${esc(t.name)}.</b> ${esc(a.text)} <button class="iconbtn" data-open="${esc(t.id)}">Abrir ficha</button></div></div>`).join("")}</div></section>`;
+    const cx = up.flatMap(cxItems).filter(({x}) => !x.cancelKeep && cxLeft(x.cancelBy) > 0).sort((a,b) => cxDate(a.x.cancelBy) - cxDate(b.x.cancelBy));
+    if (cx.length && filter === "proximos") h += `<section class="card" id="cxlist"><div class="sh"><h2>Plazos de cancelación gratis</h2><span class="d">Te aviso arriba ${CX_DAYS} días antes de cada uno</span></div>
+      ${cx.map(({t, x}) => { const soon = cxLeft(x.cancelBy) <= CX_DAYS; return `<div class="cxrow ${soon ? "soon" : ""}"><span class="cxd"><b>${cxDate(x.cancelBy).getDate()} ${MONTHS[cxDate(x.cancelBy).getMonth()]}</b>${cxDate(x.cancelBy).getFullYear()}</span><span style="min-width:0"><b style="font-weight:550">${esc(x.title)}</b><br><span class="muted" style="font-size:12.5px">${esc(t.name)} · ${soon ? cxLeftTxt(x.cancelBy) : "hasta las " + esc(cxFmt(x.cancelBy).split("· ")[1] || "")}</span></span><button class="iconbtn" data-open="${esc(t.id)}">Abrir</button></div>`; }).join("")}</section>`;
+  }
+  $("#main").innerHTML = h;
+}
+function newTripForm(){
+  return `<form class="add card" id="tripf"><h3>Nuevo viaje</h3><div class="fg">
+  <div class="f"><label for="nt-name">Nombre</label><input class="inp" id="nt-name" required placeholder="Islandia"></div>
+  <div class="f"><label for="nt-place">Destinos</label><input class="inp" id="nt-place" placeholder="Reikiavik y la costa sur"></div>
+  <div class="f"><label for="nt-start">Ida</label><input class="inp" type="date" id="nt-start" required></div>
+  <div class="f"><label for="nt-end">Vuelta</label><input class="inp" type="date" id="nt-end" required></div>
+  <div class="f"><label for="nt-who">Viajeros</label><input class="inp" id="nt-who" placeholder="Laura y Álex"></div></div>
+  <div class="actions"><button class="btn sea" type="submit">Crear viaje</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`;
+}
+
+/* ---------- trip view ---------- */
+const SECTIONS = [
+  ["resumen","Resumen"],["billetes","Billetes"],["alojamiento","Alojamiento"],["itinerario","Itinerario"],["opciones","Itinerarios posibles"],["excursiones","Excursiones"],
+  ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Maleta"],["tips","Tips"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
+];
+const secCount = (t,k) => ({opciones:((t.options||{}).items||[]).length, billetes:(t.tickets||[]).length, alojamiento:(t.stays||[]).length, itinerario:(t.itinerary||[]).length, excursiones:(t.excursions||[]).length,
+  restaurantes:(t.restaurants||[]).length, tips:(t.tips||[]).length, seguros:(t.insurance||[]).length, maleta:packLeft(t), documentos:(t.docs||[]).length + (t.links||[]).length, pendientes:todoLeft(t)}[k]);
+
+function renderTrip(){
+  const t = cur(); if (!t){ view = "home"; return render(); }
+  let h = `<button class="backbtn" data-home type="button">‹ Todos los viajes</button>
+  <section class="banner">${coverHtml(t)}<div class="bact">${assets && canWrite ? `<label class="chipbtn" style="cursor:pointer">Cambiar portada<input type="file" accept="image/*" id="coverin" hidden></label>` : ""}${t.cover && canWrite ? `<button class="chipbtn" data-uncover>Quitar foto</button>` : ""}${canWrite ? `<button class="chipbtn" data-editmeta>Editar viaje</button>` : ""}</div>
+  <div class="txt"><span class="eyebrow" style="color:#fff;opacity:.85">${esc(countdown(t))} · ${nightsTxt(t)}${t.travelers ? " · " + esc(t.travelers) : ""}</span><h1>${esc(t.name)}</h1><span class="s">${esc(t.place||"")} · ${esc(fmtRange(t.start,t.end))}</span></div></section>`;
+  if (editingMeta) h += metaForm(t);
+  const SECS = t.past || status(t) === "pasado" ? SECTIONS.filter(([k]) => !["restaurantes","tiempo","util","pendientes","maleta"].includes(k) && (k === "resumen" || secCount(t,k))) : SECTIONS;
+  if (!SECS.find(([k]) => k === sec)) sec = "resumen";
+  h += `<nav class="secnav" aria-label="Secciones del viaje">${SECS.map(([k,l]) => { const n = secCount(t,k); return `<button type="button" data-sec="${k}" aria-pressed="${sec===k}">${l}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</nav>`;
+  const secLabel = (SECS.find(([k]) => k === sec) || [0, ""])[1];
+  h += `<div class="pdfbar"><button class="btn ghost sm" data-pdf type="button">Exportar ${esc(secLabel)} a PDF</button></div>`;
+  h += `<div id="secbody">${secFull(t)}</div>`;
+  $("#main").innerHTML = h;
+}
+function metaForm(t){
+  return `<form class="add card" id="metaf"><h3>Editar viaje</h3><div class="fg">
+  <div class="f"><label for="m-name">Nombre</label><input class="inp" id="m-name" value="${esc(t.name)}" required></div>
+  <div class="f"><label for="m-place">Destinos</label><input class="inp" id="m-place" value="${esc(t.place||"")}"></div>
+  <div class="f"><label for="m-start">Ida</label><input class="inp" type="date" id="m-start" value="${esc(t.start)}" required></div>
+  <div class="f"><label for="m-end">Vuelta</label><input class="inp" type="date" id="m-end" value="${esc(t.end)}" required></div>
+  <div class="f"><label for="m-who">Viajeros</label><input class="inp" id="m-who" value="${esc(t.travelers||"")}"></div></div>
+  <div class="f"><label for="m-sum">Resumen</label><textarea class="inp" id="m-sum">${esc(t.summary||"")}</textarea></div>
+  <div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancelmeta>Cancelar</button>
+  <span style="flex:1"></span><button class="btn ghost sm" type="button" data-deltrip style="color:var(--crit)">${delArm === "trip" ? "Pulsa otra vez para borrar el viaje" : "Borrar viaje"}</button></div></form>`;
+}
+
+const STLABEL = {ok:"Confirmado", warn:"Revisar", todo:"Por reservar", cancel:"Cancelada", idea:"Opción"};
+/* ---------- trip duration across time zones ---------- */
+const tzOff = (ms, tz) => { const p = new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).formatToParts(new Date(ms));
+  const g = k => +p.find(o => o.type === k).value; return Math.round((Date.UTC(g("year"),g("month")-1,g("day"),g("hour")%24,g("minute")) - ms) / 6e4); };
+const toUtc = (s, tz) => { const m = String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/); if (!m) return null;
+  const naive = Date.UTC(+m[1], +m[2]-1, +m[3], +m[4], +m[5]); let u = naive - tzOff(naive, tz) * 6e4; return naive - tzOff(u, tz) * 6e4; };
+const hm = min => { min = Math.round(Math.abs(min)); const h = Math.floor(min/60), m = min % 60; return h ? `${h} h${m ? ` ${m} min` : ""}` : `${m} min`; };
+function durHtml(x){
+  if (!x.dep || !x.arr || x.status === "cancel") return "";
+  try {
+    const tzA = x.depTz || "Europe/Madrid", tzB = x.arrTz || tzA, a = toUtc(x.dep, tzA), b = toUtc(x.arr, tzB);
+    if (a == null || b == null || b <= a) return "";
+    const diff = tzOff(b, tzB) - tzOff(b, tzA);
+    const tzTxt = diff ? `en destino el reloj va ${hm(diff)} ${diff < 0 ? "por detrás" : "por delante"}` : "sin cambio de hora";
+    return `<div class="dur">⏱ Duración real ${hm((b - a) / 6e4)}${x.stops ? ` · ${esc(x.stops)}` : ""}<span class="tzd">· ${tzTxt}</span></div>`;
+  } catch(e){ return ""; }
+}
+/* ---------- plug drawings ---------- */
+const PLUGFIT = new Set(["C","E","F","H","J","K","L","N"]);
+const PLUGINFO = {A:"2 patas planas", B:"2 planas + tierra redonda", C:"2 patas redondas (europeo)", D:"3 redondas en triángulo", E:"2 redondas + pin de tierra", F:"2 redondas + tierra lateral (Schuko)", G:"3 rectangulares (británico)", H:"3 en V (Israel)", I:"3 planas en V (Australia)", J:"3 redondas (Suiza)", K:"3 redondas (Dinamarca)", L:"3 redondas en línea (Italia)", M:"3 redondas grandes", N:"3 redondas (Brasil)"};
+function plugSvg(k){
+  const plate = `<rect x="6" y="6" width="88" height="88" rx="18" fill="var(--surf)" stroke="var(--line)" stroke-width="2"/>`;
+  const well = r => `<circle cx="50" cy="50" r="${r}" fill="var(--soft)" stroke="var(--ink2)" stroke-width="2"/>`;
+  const hole = (x,y,r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="var(--ink)"/>`;
+  const slot = (x,y,w,h,rot) => `<rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="1.5" fill="var(--ink)"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}/>`;
+  const body = {
+    A: slot(38,46,5,18) + slot(62,46,5,18),
+    B: slot(38,42,5,18) + slot(62,42,5,18) + `<path d="M45 62a5 5 0 0 1 10 0v6h-10z" fill="var(--ink)"/>`,
+    C: well(30) + hole(37,50,4) + hole(63,50,4),
+    D: well(32) + hole(38,60,4) + hole(62,60,4) + hole(50,36,5.5),
+    E: well(32) + hole(36,50,4.2) + hole(64,50,4.2) + `<rect x="47" y="24" width="6" height="12" rx="3" fill="var(--sea)"/>`,
+    F: well(32) + hole(36,50,4.2) + hole(64,50,4.2) + `<rect x="44" y="18" width="12" height="5" rx="2" fill="var(--sea)"/><rect x="44" y="77" width="12" height="5" rx="2" fill="var(--sea)"/>`,
+    G: slot(50,34,5,14) + slot(36,62,12,5) + slot(64,62,12,5),
+    H: slot(36,40,4,14,30) + slot(64,40,4,14,-30) + slot(50,66,4,14),
+    I: slot(37,44,4,15,30) + slot(63,44,4,15,-30) + slot(50,66,4,13),
+    J: `<path d="M24 34h52l-6 34H30z" fill="var(--soft)" stroke="var(--ink2)" stroke-width="2"/>` + hole(36,46,4) + hole(64,46,4) + hole(50,58,4),
+    K: well(32) + hole(36,44,4) + hole(64,44,4) + `<path d="M44 64a6 6 0 0 1 12 0v4h-12z" fill="var(--ink)"/>`,
+    L: `<rect x="20" y="38" width="60" height="24" rx="12" fill="var(--soft)" stroke="var(--ink2)" stroke-width="2"/>` + hole(34,50,3.6) + hole(50,50,3.6) + hole(66,50,3.6),
+    M: well(34) + hole(36,60,5) + hole(64,60,5) + hole(50,36,7),
+    N: `<path d="M50 20l26 10v26l-12 22H36L24 56V30z" fill="var(--soft)" stroke="var(--ink2)" stroke-width="2"/>` + hole(37,54,4) + hole(63,54,4) + hole(50,38,4)
+  }[k];
+  return body ? `<svg viewBox="0 0 100 100" role="img" aria-label="Enchufe tipo ${k}">${plate}${body}</svg>` : "";
+}
+function plugTypes(s){
+  const m = String(s||"").match(/tipos?\s+([A-N](?:[^.]{0,30}?\b[A-N]\b)*)/i); if (!m) return [];
+  return [...new Set((m[1].match(/\b[A-N]\b/g) || []))].filter(k => PLUGINFO[k]);
+}
+function plugsHtml(s){
+  const ks = plugTypes(s); if (!ks.length) return "";
+  const fits = ks.some(k => PLUGFIT.has(k));
+  return `<div class="plugs">${ks.map(k => `<div class="plug">${plugSvg(k)}<b>Tipo ${k}</b><span>${esc(PLUGINFO[k])}</span></div>`).join("")}</div>
+    <p class="fitnote ${fits ? "ok" : "no"}">${fits ? (ks.every(k => PLUGFIT.has(k)) ? "Tus cargadores españoles entran sin adaptador." : "Tus cargadores españoles entran en algunos enchufes; lleva un adaptador por si acaso.") : "Tus cargadores españoles no entran: necesitas adaptador."}</p>`;
+}
+
+function itemList(t, field, iconFor){
+  const arr = (t[field] || []).map((x,i) => [x,i]).sort((a,b) => ((a[0].status==="cancel")-(b[0].status==="cancel")) || (a[1]-b[1])).map(p => p[0]);
+  const isPast = !!(t.past || status(t) === "pasado");
+  const firstCancel = arr.findIndex(x => x.status === "cancel");
+  let h = arr.length ? arr.map((x, idx) => `${idx === firstCancel ? `<div class="eyebrow" style="padding:18px 0 4px;border-top:1px solid var(--line)">Canceladas</div>` : ""}<div class="item st-${esc(x.status||"ok")}"><span class="ico">${iconFor(x)}</span>
+    <div style="min-width:0"><h4>${esc(x.title)}</h4>${(x.img || x.rating) ? `<div class="hrow" style="margin-top:6px">${x.img ? `<img class="${isPast ? "hthumb" : "mini"}" src="${esc(x.img)}" alt="">` : ""}${x.rating ? `<span class="score"><b>${esc(x.rating)}</b>${isPast ? ` <span class="muted" style="font-size:12.5px">Booking${x.reviews ? ` · ${esc(x.reviews)} opiniones` : ""}</span>` : ""}</span>` : ""}</div>` : ""}${x.when ? `<div class="w">${esc(x.when)}</div>` : ""}${durHtml(x)}${x.detail ? `<p>${esc(x.detail)}</p>` : ""}
+    <div class="meta2">${x.ref ? `<span>Ref. <code>${esc(x.ref)}</code></span>` : ""}${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${linkLabel(x.url)}</a>` : ""}${cxTag(t, x)}</div>${attRow(x, field)}</div>
+    <div class="side">${x.status && !isPast ? `<span class="pill ${esc(x.status)}">${STLABEL[x.status]||esc(x.status)}</span>` : ""}${x.price ? `<span class="price">${esc(x.price)}</span>` : ""}
+    ${canWrite ? `<button class="iconbtn danger" data-del="${field}:${esc(x.id)}">${delArm === field+":"+x.id ? "¿Seguro? Pulsa otra vez" : "Quitar"}</button>` : ""}</div></div>`).join("")
+    : `<div class="empty">Todavía no hay nada aquí.</div>`;
+  if (canWrite) h += adding === field ? itemForm(field) : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="${field}">+ Añadir</button></div>`;
+  return h;
+}
+function itemForm(field){
+  const kinds = field === "tickets" ? `<div class="f"><label for="a-kind">Tipo</label><select class="inp" id="a-kind"><option value="vuelo">Vuelo</option><option value="coche">Coche</option><option value="tren">Tren o bus</option><option value="barco">Barco o ferry</option></select></div>` : "";
+  return `<form class="add" id="itemf" data-field="${field}"><div class="fg">${kinds}
+  <div class="f"><label for="a-title">Título</label><input class="inp" id="a-title" required></div>
+  <div class="f"><label for="a-when">Cuándo</label><input class="inp" id="a-when" placeholder="Lun 3 mar · 9:00"></div>
+  <div class="f"><label for="a-ref">Referencia</label><input class="inp" id="a-ref"></div>
+  <div class="f"><label for="a-price">Precio</label><input class="inp" id="a-price"></div>
+  <div class="f"><label for="a-url">Enlace a la reserva</label><input class="inp" id="a-url" type="url" placeholder="https://"></div>
+  <div class="f"><label for="a-cancel">Cancelación gratis hasta</label><input class="inp" type="datetime-local" id="a-cancel"></div>
+  <div class="f"><label for="a-st">Estado</label><select class="inp" id="a-st"><option value="ok">Confirmado</option><option value="todo">Por reservar</option><option value="warn">Revisar</option><option value="idea">Opción</option><option value="cancel">Cancelar</option></select></div></div>
+  <div class="f"><label for="a-detail">Detalles</label><textarea class="inp" id="a-detail"></textarea></div>
+  <div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`;
+}
+
+function optionsHtml(t){
+  const o = t.options || {}, items = o.items || [], chosen = o.chosen || null;
+  if (!items.length) return `<section class="card"><div class="sh"><h2>Itinerarios posibles</h2></div><div class="empty">Cuando haya varias alternativas para el viaje, pídele a Claude que las compare aquí con sus pros y contras.</div></section>`;
+  const stars = n => `<span class="stars" aria-label="${n} de 5">${"★".repeat(n)}<span>${"★".repeat(5-n)}</span></span>`;
+  let h = "";
+  if (o.reco) h += `<section class="card reco"><div class="sh"><h2>Recomendación</h2>${o.order ? `<span class="pill todo">${esc(o.order)}</span>` : ""}</div><p style="margin:0;color:var(--ink2);max-width:75ch;white-space:pre-line">${esc(o.reco)}</p></section>`;
+  h += `<div class="optgrid">` + items.map((x,i) => { const isC = chosen === x.id, rec = o.top === x.id;
+    return `<article class="opt ${isC ? "chosen" : ""}">
+      <div class="optHead"><span class="eyebrow">Opción ${i+1}${rec ? ` · <span style="color:var(--sea-ink)">recomendada</span>` : ""}</span>${isC ? `<span class="pill ok">Elegida</span>` : ""}</div>
+      <h3 class="optT">${esc(x.title)}</h3>
+      ${x.base ? `<div class="muted" style="font-size:13px">Base: ${esc(x.base)}${x.last ? ` · Último día: ${esc(x.last)}` : ""}</div>` : ""}
+      ${x.route ? `<p class="optR">${esc(x.route)}</p>` : ""}
+      ${(x.scores||[]).length ? `<div class="scores">${x.scores.map(s => `<span>${esc(s[0])}</span>${stars(+s[1]||0)}`).join("")}</div>` : ""}
+      <div class="pc"><div><h4 class="pro">A favor</h4><ul>${(x.pros||[]).map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>
+      <div><h4 class="con">En contra</h4><ul>${(x.cons||[]).map(p => `<li>${esc(p)}</li>`).join("")}</ul></div></div>
+      ${x.bestIf ? `<div class="bestif"><b>Elígela si…</b> ${esc(x.bestIf)}</div>` : ""}
+      ${canWrite ? `<div class="actions" style="margin-top:auto;padding-top:6px">${isC ? `<button class="btn ghost sm" data-pickopt="">Quitar elección</button>` : `<button class="btn sea sm" data-pickopt="${esc(x.id)}">Elegir esta</button>`}</div>` : ""}
+    </article>`; }).join("") + `</div>`;
+  return h;
+}
+
+function secHtml(t){
+  switch(sec){
+  case "resumen": {
+    const al = allAlerts(t), tl = todoLeft(t), tt = (t.todo||[]).length;
+    const days = t.itinerary || [];
+    return `<div class="two"><div class="stack">
+      <section class="card"><div class="sh"><h2>De un vistazo</h2></div><p style="margin:0 0 14px;color:var(--ink2);max-width:65ch">${esc(t.summary||"")}</p>
+      <div class="kv"><div><b>${esc(countdown(t))}</b><span>${esc(fmtRange(t.start,t.end))}</span></div><div><b>${nights(t)}</b><span>noches</span></div>
+      <div><b>${(t.tickets||[]).filter(x=>x.status==="ok").length}/${(t.tickets||[]).length}</b><span>billetes confirmados</span></div><div><b>${tt-tl}/${tt}</b><span>tareas hechas</span></div></div></section>
+      ${al.length ? `<section class="card"><div class="sh"><h2>Avisos</h2><span class="d">Lo que conviene revisar</span></div><div class="stack">${al.map(a => `<div class="alert ${esc(a.level)}"><span class="ic">${a.level==="info"?"i":"!"}</span><div>${esc(a.text)}${canWrite ? (a.auto ? ` <button class="iconbtn" data-cxkeep="${esc(a.auto)}">La mantengo</button>` : ` <button class="iconbtn" data-del="alerts:${esc(a.id)}">${delArm === "alerts:"+a.id ? "¿Resuelto? Pulsa otra vez" : "Resuelto"}</button>`) : ""}</div></div>`).join("")}</div></section>` : ""}
+    </div><div class="stack">
+      <section class="card"><div class="sh"><h2>Día a día</h2><button class="iconbtn" data-sec="itinerario">Ver itinerario</button></div>
+      ${days.map(d => { const D = pd(d.date); return `<div style="display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:6px 0;border-top:1px solid var(--line2);font-size:14px"><span class="muted" style="text-transform:capitalize">${DOW[D.getDay()]} ${D.getDate()}</span><span><b style="font-weight:550">${esc(d.title)}</b><br><span class="muted" style="font-size:12.5px">Duerme en ${esc(d.sleep||"")}</span></span></div>`; }).join("") || `<div class="empty">Sin itinerario todavía.</div>`}</section>
+      <section class="card"><div class="sh"><h2>Pendientes</h2><button class="iconbtn" data-sec="pendientes">Ver todos</button></div><div class="bar"><span style="width:${tt ? Math.round((tt-tl)/tt*100) : 0}%"></span></div>
+      <div style="margin-top:8px">${(t.todo||[]).filter(x=>!x.done).slice(0,4).map(x => `<div style="font-size:14px;padding:4px 0">○ ${esc(x.text)}</div>`).join("") || `<div class="muted">Todo hecho.</div>`}</div></section>
+    </div></div>`;
+  }
+  case "billetes": return `<section class="card"><div class="sh"><h2>Billetes y transporte</h2><span class="d">Vuelos, coches, trenes y barcos</span></div>${itemList(t,"tickets", x => ICON[x.kind] || ICON.vuelo)}</section>`;
+  case "alojamiento": return `<section class="card"><div class="sh"><h2>Alojamiento</h2><span class="d">Noche a noche</span></div>${itemList(t,"stays", () => ICON.cama)}</section>`;
+  case "excursiones": return `<section class="card"><div class="sh"><h2>Excursiones y actividades</h2></div>${itemList(t,"excursions", () => ICON.excursion)}</section>
+    ${(t.contacts||[]).length ? `<section class="card"><div class="sh"><h2>Contactos de proveedores</h2></div>${(t.contacts||[]).map(c => `<div class="item"><span class="ico">${ICON.contacto}</span><div style="min-width:0"><h4>${esc(c.title)}</h4><p style="user-select:all">${esc(c.detail)}</p></div><div class="side"></div></div>`).join("")}</section>` : ""}`;
+  case "itinerario": {
+    const td = today().toISOString().slice(0,10);
+    const days = t.itinerary || [];
+    let h = `<section class="card"><div class="sh"><h2>Itinerario</h2><span class="d">${days.length} días</span></div>` + (days.map(d => { const D = pd(d.date);
+      return `<div class="day ${d.date===td?"today":""}"><div class="dd"><b>${D.getDate()}</b><span>${DOW[D.getDay()]} · ${MONTHS[D.getMonth()]}</span></div>
+      <div style="min-width:0"><h4>${esc(d.title)}</h4><span class="sleep">Duerme en ${esc(d.sleep||"")}</span>
+      <ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul>${attRow(d, "itinerary")}
+      <div class="actions" style="margin-top:6px"><a class="iconbtn" href="https://www.google.com/maps/search/${encodeURIComponent(d.sleep||t.place||"")}" target="_blank" rel="noopener">Mapa ↗</a>${canWrite ? `<button class="iconbtn danger" data-del="itinerary:${esc(d.id)}">${delArm === "itinerary:"+d.id ? "¿Seguro? Pulsa otra vez" : "Quitar día"}</button>` : ""}</div></div></div>`; }).join("") || `<div class="empty">Sin itinerario todavía.</div>`);
+    if (canWrite) h += adding === "itinerary" ? `<form class="add" id="dayf"><div class="fg"><div class="f"><label for="dy-date">Fecha</label><input class="inp" type="date" id="dy-date" required value="${esc(t.start)}"></div>
+      <div class="f"><label for="dy-title">Título del día</label><input class="inp" id="dy-title" required></div><div class="f"><label for="dy-sleep">Duermes en</label><input class="inp" id="dy-sleep"></div></div>
+      <div class="f"><label for="dy-items">Planes (una línea por plan; empieza con la hora si quieres, p. ej. «9:00 Museo»)</label><textarea class="inp" id="dy-items"></textarea></div>
+      <div class="actions"><button class="btn sea" type="submit">Añadir día</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
+      : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="itinerary">+ Añadir día</button></div>`;
+    return h + `</section>` + propHtml(t);
+  }
+  case "tips": {
+    let h = `<section class="card"><div class="sh"><h2>Tips y consejos</h2></div><div class="tipgrid">${(t.tips||[]).map(x => `<div class="tip"><h4>${esc(x.title)}</h4><p>${esc(x.detail)}</p>${canWrite ? `<button class="iconbtn danger" style="justify-self:start" data-del="tips:${esc(x.id)}">${delArm === "tips:"+x.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("")}</div>`;
+    if (canWrite) h += adding === "tips" ? `<form class="add" id="tipf"><div class="f"><label for="tp-title">Título</label><input class="inp" id="tp-title" required></div><div class="f"><label for="tp-detail">Consejo</label><textarea class="inp" id="tp-detail" required></textarea></div><div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
+      : `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="tips">+ Añadir consejo</button>${sample ? `<button class="btn ghost sm" data-moretips>Pedir más tips a Claude</button>` : ""}</div>`;
+    return h + `</section>`;
+  }
+  case "pendientes": {
+    const arr = t.todo || [], left = todoLeft(t);
+    return `<section class="card"><div class="sh"><h2>Pendientes</h2><span class="d">${arr.length-left} de ${arr.length} hechos</span></div><div class="bar" style="margin-bottom:8px"><span style="width:${arr.length ? Math.round((arr.length-left)/arr.length*100) : 0}%"></span></div>
+    ${arr.map(x => `<div class="tdrow ${x.done?"done":""}"><input type="checkbox" id="td-${esc(x.id)}" data-todo="${esc(x.id)}" ${x.done?"checked":""} ${canWrite?"":"disabled"}><label for="td-${esc(x.id)}">${esc(x.text)}</label>${canWrite ? `<button class="iconbtn danger" data-del="todo:${esc(x.id)}">${delArm === "todo:"+x.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("") || `<div class="empty">Sin tareas.</div>`}
+    ${canWrite ? `<form class="add" id="todof" style="grid-template-columns:minmax(0,1fr) auto;align-items:end"><div class="f"><label for="td-new">Nueva tarea</label><input class="inp" id="td-new" required placeholder="Comprar adaptador de enchufe"></div><button class="btn sea" type="submit">Añadir</button></form>` : ""}</section>`;
+  }
+  case "documentos": {
+    const docs = t.docs || [], links = t.links || [];
+    const ft = d => /pdf/i.test(d.type||d.title) ? ["PDF",""] : /image|png|jpe?g/i.test(d.type||d.title) ? ["IMG","img"] : ["DOC",""];
+    let h = `<section class="card"><div class="sh"><h2>Copias de reservas y documentos</h2><span class="d">Se abren en una pestaña nueva</span></div>
+      <div class="docs">${docs.map(d => { const [lab,cls] = ft(d); return `<div style="display:grid;gap:4px"><a class="doc" href="${esc(blobUrl(d.asset))}" target="_blank" rel="noopener"><span class="ft ${cls}">${lab}</span><span style="min-width:0"><b>${esc(d.title)}</b><span>${esc([d.sec ? "Pestaña " + (SECNAME[d.sec] || d.sec) : "", d.note || ""].filter(Boolean).join(" · "))}</span></span><span aria-hidden="true">↗</span></a>${canWrite ? `<button class="iconbtn danger" style="justify-self:end" data-del="docs:${esc(d.id)}">${delArm === "docs:"+d.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`; }).join("") || `<div class="empty">Sin documentos.</div>`}</div>
+      ${assets && canWrite ? `<div class="actions" style="margin-top:12px"><label class="btn ghost sm" style="cursor:pointer">+ Subir PDF o foto<input type="file" id="docin" accept="application/pdf,image/*,text/plain,text/csv" multiple hidden></label></div>` : ""}</section>
+      ${(() => { const LBL = {tickets:"Billetes", stays:"Alojamiento", excursions:"Excursiones", itinerary:"Itinerario", insurance:"Seguros"};
+        const rows = ["tickets","stays","excursions","itinerary","insurance"].flatMap(f => (t[f]||[]).filter(x => x.status !== "cancel" && itemFiles(x, f).length).map(x => `<div class="attrow"><b>${esc(x.title)}</b><span>${LBL[f]}${x.when ? " · " + esc(x.when) : x.date ? " · " + esc(x.date) : ""}</span><div class="att">${attChips(itemFiles(x, f), "")}</div></div>`));
+        return rows.length ? `<section class="card"><div class="sh"><h2>Adjuntos de cada reserva</h2><span class="d">Los que has puesto en cada línea de Billetes, Alojamiento, Excursiones e Itinerario</span></div>${rows.join("")}</section>` : ""; })()}
+      <section class="card"><div class="sh"><h2>Enlaces</h2><span class="d">Reservas online, webs de proveedores</span></div><div class="docs">${links.map(l => `<div style="display:grid;gap:4px"><a class="doc" href="${esc(l.url)}" target="_blank" rel="noopener"><span class="ft lnk">WEB</span><span style="min-width:0"><b>${esc(l.title)}</b><span>${esc((l.url||"").replace(/^https?:\/\//,"").split("/")[0])}</span></span><span aria-hidden="true">↗</span></a>${canWrite ? `<button class="iconbtn danger" style="justify-self:end" data-del="links:${esc(l.id)}">${delArm === "links:"+l.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("") || `<div class="empty">Sin enlaces.</div>`}</div>
+      ${canWrite ? `<form class="add" id="linkf"><div class="fg"><div class="f"><label for="lk-title">Nombre</label><input class="inp" id="lk-title" required placeholder="Reserva del coche"></div><div class="f"><label for="lk-url">Enlace</label><input class="inp" id="lk-url" type="url" required placeholder="https://"></div></div><div class="actions"><button class="btn sea sm" type="submit">Añadir enlace</button></div></form>` : ""}</section>`;
+    return h;
+  }
+  case "opciones": return optionsHtml(t);
+  case "restaurantes": return restHtml(t);
+  case "tiempo": return weatherHtml(t);
+  case "util": return utilHtml(t);
+  case "maleta": return packHtml(t);
+  case "seguros": return `<section class="card"><div class="sh"><h2>Seguros</h2><span class="d">Pólizas del viaje: qué cubren, a quién y cómo reclamar</span></div>${itemList(t,"insurance", () => ICON.seguro)}</section>`;
+  }
+  return "";
+}
+
+/* ---------- packing list (Maleta) ---------- */
+const PACK_CATS = [["docs","Documentos"],["elec","Electrónica"],["meds","Botiquín"],["ropa","Ropa"],["hig","Aseo"],["otros","Otros"],["antes","Antes de salir"]];
+const PACK_TYPES = [["largo","Viaje largo / lejano"],["verano","Corto de verano"],["invierno","Corto de invierno"]];
+/* Base: tu Excel «Lista viaje» (3 pestañas), revisado. Cada línea: categoría|artículo|tipos (L=largo, V=verano, I=invierno) */
+const PACK_BASE = `docs|Pasaportes|LVI
+docs|DNI|LVI
+docs|Pasaporte USA de Álex|L
+docs|Visados / ESTA|LVI
+docs|Tarjetas de embarque|LVI
+docs|Tarjetas de crédito|LVI
+docs|Efectivo (euros y moneda local)|LVI
+docs|Tarjeta Sanitas|LVI
+docs|Póliza del seguro de viaje|LVI
+docs|Carnet de conducir|LVI
+docs|Carnet de conducir internacional|LVI
+docs|Carnet de prensa|LVI
+docs|Reservas (hoteles, coche, excursiones)|LVI
+elec|iPhones|LVI
+elec|Cargadores de iPhone|LVI
+elec|Cables (2)|LVI
+elec|Tablet y su cargador|LVI
+elec|eBook y su cargador|LVI
+elec|Auriculares y su cargador|LVI
+elec|Adaptador de enchufe (el de AIM)|LVI
+elec|Portátil|LVI
+elec|Cargador del portátil|LVI
+elec|Ratón|V
+elec|Móviles de empresa|V
+elec|GoPro|LV
+elec|Baterías GoPro|LVI
+elec|Soporte GoPro|LVI
+meds|Apiretal|LVI
+meds|Dalsy|LVI
+meds|Ibuprofeno|LVI
+meds|Dolalgial|LVI
+meds|Antihistamínico|LVI
+meds|Antibiótico|LVI
+meds|Ventolín|LVI
+meds|Pantoprazol|LVI
+meds|Fortasec|LVI
+meds|Cleboril|LVI
+meds|Relec|LV
+meds|Biodramina|L
+meds|Ashwagandha|LI
+meds|Pastillas para dormir|LVI
+meds|Termómetro|LVI
+meds|Tiritas|LVI
+meds|Crema para picaduras|L
+ropa|Bragas|LVI
+ropa|Calzoncillos|LVI
+ropa|Calcetines|VI
+ropa|Camisetas|LVI
+ropa|Pantalones|LVI
+ropa|Vestidos|L
+ropa|Bañador|LV
+ropa|Camiseta de protección UV|LV
+ropa|Sombrero|LV
+ropa|Sandalias Teva (2)|L
+ropa|Chanclas de ducha|LVI
+ropa|Botas Ugg|I
+ropa|Camiseta térmica|I
+ropa|Mallas térmicas|I
+ropa|Plumas|I
+ropa|Gorro|I
+ropa|Braga de cuello|I
+hig|Cepillo de dientes|LVI
+hig|Pasta de dientes|LVI
+hig|Hilo dental|LVI
+hig|Lentillas|LVI
+hig|Líquido de lentillas|LVI
+hig|Portalentillas|LVI
+hig|Crema de cara|LVI
+hig|Crema solar|LV
+hig|Hidratante (after sun)|V
+hig|Cepillo de pelo|LVI
+hig|Pinzas de pelo|LVI
+hig|Diadema|L
+hig|Pinzas de depilar|LVI
+hig|Planchas de pelo|LVI
+hig|Secador pequeño|LI
+hig|Cortaúñas|LVI
+otros|Riñonera|LVI
+otros|Coozy|LVI
+otros|Gafas de sol|LVI
+otros|Gafas de ver|LVI
+otros|Mochila|LVI
+otros|Guías de viaje|LVI
+otros|Pastillero|LVI
+otros|Bolígrafo (para formularios de aduana)|LVI
+otros|Dados|LVI
+otros|Cartas|LVI
+otros|Petaca|LI
+otros|Antifaz|LVI
+otros|Almohada de viaje|LVI
+otros|Funda impermeable para iPhone|LV
+otros|Bolsa estanca / bolsas impermeables|LV
+otros|Bolsa de playa|L
+otros|Toallas Decathlon|LV
+otros|Gafas de snorkel / buceo|LV
+otros|Aletas|V
+otros|Escarpines|V
+antes|Vacuna del gato al día y quién lo cuida|LVI
+antes|Deberes de Álex|L
+antes|Check-in online de los vuelos|LVI
+antes|Avisar al banco del viaje|L`;
+const PACK = PACK_BASE.split("\n").map(l => { const [c, n, ty] = l.split("|"); return {k: c + ":" + n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-"), c, n, ty}; });
+const guessPack = t => { const n = nights(t), m = pd(t.start).getMonth(), far = /asia|tailand|vietnam|camboya|brasil|baja|usa|ee\. uu|méxico|panam|india|zanz|japón|cuba|costa rica|islandia/i.test((t.place||"") + " " + (t.name||""));
+  return far || n >= 8 ? "largo" : (m >= 4 && m <= 8 ? "verano" : "invierno"); };
+const packType = t => (t.packing && t.packing.type) || guessPack(t);
+function packItems(t){
+  const P = t.packing || {}, ty = {largo:"L", verano:"V", invierno:"I"}[packType(t)], gone = new Set(P.removed || []);
+  const base = PACK.filter(x => x.ty.includes(ty) && !gone.has(x.k));
+  return [...base, ...(P.extra || []).map(x => ({k: "x:" + x.id, c: x.c || "otros", n: x.n, own: true}))];
+}
+const packLeft = t => { if (t.past || status(t) === "pasado") return 0; const ch = (t.packing||{}).checked || {}; return packItems(t).filter(x => !ch[x.k]).length; };
+function packHtml(t){
+  const P = t.packing || {}, ch = P.checked || {}, items = packItems(t), done = items.filter(x => ch[x.k]).length, ty = packType(t);
+  const plugNeed = (() => { const ks = plugTypes((t.practical||{}).plugs); return ks.length && !ks.some(k => PLUGFIT.has(k)); })();
+  let h = `<section class="card"><div class="packhead"><div><h2>Maleta</h2><span class="muted" style="font-size:12.5px">${done} de ${items.length} metidos · lista propia de este viaje, empieza vacía en cada viaje nuevo</span></div>
+    <div class="packtypes" role="group" aria-label="Tipo de viaje">${PACK_TYPES.map(([k,l]) => `<button type="button" data-packtype="${k}" aria-pressed="${ty===k}">${l}</button>`).join("")}</div></div>
+    <div class="bar"><span style="width:${items.length ? Math.round(done/items.length*100) : 0}%"></span></div>
+    ${plugNeed ? `<div class="alert warn" style="margin-top:12px"><span class="ic">!</span><div>En este destino tus enchufes no sirven: no te olvides del adaptador.</div></div>` : ""}
+    ${!P.type ? `<p class="muted" style="margin:10px 0 0;font-size:13px">He elegido «${esc(PACK_TYPES.find(x=>x[0]===ty)[1])}» por las fechas y el destino; cámbialo arriba si no encaja.</p>` : ""}
+    <div class="packgrid">${PACK_CATS.map(([c,l]) => { const arr = items.filter(x => x.c === c); if (!arr.length) return ""; const dn = arr.filter(x => ch[x.k]).length;
+      return `<div class="packcat"><h3>${l}<span>${dn}/${arr.length}</span></h3>${arr.map(x => { const id = "pk-" + x.k.replace(/[^a-z0-9]/gi,"_");
+        return `<div class="pk ${ch[x.k] ? "done" : ""}"><input type="checkbox" id="${esc(id)}" data-pack="${esc(x.k)}" ${ch[x.k] ? "checked" : ""} ${canWrite ? "" : "disabled"}><label for="${esc(id)}">${esc(x.n)}</label>${x.own ? `<span class="tag">tuyo</span>` : ""}${canWrite ? `<button class="x" type="button" data-packrm="${esc(x.k)}" aria-label="Quitar ${esc(x.n)} de esta lista">✕</button>` : ""}</div>`; }).join("")}</div>`; }).join("")}</div>
+    ${canWrite ? `<form class="packadd" id="packf"><div class="f"><label for="pk-new">Añadir algo solo para este viaje</label><input class="inp" id="pk-new" required placeholder="Repelente de mosquitos"></div>
+      <div class="f"><label for="pk-cat">Dónde</label><select class="inp" id="pk-cat">${PACK_CATS.map(([c,l]) => `<option value="${c}" ${c==="otros"?"selected":""}>${l}</option>`).join("")}</select></div><button class="btn sea" type="submit">Añadir</button></form>
+      <div class="actions" style="margin-top:12px">${done ? `<button class="btn ghost sm" type="button" data-packreset>${delArm === "packreset" ? "¿Seguro? Pulsa otra vez" : "Desmarcar todo"}</button>` : ""}${(P.removed||[]).length ? `<button class="btn ghost sm" type="button" data-packrestore>Recuperar lo quitado (${P.removed.length})</button>` : ""}</div>` : ""}</section>`;
+  return h;
+}
+
+/* ---------- restaurants ---------- */
+const places = t => [...new Set((t.itinerary||[]).map(d => d.sleep).filter(s => s && !/avi[oó]n|casa|confirmar|según|vuelo/i.test(s)))];
+const RPREFS = ["Cocina local","Pescado y marisco","Barato","Con niños","Vegetariano","Con vistas","Para cenar tarde"];
+function restHtml(t){
+  const st = restState[t.id] || (restState[t.id] = {place: places(t)[0] || "", prefs: ["Cocina local"], note:"", res:null, busy:false, err:""});
+  const saved = t.restaurants || [];
+  let h = `<section class="card"><div class="sh"><h2>Buscar restaurantes</h2><span class="d">Sugerencias de Claude, compruébalas en Google Maps</span></div>`;
+  if (!sample) h += `<p class="muted" style="margin:0 0 10px">El buscador con IA no está disponible en esta vista. Puedes buscar directamente en Google Maps:</p>`;
+  h += `<div class="stack"><div class="fg"><div class="f"><label for="r-place">Zona</label><input class="inp" id="r-place" list="r-places" value="${esc(st.place)}"><datalist id="r-places">${places(t).map(p => `<option value="${esc(p)}">`).join("")}</datalist></div>
+    <div class="f"><label for="r-note">Algo más</label><input class="inp" id="r-note" value="${esc(st.note)}" placeholder="cerca del puerto, para comer hoy..."></div></div>
+    <div class="chips">${RPREFS.map(p => `<button type="button" class="tchip" data-rpref="${esc(p)}" aria-pressed="${st.prefs.includes(p)}">${esc(p)}</button>`).join("")}</div>
+    <div class="actions">${sample ? `<button class="btn sea" data-rsearch ${st.busy?"disabled":""}>${st.busy ? "Buscando…" : "Buscar con IA"}</button>` : ""}<a class="btn ghost" target="_blank" rel="noopener" href="https://www.google.com/maps/search/${encodeURIComponent("restaurantes " + st.prefs.join(" ") + " " + st.place)}">Abrir en Google Maps ↗</a></div>
+    ${st.err ? `<div class="alert warn"><span class="ic">!</span><div>${esc(st.err)}</div></div>` : ""}
+    ${st.busy ? `<div class="loading"><span class="spin"></span>Pensando en sitios para ${esc(st.place)}…</div>` : ""}
+    ${st.res ? `<div class="rest">${st.res.map((r,i) => restCard(r, t, i, false)).join("")}</div><p class="muted" style="font-size:12.5px;margin:0">Claude no consulta internet en tiempo real: confirma horarios y que siguen abiertos antes de ir.</p>` : ""}</div></section>`;
+  h += `<section class="card"><div class="sh"><h2>Guardados</h2><span class="d">${saved.length} sitios</span></div>${saved.length ? `<div class="rest">${saved.map((r,i) => restCard(r, t, i, true)).join("")}</div>` : `<div class="empty">Guarda aquí los que te gusten.</div>`}</section>`;
+  return h;
+}
+function restCard(r, t, i, isSaved){
+  const q = encodeURIComponent(`${r.name} ${r.area || ""} ${r.city || ""}`);
+  return `<div class="rcard"><span class="tp">${esc([r.type, r.price].filter(Boolean).join(" · "))}</span><h4>${esc(r.name)}</h4>${r.area ? `<span class="muted" style="font-size:12.5px">${esc(r.area)}${r.city ? ", " + esc(r.city) : ""}</span>` : ""}<p>${esc(r.why||"")}</p>
+  <div class="actions"><a class="btn ghost sm" href="https://www.google.com/maps/search/${q}" target="_blank" rel="noopener">Mapa ↗</a>
+  ${canWrite ? (isSaved ? `<button class="iconbtn danger" data-del="restaurants:${esc(r.id)}">${delArm === "restaurants:"+r.id ? "¿Seguro?" : "Quitar"}</button>` : `<button class="btn ghost sm" data-rsave="${i}">Guardar</button>`) : ""}</div></div>`;
+}
+async function runRest(t){
+  const st = restState[t.id]; st.place = $("#r-place").value.trim(); st.note = $("#r-note").value.trim();
+  if (!st.place){ st.err = "Escribe una zona."; return renderSec(); }
+  st.busy = true; st.err = ""; st.res = null; renderSec();
+  const prompt = `Eres un experto local en gastronomía. Recomienda 6 restaurantes reales y conocidos en "${st.place}" (viaje: ${t.place}). Preferencias: ${st.prefs.join(", ") || "ninguna"}. ${st.note ? "Además: " + st.note + "." : ""} Viajeros: ${t.travelers}. Fechas del viaje: ${t.start} a ${t.end}.
+Prioriza sitios con trayectoria que probablemente sigan abiertos. Escribe en español, sin rayas largas.
+Responde solo con un array JSON de objetos {"name","area","city","type","price","why"}: type = tipo de cocina, price = "€", "€€" o "€€€", why = una frase de por qué ir y qué pedir. Ejemplo: [{"name":"Da Michele","area":"Forcella","city":"Nápoles","type":"Pizzería","price":"€","why":"La pizza margherita clásica desde 1870; hay cola."}]`;
+  try {
+    const out = await sample.json(prompt, {modelTier:"default"});
+    st.res = Array.isArray(out) ? out.filter(r => r && r.name).slice(0,8) : [];
+    if (!st.res.length) st.err = "No ha salido ninguna sugerencia. Prueba con otra zona.";
+  } catch(e){ st.err = errText(e); }
+  st.busy = false; renderSec();
+}
+function errText(e){
+  const c = e && e.code;
+  return c === "not_granted" ? "Hay que permitir que la página consulte a Claude (menú Permisos del artifact)." : c === "rate_limited" ? "Demasiadas consultas seguidas. Espera un momento." : c === "invalid_json" ? "La respuesta no ha llegado en buen formato. Pulsa otra vez." : "No se ha podido consultar a Claude ahora mismo.";
+}
+
+
+/* ---------- AI itinerary proposal ---------- */
+function propHtml(t){
+  if (!sample) return "";
+  const st = propState[t.id] || (propState[t.id] = {open:false, note:"", busy:false, res:null, err:""});
+  const has = (t.itinerary||[]).length;
+  let h = `<section class="card"><div class="sh"><h2>Proponer itinerario con IA</h2><span class="d">Claude lo prepara con tus billetes, hoteles y excursiones</span></div>`;
+  if (!st.open && !st.res) return h + `<div class="actions"><button class="btn sea" data-prop-open>Proponer itinerario</button></div></section>`;
+  h += `<div class="stack"><div class="f"><label for="pr-note">¿Qué os apetece? (ritmo, intereses, cosas que evitar)</label><textarea class="inp" id="pr-note" placeholder="Ritmo tranquilo, naturaleza y buena comida, nada de caballos...">${esc(st.note)}</textarea></div>
+    <div class="actions"><button class="btn sea" data-prop-run ${st.busy?"disabled":""}>${st.busy ? "Preparando…" : (st.res ? "Proponer otro" : "Proponer")}</button><button class="btn ghost" data-prop-close>Cerrar</button></div>
+    ${st.err ? `<div class="alert warn"><span class="ic">!</span><div>${esc(st.err)}</div></div>` : ""}
+    ${st.busy ? `<div class="loading"><span class="spin"></span>Pensando el viaje día a día…</div>` : ""}`;
+  if (st.res){
+    h += `<div style="border:1px dashed var(--line);border-radius:10px;padding:4px 14px">${st.res.map(d => { const D = pd(d.date);
+      return `<div class="day"><div class="dd"><b>${D.getDate()}</b><span>${DOW[D.getDay()]} · ${MONTHS[D.getMonth()]}</span></div><div style="min-width:0"><h4>${esc(d.title)}</h4><span class="sleep">Duerme en ${esc(d.sleep||"")}</span><ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul></div></div>`; }).join("")}</div>
+      ${canWrite ? `<div class="actions">${has ? `<button class="btn sea" data-prop-save="missing">Añadir solo los días que faltan</button><button class="btn ghost" data-prop-save="replace">${delArm === "prop-replace" ? "Pulsa otra vez para sustituir el itinerario" : "Sustituir el itinerario actual"}</button>` : `<button class="btn sea" data-prop-save="replace">Guardar en la ficha</button>`}</div>` : ""}`;
+  }
+  return h + `</div></section>`;
+}
+async function runProp(t){
+  const st = propState[t.id]; st.note = ($("#pr-note")?.value || "").trim(); st.busy = true; st.err = ""; renderSec();
+  const ctx = {destinos: t.place, ida: t.start, vuelta: t.end, viajeros: t.travelers,
+    billetes: (t.tickets||[]).filter(x => x.status !== "cancel").map(x => [x.title, x.when].join(" | ")),
+    alojamiento: (t.stays||[]).filter(x => x.status !== "cancel").map(x => [x.title, x.when, x.detail].join(" | ")),
+    excursiones: (t.excursions||[]).filter(x => x.status !== "cancel").map(x => [x.title, x.when, x.status].join(" | ")),
+    itinerario_actual: (t.itinerary||[]).map(d => d.date + " " + d.title)};
+  const prompt = `Eres un planificador de viajes experto. Propón un itinerario día a día para este viaje, desde ${t.start} hasta ${t.end}, ambos incluidos.
+Respeta los vuelos, alojamientos y excursiones ya reservados (fechas y horas). Incluye tiempos de traslado realistas y deja huecos para descansar. Escribe en español, frases cortas, sin rayas largas.
+Preferencias: ${st.note || "ninguna en particular"}.
+Datos del viaje (JSON): ${JSON.stringify(ctx)}
+Responde solo con un array JSON, un objeto por día: {"date":"AAAA-MM-DD","title":"título corto","sleep":"ciudad donde se duerme","items":[{"time":"9:00 o Mañana/Tarde/Noche","text":"plan"}]}. Entre 2 y 5 items por día.`;
+  try {
+    const out = await sample.json(prompt, {modelTier:"complex"});
+    st.res = (Array.isArray(out) ? out : []).filter(d => d && /^\d{4}-\d{2}-\d{2}$/.test(d.date || "")).map(d => ({id: uid(), date: d.date, title: String(d.title||""), sleep: String(d.sleep||""), items: (d.items||[]).map(i => ({time: String(i.time||""), text: String(i.text||"")}))}));
+    if (!st.res.length){ st.res = null; st.err = "No ha salido ninguna propuesta. Prueba otra vez."; }
+  } catch(e){ st.err = errText(e); }
+  st.busy = false; renderSec();
+}
+
+/* ---------- weather ---------- */
+const WMO = c => c==null ? ["·",""] : c===0 ? ["☀️","Despejado"] : c<=2 ? ["🌤️","Poco nuboso"] : c===3 ? ["☁️","Nublado"] : c<=48 ? ["🌫️","Niebla"] : c<=57 ? ["🌦️","Llovizna"] : c<=67 ? ["🌧️","Lluvia"] : c<=77 ? ["🌨️","Nieve"] : c<=82 ? ["🌧️","Chubascos"] : ["⛈️","Tormenta"];
+function weatherHtml(t){
+  const w = weather[t.id]; const dt = daysTo(t.start);
+  let h = `<section class="card"><div class="sh"><h2>Previsión</h2><span class="d">${w && w.updatedAt ? "Actualizada " + esc(new Date(w.updatedAt).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})) : "Sin datos todavía"}</span></div>`;
+  if (w && (w.days||[]).length){
+    const byPlace = {}; w.days.forEach(d => (byPlace[d.place] = byPlace[d.place] || []).push(d));
+    h += Object.entries(byPlace).map(([p, ds]) => `<h3 style="margin:6px 0 8px">${esc(p)}</h3><div class="wx">${ds.map(d => { const [e, txt] = WMO(d.code); const D = pd(d.date);
+      return `<div class="wxd"><span class="d">${DOW[D.getDay()]} ${D.getDate()} ${MONTHS[D.getMonth()]}</span><span class="e" aria-hidden="true">${e}</span><span class="t">${Math.round(d.tmax)}° <span>${Math.round(d.tmin)}°</span></span><span class="x">${esc(d.desc || txt)}${d.rain != null ? " · " + Math.round(d.rain) + "% lluvia" : ""}</span></div>`; }).join("")}</div>`).join("");
+  } else {
+    h += `<p style="margin:0 0 10px;color:var(--ink2)">${dt > 14 ? `Faltan ${dt} días: la previsión fiable empieza unos 10 días antes. Mientras tanto, esto es lo normal en esas fechas.` : "Aún no hay previsión guardada para este viaje. Ábrela en directo:"}</p>`;
+  }
+  h += `<div class="actions" style="margin-top:12px">${places(t).map(p => `<a class="btn ghost sm" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent("tiempo " + p + " próximos 10 días")}">${esc(p)} ↗</a>`).join("")}</div></section>`;
+  h += `<section class="card"><div class="sh"><h2>Clima habitual</h2><span class="d">Para esas fechas</span></div>${(t.climate||[]).map(c => `<div class="item"><span class="ico" aria-hidden="true">🌡️</span><div style="min-width:0"><h4>${esc(c.place)}</h4><p>${esc(c.text)}</p></div><div class="side"></div></div>`).join("") || `<div class="empty">Sin datos de clima.</div>`}</section>`;
+  return h;
+}
+
+/* ---------- useful tools ---------- */
+function utilHtml(t){
+  const p = t.practical || {}; const cur = (p.currency||[]).filter(c => c.code !== "EUR");
+  const tzMap = {"brasil-2027":["America/Sao_Paulo","America/Campo_Grande"], "baja-2027":["America/Los_Angeles","America/Mazatlan"]};
+  const zones = tzMap[t.id] || [];
+  let h = `<div class="two"><div class="stack">`;
+  if (cur.length) h += `<section class="card"><div class="sh"><h2>Conversor de moneda</h2><span class="d">Cambio aproximado, edítalo si cambia</span></div><div class="conv">${cur.map((c,i) => `
+    <div class="convrow"><div class="f"><label for="cv-eur-${i}">Euros</label><input class="inp big" id="cv-eur-${i}" inputmode="decimal" data-cv="${i}" data-dir="eur" value="10"></div><span class="eq">=</span>
+    <div class="f"><label for="cv-x-${i}">${esc(c.name)} (${esc(c.code)})</label><input class="inp big" id="cv-x-${i}" inputmode="decimal" data-cv="${i}" data-dir="x" value="${(10*c.rate).toFixed(2)}"></div></div>
+    <div class="f" style="max-width:260px"><label for="cv-rate-${i}">1 € = ? ${esc(c.code)}</label><input class="inp" id="cv-rate-${i}" inputmode="decimal" data-rate="${i}" value="${c.rate}"></div>`).join("")}</div></section>`;
+  h += `<section class="card"><div class="sh"><h2>Emergencias</h2></div><p class="big" style="margin:0;user-select:all">${esc(p.emergency || "112")}</p><p class="muted" style="margin:6px 0 0;font-size:13px">Pólizas y teléfonos de asistencia en la pestaña Seguros; contactos de proveedores en Excursiones.</p></section>`;
+  h += `</div><div class="stack"><section class="card"><div class="sh"><h2>Hora local</h2></div><div id="clocks" data-z='${esc(JSON.stringify(zones))}'></div><p class="muted" style="margin:8px 0 0;font-size:13px">${esc(p.tz || "")}</p></section>
+    <section class="card"><div class="sh"><h2>Enchufes</h2></div><p style="margin:0">${esc(p.plugs || "")}</p>${plugsHtml(p.plugs)}</section>
+    ${sample ? `<section class="card"><div class="sh"><h2>Frases útiles</h2></div><p class="muted" style="margin:0 0 10px;font-size:13.5px">Pide al asistente que te traduzca algo o que te lea una carta con una foto.</p><div class="chips">${["¿Me trae la cuenta, por favor?","Soy alérgica a…","¿Dónde está la farmacia?","Una mesa para dos"].map(s => `<button class="tchip" data-ask="${esc("Tradúceme al idioma local y dime cómo se pronuncia: " + s)}">${esc(s)}</button>`).join("")}</div></section>` : ""}
+    </div></div>`;
+  return h;
+}
+function tickClocks(){
+  const el = $("#clocks"); if (!el) return;
+  let zones = []; try { zones = JSON.parse(el.dataset.z || "[]"); } catch(e){}
+  const f = z => new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",timeZone:z});
+  const rows = [["Madrid","Europe/Madrid"], ...zones.map(z => [z.split("/")[1].replace("_"," "), z])];
+  el.innerHTML = rows.map(([n,z]) => { let v = "--:--"; try { v = f(z); } catch(e){} return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line2)"><span>${esc(n)}</span><b style="font-weight:550;font-size:18px">${v}</b></div>`; }).join("");
+}
+setInterval(tickClocks, 30000);
+
+/* ---------- PDF export ---------- */
+let pdfLib = null;
+function loadPdfLib(){
+  if (window.html2pdf) return Promise.resolve();
+  return pdfLib || (pdfLib = new Promise((res, rej) => { const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+    s.onload = res; s.onerror = () => { pdfLib = null; rej(new Error("load")); }; document.head.append(s); }));
+}
+async function exportPdf(btn){
+  const t = cur(); if (!t) return;
+  const label = (SECTIONS.find(([k]) => k === sec) || [0, sec])[1];
+  const old = btn.textContent; btn.disabled = true; btn.textContent = "Preparando PDF…";
+  const holder = document.createElement("div"); holder.style.cssText = "position:fixed;left:-10000px;top:0";
+  try {
+    await loadPdfLib();
+    const wrap = document.createElement("div"); wrap.className = "pdfdoc";
+    wrap.innerHTML = `<div class="pdfhead"><span class="wl"><span class="wl-a">Wander</span><span class="wl-b">lust</span></span><h1>${esc(t.name)} · ${esc(label)}</h1><p>${esc(t.place||"")} · ${esc(fmtRange(t.start,t.end))}${t.travelers ? " · " + esc(t.travelers) : ""}</p></div>` + ($("#secbody")?.innerHTML || "");
+    wrap.querySelectorAll("input[type=checkbox]").forEach(i => { const sp = document.createElement("span"); sp.textContent = i.hasAttribute("checked") ? "☑" : "☐"; sp.style.fontSize = "16px"; i.replaceWith(sp); });
+    wrap.querySelectorAll("button,form,.actions,input,textarea,select,label.btn,.attbtn,.loading").forEach(e => e.remove());
+    holder.append(wrap); document.body.append(holder);
+    const filename = `Wanderlust - ${t.name} - ${label}.pdf`.replace(/[\\/:*?"<>|]/g, "");
+    const worker = html2pdf().set({margin:[12,12,14,12], filename, image:{type:"jpeg", quality:0.95},
+      html2canvas:{scale:2, useCORS:true, backgroundColor:"#ffffff"}, jsPDF:{unit:"mm", format:"a4", orientation:"portrait"},
+      pagebreak:{mode:["css","legacy"], avoid:[".item",".day",".tdrow",".alert",".rcard",".tip",".opt",".doc",".wxd",".kv"]}}).from(wrap);
+    const blob = await worker.outputPdf("blob");
+    let dl = null; try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(_){}
+    if (dl){
+      try { await dl.save({filename, data: blob}); toast("PDF listo"); }
+      catch(e){ if (e && e.code !== "declined") toast(e && e.code === "rate_limited" ? "Ya hay una descarga pendiente de confirmar" : "No se ha podido guardar el PDF"); }
+    } else {
+      const u = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = u; a.download = filename; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+    }
+  } catch(e){ toast("No se ha podido crear el PDF. Inténtalo de nuevo."); }
+  finally { holder.remove(); btn.disabled = false; btn.textContent = old; }
+}
+
+/* ---------- render ---------- */
+function render(){ renderTop(); if (view === "trip") renderTrip(); else renderHome(); updateCtx(); tickClocks(); }
+function renderSec(){ const t = cur(); const el = $("#secbody"); if (t && el){ el.innerHTML = secFull(t); tickClocks(); } else render(); }
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button,[data-open]"); if (!b) return;
+  const d = b.dataset;
+  if (b.id === "home" || "home" in d){ view = "home"; adding = null; editingMeta = false; render(); scrollTo(0,0); return; }
+  if (d.open){ tripId = d.open; view = "trip"; adding = null; delArm = null; editingMeta = false; render(); scrollTo(0,0); return; }
+  if (d.f){ filter = d.f; render(); return; }
+  if (d.packtype){ const t = cur(); await save(tripId, {packing: {...(t.packing||{}), type: d.packtype}}); return; }
+  if (d.packrm){ const t = cur(), P = t.packing || {};
+    if (d.packrm.startsWith("x:")) await save(tripId, {packing: {...P, extra: (P.extra||[]).filter(x => "x:" + x.id !== d.packrm)}});
+    else await save(tripId, {packing: {...P, removed: [...new Set([...(P.removed||[]), d.packrm])]}}); return; }
+  if ("packrestore" in d){ const t = cur(); await save(tripId, {packing: {...(t.packing||{}), removed: []}}); return; }
+  if ("packreset" in d){ if (delArm !== "packreset"){ delArm = "packreset"; renderSec(); return; } delArm = null; const t = cur(); await save(tripId, {packing: {...(t.packing||{}), checked: {}}}); return; }
+  if (d.jump){ document.getElementById(d.jump)?.scrollIntoView({behavior:"smooth"}); return; }
+  if (d.sec){ sec = d.sec; store.set("sec", sec); adding = null; delArm = null; render(); return; }
+  if (b.id === "newtrip"){ adding = "trip"; render(); $("#nt-name")?.focus(); return; }
+  if (d.add){ adding = d.add; renderSec(); document.querySelector("#secbody form.add input")?.focus(); return; }
+  if ("cancel" in d){ adding = null; view === "trip" ? renderSec() : render(); return; }
+  if ("editmeta" in d){ editingMeta = true; render(); return; }
+  if ("cancelmeta" in d){ editingMeta = false; delArm = null; render(); return; }
+  if ("deltrip" in d){
+    if (delArm !== "trip"){ delArm = "trip"; render(); return; }
+    try { await db.doc("trips/" + tripId).delete(); toast("Viaje borrado"); view = "home"; editingMeta = false; delArm = null; } catch(err){ toast("No se ha podido borrar"); }
+    return;
+  }
+  if ("pickopt" in d){ const t = cur(); if (t){ const o = {...(t.options||{}), chosen: d.pickopt || null}; if (await save(tripId, {options: o})) toast(d.pickopt ? "Opción elegida" : "Elección quitada"); } return; }
+  if ("uncover" in d){ await save(tripId, {cover: null}); return; }
+  if (d.del){
+    if (delArm !== d.del){ delArm = d.del; renderSec(); return; }
+    const [field, id] = d.del.split(":"); const t = cur();
+    delArm = null; await save(tripId, {[field]: (t[field]||[]).filter(x => x.id !== id)}); return;
+  }
+  if (d.cxkeep){ const [field, iid] = d.cxkeep.split(":"), t = cur(); if (t && await save(tripId, {[field]: (t[field]||[]).map(x => x.id === iid ? {...x, cancelKeep: true} : x)})) toast("Aviso quitado: la reserva se mantiene"); return; }
+  if (d.delatt){
+    const k = "att:" + d.delatt; if (delArm !== k){ delArm = k; renderSec(); return; }
+    delArm = null; const parts = d.delatt.split(":"), t = cur(); if (!t) return;
+    if (parts[0] === "sec"){ await save(tripId, {docs: (t.docs||[]).filter(x => x.id !== parts[2])}); return; }
+    const [field, iid, fid] = parts;
+    await save(tripId, {[field]: (t[field]||[]).map(x => { if (x.id !== iid) return x; if (fid === "__doc"){ const {doc, ...rest} = x; return rest; } return {...x, files: (x.files||[]).filter(f => f.id !== fid)}; })});
+    return;
+  }
+  if ("pdf" in d){ exportPdf(b); return; }
+  if (d.rpref){ const st = restState[tripId]; st.place = $("#r-place").value; st.note = $("#r-note").value; st.prefs = st.prefs.includes(d.rpref) ? st.prefs.filter(x => x !== d.rpref) : [...st.prefs, d.rpref]; renderSec(); return; }
+  if ("propOpen" in d){ propState[tripId].open = true; renderSec(); document.getElementById("pr-note")?.focus(); return; }
+  if ("propClose" in d){ propState[tripId] = {open:false, note:"", busy:false, res:null, err:""}; renderSec(); return; }
+  if ("propRun" in d){ runProp(cur()); return; }
+  if (d.propSave){
+    const t = cur(), st = propState[tripId];
+    if (d.propSave === "replace" && (t.itinerary||[]).length && delArm !== "prop-replace"){ delArm = "prop-replace"; renderSec(); return; }
+    delArm = null;
+    let next;
+    if (d.propSave === "missing"){ const have = new Set((t.itinerary||[]).map(x => x.date)); next = [...(t.itinerary||[]), ...st.res.filter(x => !have.has(x.date))]; }
+    else next = st.res;
+    next.sort((a,b) => a.date.localeCompare(b.date));
+    if (await save(tripId, {itinerary: next})){ propState[tripId] = {open:false, note:"", busy:false, res:null, err:""}; toast("Itinerario guardado"); }
+    return;
+  }
+  if ("rsearch" in d){ runRest(cur()); return; }
+  if (d.rsave != null){ const t = cur(), r = restState[tripId].res[+d.rsave]; if (await save(tripId, {restaurants: [...(t.restaurants||[]), {...r, id: uid()}]})) toast("Guardado"); return; }
+  if ("moretips" in d){ openDrawer(); ask(`Dame 5 consejos prácticos nuevos y concretos para este viaje que no estén ya en la lista de tips.`); return; }
+  if (d.ask){ openDrawer(); ask(d.ask); return; }
+  if ("say" in d){ speak(b.closest(".msg").dataset.text || ""); return; }
+});
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.dataset.pack){ const t = cur(), P = t.packing || {}; await save(tripId, {packing: {...P, checked: {...(P.checked||{}), [el.dataset.pack]: el.checked}}}); return; }
+  if (el.dataset.todo){ const t = cur(); await save(tripId, {todo: (t.todo||[]).map(x => x.id === el.dataset.todo ? {...x, done: el.checked} : x)}); return; }
+  if (el.id === "coverin" && el.files[0]){ const id = await upload(el.files[0]); if (id) await save(tripId, {cover: id}); return; }
+  if ((el.id === "docin" || el.dataset.attach) && el.files.length){
+    const key = el.dataset.attach || "", files = [...el.files]; el.value = "";
+    const ups = [];
+    for (const f of files){ const id = await upload(f); if (id) ups.push({id: uid(), title: f.name.replace(/\.[^.]+$/,""), asset: id, type: f.type, note: "Subido " + new Date().toLocaleDateString("es-ES")}); }
+    const t = cur(); if (!ups.length || !t) return;
+    let ok;
+    if (!key) ok = await save(tripId, {docs: [...(t.docs||[]), ...ups]});
+    else if (key.startsWith("sec:")) ok = await save(tripId, {docs: [...(t.docs||[]), ...ups.map(u => ({...u, sec: key.slice(4)}))]});
+    else { const i = key.indexOf(":"), field = key.slice(0, i), iid = key.slice(i + 1);
+      ok = await save(tripId, {[field]: (t[field]||[]).map(x => x.id === iid ? {...x, files: [...(x.files||[]), ...ups]} : x)}); }
+    if (ok) toast(ups.length > 1 ? ups.length + " documentos guardados" : "Documento guardado");
+    return; }
+  if (el.id === "photo" && el.files[0]){ pendingImg = el.files[0]; const u = URL.createObjectURL(pendingImg); $("#thumb").innerHTML = `<img src="${u}" alt=""> Foto lista para enviar <button class="iconbtn" type="button" id="unphoto">Quitar</button>`; $("#thumb").hidden = false; return; }
+  if (el.id === "speak"){ store.set("speak", el.checked ? "1" : ""); if (!el.checked) try { speechSynthesis.cancel(); } catch(_){} }
+});
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (el.dataset.cv != null || el.dataset.rate != null){
+    const i = el.dataset.cv ?? el.dataset.rate; const num = v => parseFloat(String(v).replace(",", ".")) || 0;
+    const rate = num($("#cv-rate-" + i).value);
+    if (el.dataset.dir === "x") $("#cv-eur-" + i).value = rate ? (num(el.value) / rate).toFixed(2) : "";
+    else $("#cv-x-" + i).value = (num($("#cv-eur-" + i).value) * rate).toFixed(2);
+  }
+});
+document.addEventListener("click", e => { if (e.target.id === "unphoto"){ pendingImg = null; $("#thumb").hidden = true; $("#photo").value = ""; } });
+async function upload(file){
+  if (!assets){ toast("Subir archivos no está disponible en esta vista"); return null; }
+  toast("Subiendo…");
+  try { const r = await assets.upload(file); toast("Subido"); return r.id; }
+  catch(e){ toast(e && e.code === "too_large" ? "El archivo es demasiado grande (máx. 20 MB)" : e && e.code === "unsupported_type" ? "Ese tipo de archivo no se admite" : "No se ha podido subir"); return null; }
+}
+document.addEventListener("submit", async e => {
+  const f = e.target; e.preventDefault();
+  const v = id => (document.getElementById(id)?.value || "").trim();
+  if (f.id === "itemf"){ const field = f.dataset.field, t = cur();
+    const it = {id: uid(), title: v("a-title"), when: v("a-when"), ref: v("a-ref"), price: v("a-price"), url: v("a-url"), status: v("a-st"), detail: v("a-detail"), cancelBy: v("a-cancel")};
+    if (field === "tickets") it.kind = v("a-kind");
+    Object.keys(it).forEach(k => it[k] === "" && delete it[k]);
+    adding = null; await save(tripId, {[field]: [...(t[field]||[]), it]}); return; }
+  if (f.id === "dayf"){ const t = cur();
+    const items = v("dy-items").split("\n").map(s => s.trim()).filter(Boolean).map(s => { const m = s.match(/^(\d{1,2}[:.]\d{2}|mañana|tarde|noche|mediodía)\s+(.*)$/i); return m ? {time: m[1], text: m[2]} : {time: "", text: s}; });
+    const day = {id: uid(), date: v("dy-date"), title: v("dy-title"), sleep: v("dy-sleep"), items};
+    adding = null; await save(tripId, {itinerary: [...(t.itinerary||[]), day].sort((a,b) => a.date.localeCompare(b.date))}); return; }
+  if (f.id === "tipf"){ const t = cur(); adding = null; await save(tripId, {tips: [...(t.tips||[]), {id: uid(), title: v("tp-title"), detail: v("tp-detail")}]}); return; }
+  if (f.id === "packf"){ const t = cur(), P = t.packing || {}; await save(tripId, {packing: {...P, extra: [...(P.extra||[]), {id: uid(), n: v("pk-new"), c: v("pk-cat") || "otros"}]}}); return; }
+  if (f.id === "todof"){ const t = cur(); await save(tripId, {todo: [...(t.todo||[]), {id: uid(), text: v("td-new"), done: false}]}); return; }
+  if (f.id === "linkf"){ const t = cur(); await save(tripId, {links: [...(t.links||[]), {id: uid(), title: v("lk-title"), url: v("lk-url")}]}); return; }
+  if (f.id === "metaf"){ if (v("m-end") < v("m-start")){ toast("La vuelta no puede ser antes que la ida"); return; }
+    editingMeta = false; await save(tripId, {name: v("m-name"), place: v("m-place"), start: v("m-start"), end: v("m-end"), travelers: v("m-who"), summary: v("m-sum")}); return; }
+  if (f.id === "tripf"){
+    if (v("nt-end") < v("nt-start")){ toast("La vuelta no puede ser antes que la ida"); return; }
+    const id = (v("nt-name").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "viaje") + "-" + Date.now().toString(36);
+    const doc = {name: v("nt-name"), place: v("nt-place"), start: v("nt-start"), end: v("nt-end"), travelers: v("nt-who"), art: v("nt-name"), cover: null, summary: "",
+      alerts: [], tickets: [], stays: [], itinerary: [], excursions: [], restaurants: [], tips: [], docs: [], links: [], todo: [], contacts: [], climate: [], practical: {}};
+    try { await db.doc("trips/" + id).set(doc); adding = null; tripId = id; view = "trip"; sec = "resumen"; toast("Viaje creado"); } catch(err){ toast("No se ha podido crear el viaje"); }
+    return; }
+  if (f.id === "askf"){ const q = $("#q").value.trim(); if (q || pendingImg) ask(q || "¿Qué pone en esta foto? Tradúcelo y explícamelo."); }
+});
+
+/* ---------- assistant ---------- */
+const SUGG = { home: ["¿Qué tengo pendiente en los próximos viajes?","¿Qué documentación necesito para cada viaje?","Haz una lista de equipaje para Brasil"],
+  trip: ["¿Qué hago mañana?","¿Qué debería reservar ya?","Ideas si llueve","Lista de equipaje"] };
+function updateCtx(){ const t = view === "trip" ? cur() : null; $("#dctx").textContent = t ? `Sobre: ${t.name}` : "Todos tus viajes"; }
+function openDrawer(){ $("#drawer").hidden = false; $("#fab").hidden = true; if (!chat.length) renderMsgs(); setTimeout(() => $("#q").focus(), 50); }
+function renderMsgs(){
+  const box = $("#msgs");
+  if (!chat.length){ const s = SUGG[view === "trip" ? "trip" : "home"];
+    box.innerHTML = `<div class="msg a">Hola, Laura. Pregúntame lo que quieras de tus viajes: qué toca hoy, qué falta reservar, traducciones, qué pedir en un restaurante… También puedes mandarme una foto de una carta o un cartel.</div><div class="sugg">${s.map(x => `<button class="tchip" data-ask="${esc(x)}">${esc(x)}</button>`).join("")}</div>`; return; }
+  box.innerHTML = chat.map(m => `<div class="msg ${m.role === "user" ? "u" : "a"}" data-text="${esc(m.content)}">${m.img ? "📷 " : ""}${esc(m.content)}${m.role !== "user" && m.content && !m.busy ? `<button class="say" data-say type="button">🔊 Escuchar</button>` : ""}</div>`).join("");
+  box.scrollTop = box.scrollHeight;
+}
+function tripContext(){
+  const compact = t => ({nombre: t.name, destinos: t.place, ida: t.start, vuelta: t.end, viajeros: t.travelers, avisos: allAlerts(t).map(a => a.text), plazos_cancelacion_gratis: cxItems(t).map(({x}) => x.title + ": " + x.cancelBy),
+    billetes: (t.tickets||[]).map(x => [x.title, x.when, x.status, x.ref].filter(Boolean).join(" | ")), alojamiento: (t.stays||[]).map(x => [x.title, x.when, x.status].join(" | ")),
+    itinerario: (t.itinerary||[]).map(d => `${d.date} ${d.title} (duerme en ${d.sleep}): ` + (d.items||[]).map(i => `${i.time} ${i.text}`).join("; ")),
+    excursiones: (t.excursions||[]).map(x => [x.title, x.when, x.status].join(" | ")), pendientes: (t.todo||[]).filter(x => !x.done).map(x => x.text), tips: (t.tips||[]).map(x => x.title + ": " + x.detail), practico: t.practical});
+  const t = view === "trip" ? cur() : null;
+  return t ? JSON.stringify(compact(t)) : JSON.stringify(sorted().filter(x => status(x) !== "pasado").map(compact));
+}
+async function ask(q){
+  if (!sample){ chat.push({role:"user", content:q}, {role:"assistant", content:"El asistente no está disponible en esta vista. Abre la app desde claude.ai con tu cuenta."}); renderMsgs(); return; }
+  const img = pendingImg; pendingImg = null; $("#thumb").hidden = true; $("#photo").value = ""; $("#q").value = "";
+  chat.push({role:"user", content:q, img: !!img}); const ans = {role:"assistant", content:"", busy:true}; chat.push(ans); renderMsgs();
+  const sys = `Eres el asistente de viaje de Laura (española, viaja a menudo con su hijo Álex). Hoy es ${today().toISOString().slice(0,10)}. Responde en español, breve y práctico, como un amigo que conoce bien el destino. No uses rayas largas (—), usa comas. Si algo depende de datos en tiempo real (horarios, precios actuales, tiempo), dilo y sugiere comprobarlo. Si te mandan una foto de una carta, cartel o documento, tradúcelo y explícalo.
+Datos de sus viajes (JSON): ${tripContext()}`;
+  const msgs = [{role:"user", content: sys + "\n\n(Ya está, a partir de aquí la conversación.)"}, {role:"assistant", content:"Entendido."},
+    ...chat.filter(m => m !== ans).slice(-12).map(m => ({role: m.role, content: m.content || "(foto)"}))];
+  try {
+    const opts = {cache:false, onText: u => { ans.content = u.text; renderMsgs(); }};
+    if (img) opts.images = [img];
+    const r = await sample(msgs, opts); ans.content = r.text;
+  } catch(e){ ans.content = e && e.code === "not_granted" ? "Hay que permitir que la página consulte a Claude (menú Permisos del artifact)." : e && /image/i.test(e.message||"") ? "No he podido leer la foto. Prueba con una imagen más pequeña." : errText(e); }
+  ans.busy = false; renderMsgs();
+  if ($("#speak").checked && ans.content) speak(ans.content);
+}
+function speak(text){
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text.replace(/[*#_`]/g,"")); u.lang = "es-ES"; u.rate = 1.02; speechSynthesis.speak(u); }
+  catch(e){ toast("Tu navegador no puede leer en voz alta aquí"); }
+}
+$("#fab").addEventListener("click", openDrawer);
+$("#dclose").addEventListener("click", () => { $("#drawer").hidden = true; $("#fab").hidden = false; try { speechSynthesis.cancel(); } catch(_){} });
+$("#dclear").addEventListener("click", () => { chat = []; renderMsgs(); });
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("#askf").requestSubmit(); } });
+$("#speak").checked = store.get("speak") === "1";
+if (!("speechSynthesis" in window)) $("#speak").closest("label").hidden = true;
+
+/* ---------- boot ---------- */
+render();
+(async () => {
+  const C = window.claude;
+  if (!C || !C.use){ loaded = true; render(); return; }
+  const [d, u, a, s] = await Promise.all([C.use("db"), C.use("user"), C.use("assets"), C.use("sample")].map(p => p.catch(() => null)));
+  db = d; assets = a; sample = s;
+  canWrite = !!db && (u ? (u.can ? (u.can("data.write") ?? true) : true) : true);
+  if (sample){ $("#fab").hidden = false; try { const lim = await sample.limits(); if (!lim.images) $("#photobtn").hidden = true; } catch(e){ $("#photobtn").hidden = true; } }
+  if (!db){ loaded = true; render(); return; }
+  db.collection("trips").onSnapshot(snap => {
+    trips = {}; snap.docs.forEach(doc => { trips[doc.id] = doc.data(); });
+    loaded = true; if (view === "trip" && !trips[tripId]) view = "home";
+    const fe = document.activeElement; const typing = fe && fe.matches("input:not([type=checkbox]),textarea") && fe.id !== "q";
+    if (!typing) render(); else renderTop();
+  }, () => { loaded = true; render(); });
+  db.collection("weather").onSnapshot(snap => { weather = {}; snap.docs.forEach(doc => { weather[doc.id] = doc.data(); }); if (view === "trip" && sec === "tiempo") renderSec(); }, () => {});
+})();
+})();
+</script>
+
+</body></html>
