@@ -1034,7 +1034,7 @@ const attachBtn = (key, label) => assets && canWrite ? `<label class="attbtn">${
 const itemFiles = (x, field) => [...(x.doc ? [{id: "__doc", asset: x.doc, title: "Copia de la reserva", type: "application/pdf"}] : []), ...(x.files || [])];
 const attRow = (x, field) => { const fl = itemFiles(x, field); const b = attachBtn(field + ":" + x.id); return fl.length || b ? `<div class="att">${attChips(fl, field + ":" + x.id)}${b}</div>` : ""; };
 const linkLabel = u => /booking\.com\/mytrips/.test(u) ? "Ver viaje en Booking ↗" : /booking\.com/.test(u) ? "Ver reserva en Booking ↗" : "Ver reserva ↗";
-const SECNAME = {resumen:"Resumen", billetes:"Billetes", alojamiento:"Alojamiento", itinerario:"Itinerario", opciones:"Itinerarios posibles", excursiones:"Excursiones", restaurantes:"Restaurantes", tiempo:"Tiempo", util:"Útil", seguros:"Seguros", maleta:"Maleta", tips:"Tips", pendientes:"Pendientes"};
+const SECNAME = {resumen:"Resumen", billetes:"Billetes", alojamiento:"Alojamiento", itinerario:"Itinerario", opciones:"Itinerarios posibles", excursiones:"Excursiones", restaurantes:"Restaurantes", tiempo:"Tiempo", util:"Útil", seguros:"Seguros", maleta:"Checklist", tips:"Tips", pendientes:"Pendientes"};
 function secDocs(t, s){
   const list = (t.docs || []).filter(d => d.sec === s);
   if (!list.length && !(assets && canWrite)) return "";
@@ -1451,7 +1451,7 @@ async function liveFx(){
 /* ---------- trip view ---------- */
 const SECTIONS = [
   ["resumen","Resumen"],["billetes","Billetes"],["alojamiento","Alojamiento"],["itinerario","Itinerario"],["mapa","Mapa"],["opciones","Itinerarios posibles"],["excursiones","Excursiones"],
-  ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Maleta"],["tips","Tips"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
+  ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Checklist"],["tips","Tips"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
 ];
 const secCount = (t,k) => ({opciones:((t.options||{}).items||[]).length, billetes:(t.tickets||[]).length, alojamiento:(t.stays||[]).length, itinerario:(t.itinerary||[]).length, mapa:((t.map||{}).stops||[]).length, excursiones:(t.excursions||[]).length,
   restaurantes:(t.restaurants||[]).length, tips:(t.tips||[]).length, seguros:(t.insurance||[]).length, maleta:packLeft(t), documentos:(t.docs||[]).length + (t.links||[]).length, pendientes:todoLeft(t)}[k]);
@@ -1775,7 +1775,7 @@ const packLeft = t => { if (t.past || status(t) === "pasado") return 0; const ch
 function packHtml(t){
   const P = t.packing || {}, ch = P.checked || {}, items = packItems(t), done = items.filter(x => ch[x.k]).length, ty = packType(t);
   const plugNeed = (() => { const ks = plugTypes((t.practical||{}).plugs); return ks.length && !ks.some(k => PLUGFIT.has(k)); })();
-  let h = `<section class="card"><div class="packhead"><div><h2>Maleta</h2><span class="muted" style="font-size:12.5px">${done} de ${items.length} metidos · lista propia de este viaje, empieza vacía en cada viaje nuevo</span></div>
+  let h = `<section class="card"><div class="packhead"><div><h2>Checklist</h2><span class="muted" style="font-size:12.5px">${done} de ${items.length} metidos · lista propia de este viaje, empieza vacía en cada viaje nuevo</span></div>
     <div class="packtypes" role="group" aria-label="Tipo de viaje">${PACK_TYPES.map(([k,l]) => `<button type="button" data-packtype="${k}" aria-pressed="${ty===k}">${l}</button>`).join("")}</div></div>
     <div class="bar"><span style="width:${items.length ? Math.round(done/items.length*100) : 0}%"></span></div>
     ${plugNeed ? `<div class="alert warn" style="margin-top:12px"><span class="ic">!</span><div>En este destino tus enchufes no sirven: no te olvides del adaptador.</div></div>` : ""}
