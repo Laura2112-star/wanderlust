@@ -261,9 +261,14 @@
   /* Import: a copy made by Claude or by "Exportar". Attachments embedded as base64 are uploaded to Drive and relinked. */
   async function importCopy(file){
     let d; try { d = JSON.parse(await file.text()); } catch(e){ note("Ese archivo no es una copia de Wanderlust"); return; }
-    const trips = d.trips || {}; const files = d.files || {};
-    const n = Object.keys(trips).length;
-    if (!n){ note("La copia no tiene viajes"); return; }
+    const trips = d.trips || {}; const files = d.files || {}; const patch = d.patch || {};
+    const n = Object.keys(trips).length, np = Object.keys(patch).length;
+    if (!n && !np){ note("La copia no tiene viajes"); return; }
+    if (!n){ /* partial update: merge fields into existing trips, attachments untouched */
+      try { await mutate(s => { for (const id of Object.keys(patch)){ if (s.trips[id]) Object.assign(s.trips[id], patch[id]); } });
+        note(np === 1 ? "Viaje actualizado" : `${np} viajes actualizados`); }
+      catch(e){ console.error(e); note("No se ha podido terminar la importación. Inténtalo de nuevo."); }
+      return; }
     const ids = Object.keys(files); const map = {};
     const pr = progress(`Importando ${n} viajes`);
     try {
