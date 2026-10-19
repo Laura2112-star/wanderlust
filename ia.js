@@ -18,16 +18,23 @@
   const toContents = input => typeof input === "string"
     ? [{ role: "user", parts: [{ text: input }] }]
     : input.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: String(m.content || "") }] }));
+  /* If a model is overloaded (Google answers 503 "high demand"), try the next one. */
+  const FALLBACK = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash-lite"];
   async function call(method, body, key, model){
-    const url = `${BASE}${encodeURIComponent(model || MODEL())}:${method}${method.startsWith("stream") ? "?alt=sse&" : "?"}key=${encodeURIComponent(key || KEY())}`;
-    let r;
-    try { r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
-    catch(e){ throw err("network", "Sin conexión con la IA"); }
-    if (!r.ok){
-      let m = ""; try { m = (await r.json()).error.message || ""; } catch(_){}
-      throw err(r.status === 429 ? "rate_limited" : (r.status === 400 || r.status === 403) && /api key|permission|API_KEY/i.test(m) ? "not_granted" : "upstream", m);
+    const models = [...new Set([model || MODEL(), ...FALLBACK])];
+    let last = null;
+    for (const m of models){
+      const url = `${BASE}${encodeURIComponent(m)}:${method}${method.startsWith("stream") ? "?alt=sse&" : "?"}key=${encodeURIComponent(key || KEY())}`;
+      let r;
+      try { r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
+      catch(e){ throw err("network", "Sin conexión con la IA"); }
+      if (r.ok) return r;
+      let msg = ""; try { msg = (await r.json()).error.message || ""; } catch(_){}
+      if ((r.status === 400 || r.status === 401 || r.status === 403) && /api key|permission|API_KEY|unauth/i.test(msg)) throw err("not_granted", msg);
+      last = err(r.status === 429 ? "rate_limited" : r.status >= 500 || /demand|overload|unavailable/i.test(msg) ? "busy" : r.status === 404 ? "no_model" : "upstream", msg);
+      if (!["busy", "no_model", "rate_limited"].includes(last.code)) throw last;
     }
-    return r;
+    throw last;
   }
   const textOf = j => ((j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []).map(p => p.text || "").join("");
 
@@ -73,7 +80,7 @@
     const old = document.querySelector(".wlprog.ai"); if (old) old.remove();
     const w = document.createElement("div"); w.className = "wlprog ai";
     const has = !!KEY();
-    w.innerHTML = `<div class="box" style="background:var(--surf);color:var(--ink);border-radius:16px;padding:22px;max-width:440px;width:calc(100% - 32px);display:grid;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.2)">
+    w.innerHTML = `<div class="box" style="text-align:left;background:var(--surf);color:var(--ink);border-radius:16px;padding:22px;max-width:440px;width:calc(100% - 32px);display:grid;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.2)">
       <h2 style="font-family:var(--disp);font-weight:400;font-size:24px;margin:0">Asistente con IA</h2>
       <p style="margin:0;color:var(--ink2);font-size:14px">Fuera de Claude, el asistente, el buscador de restaurantes, los tips, proponer itinerarios y leer los correos de reservas usan Gemini, la IA de Google. Tiene uso gratuito con una clave personal.</p>
       <ol style="margin:0;padding-left:18px;color:var(--ink2);font-size:14px;display:grid;gap:4px">
@@ -98,7 +105,9 @@
         const r = await call("generateContent", { contents: [{ role: "user", parts: [{ text: "Responde solo: ok" }] }] }, k);
         await r.json(); await S().set("geminiKey", k);
         msg("Clave correcta y guardada. Recargando…", true); setTimeout(() => location.reload(), 900);
-      } catch(e){ msg(e.code === "not_granted" ? "Esa clave no funciona. Cópiala de nuevo desde AI Studio." : e.code === "rate_limited" ? "La clave funciona, pero Google pide esperar un momento. Inténtalo en un minuto." : "No se ha podido comprobar: " + (e.message || "error")); }
+      } catch(e){
+        if (e.code === "busy" || e.code === "rate_limited"){ await S().set("geminiKey", k); msg("Clave guardada. Google está saturado ahora mismo, pero la clave es válida. Recargando…", true); setTimeout(() => location.reload(), 1500); return; }
+        msg(e.code === "not_granted" ? "Esa clave no funciona. Cópiala de nuevo desde AI Studio." : "No se ha podido comprobar: " + (e.message || "error")); }
     };
   }
   window.__wlMenu = window.__wlMenu || [];
