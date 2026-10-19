@@ -43,12 +43,17 @@
     let img = null; const m = html.match(/https:\/\/[a-z0-9.-]*bstatic\.com\/xdata\/images\/hotel\/[^"' )]+/i); if (m) img = m[0].replace(/&amp;/g, "&");
     return { text: text.replace(/\n{3,}/g, "\n\n").slice(0, 14000), img };
   }
+  /* only emails from travel sites matter; codes, security alerts and newsletters are ignored */
+  const TRAVEL = /booking\.com|rentalcars|airbnb|trip\.com|getyourguide|iberia|vueling|volotea|ryanair|klm\b|air ?europa|aireuropa|easyjet|flytap|tap air|air ?france|airfrance|civitatis|renfe|iryo|ouigo|expedia|edreams|lastminute|hotels\.com|agoda|vrbo|lufthansa|emirates|qatar|turkish|latam|finnair|british airways|transavia|wizz|norwegian|alaska|copa|aerom[eé]xico|united|delta|american airlines|gol |vietjet|airasia|ferry|directferries|balearia|trasmed|hertz|avis|europcar|sixt|goldcar|enterprise|budget|cicar|okmobility|ok mobility/i;
+  const NOISE = /c[oó]digo de verificaci[oó]n|verification code|verify your|security alert|alerta de seguridad|contraseña|password|inicio de sesi[oó]n|sign[- ]in|google account|cuenta de google|newsletter|bolet[ií]n|oferta|offer|descuento|discount|promo|rese[ñn]a|review your stay|valora tu|rate your|encuesta|survey/i;
+  const isTravel = (from, subject) => TRAVEL.test(from + " " + subject) && !NOISE.test(subject);
   const hdr = (m, n) => ((m.payload && m.payload.headers) || []).find(h => h.name.toLowerCase() === n) || {};
 
   /* ---------- understanding one email ---------- */
   async function understand(msg){
     const ai = window.__wlMakeSample && window.__wlMakeSample();
     const subject = hdr(msg, "subject").value || "", from = hdr(msg, "from").value || "";
+    if (!isTravel(from, subject)) return { reserva: false, accion: "otro", subject, ignored: true };
     const { text, img } = bodyOf(msg.payload);
     if (ai){
       const prompt = `Extrae los datos de este correo de una reserva de viaje (puede ser un reenvío). Hoy es ${new Date().toISOString().slice(0,10)}.
@@ -63,8 +68,8 @@ ${text}`;
     /* without AI: only what is safe to recognise */
     const all = subject + "\n" + text;
     const ref = (all.match(/(?:n[uú]mero de (?:confirmaci[oó]n|reserva)|confirmation number|booking (?:number|reference)|localizador|reference|referencia|c[oó]digo de reserva)\s*[:#]?\s*([A-Z0-9][A-Z0-9.\-]{4,})/i) || [])[1] || "";
-    const accion = /cancel/i.test(subject) ? "cancelacion" : /modific|cambi|change|updated/i.test(subject) ? "cambio" : /confirm/i.test(subject) ? "nueva" : "otro";
-    return { reserva: !!(ref || /booking\.com|rentalcars|reserva|booking|vuelo|flight/i.test(all)), accion, referencia: ref, img, subject, resumen: subject, ruleOnly: true };
+    const accion = /cancel/i.test(subject) ? "cancelacion" : /modific|cambi|change|updated/i.test(subject) ? "cambio" : /confirm|reserva|booking|itinerar|e-?ticket|billete|tarjeta de embarque|boarding/i.test(subject) ? "nueva" : "otro";
+    return { reserva: accion !== "otro", accion, referencia: ref, img, subject, resumen: subject, ruleOnly: true };
   }
 
   /* ---------- applying it to the trips ---------- */
@@ -113,7 +118,7 @@ ${text}`;
       await S().updateTrip(found.id, t => { const it = (t[found.f] || []).find(y => y.id === found.x.id); if (it) it.status = "cancel"; });
       await note(found.id, `Correo: se ha cancelado ${found.x.title}.`); return "cambio";
     }
-    if (e.ruleOnly) return "revisar";
+    if (e.ruleOnly) return e.reserva ? "revisar" : "ignorar";
     if (found && (e.accion === "cambio" || e.accion === "nueva")){
       const { x } = itemFrom(e); delete x.id; delete x.status; delete x.src;
       await S().updateTrip(found.id, t => { const it = (t[found.f] || []).find(y => y.id === found.x.id); if (it) Object.assign(it, x); });
@@ -151,7 +156,11 @@ ${text}`;
       const since = S().get("mailSince") || "newer_than:120d";
       const list = await gm(`/messages?maxResults=60&q=${encodeURIComponent(since + " -in:sent -in:chats")}`);
       const ids = (list.messages || []).map(m => m.id).filter(id => !done.has(id)).reverse();
-      const inbox = S().get("mailInbox") || [];
+      let inbox = (S().get("mailInbox") || []).filter(m => isTravel(m.from || "", m.subject || ""));
+      const ai = window.__wlMakeSample && window.__wlMakeSample();
+      if (ai && inbox.some(m => m.why === "revisar" && !m.ai)){ /* first run with AI: read again what was left for review without it */
+        const again = new Set(inbox.filter(m => m.why === "revisar" && !m.ai).map(m => m.id)); inbox = inbox.filter(m => !again.has(m.id)); again.forEach(id => done.delete(id)); ids.unshift(...[...again].filter(id => !ids.includes(id)));
+      }
       const count = { nueva: 0, cambio: 0, revisar: 0, sinviaje: 0 };
       for (let i = 0; i < ids.length; i++){
         if (pr) pr.set(i, ids.length, `Leyendo correo ${i + 1} de ${ids.length}`);
@@ -159,7 +168,7 @@ ${text}`;
         let r = "ignorar", e = null;
         try { e = await understand(msg); r = await apply(e, ids[i]); }
         catch(err){ if (err && err.code === "rate_limited"){ break; } r = "revisar"; }
-        if (r === "revisar" || r === "sinviaje") inbox.push({ id: ids[i], subject: hdr(msg, "subject").value || "(sin asunto)", date: Number(msg.internalDate) || Date.now(), why: r, resumen: e && e.resumen || "" });
+        if (r === "revisar" || r === "sinviaje") inbox.push({ id: ids[i], subject: hdr(msg, "subject").value || "(sin asunto)", from: hdr(msg, "from").value || "", date: Number(msg.internalDate) || Date.now(), why: r, resumen: e && e.resumen || "", ai: !!ai });
         if (count[r] != null) count[r]++;
         done.add(ids[i]);
       }
@@ -175,7 +184,7 @@ ${text}`;
   /* ---------- "Correos por revisar" card on the home page ---------- */
   function paint(){
     const main = document.getElementById("main"); if (!main || !S()) return;
-    const old = main.querySelector(".wlmail"); const inbox = S().get("mailInbox") || [];
+    const old = main.querySelector(".wlmail"); const inbox = (S().get("mailInbox") || []).filter(m => isTravel(m.from || "", m.subject || ""));
     const onHome = !!main.querySelector(".hero, .grid");
     if (!inbox.length || !onHome){ if (old) old.remove(); return; }
     const sig = inbox.map(m => m.id).join(); if (old && old.dataset.sig === sig) return; if (old) old.remove();
