@@ -1157,17 +1157,17 @@ function mapHtml(t){
   const days = (t.itinerary||[]).filter(d => stops.some(s => s.day === d.id));
   const cnt = k => stops.filter(s => s.kind === k).length;
   let h = `<section class="card mapcard"><div class="sh"><h2>Mapa</h2><span class="d">${stops.length} puntos · toca uno para ver la ficha</span></div>
-  <div class="mapbar" role="group" aria-label="Día"><button type="button" class="dchip" data-mapday="all" aria-pressed="${mapUi.day==="all"}">Todo el viaje</button>${days.map(d => { const D = pd(d.date);
-    return `<button type="button" class="dchip" data-mapday="${esc(d.id)}" aria-pressed="${mapUi.day===d.id}" style="--dc:${dayColor(t,d.id)}"><i></i>${DOW[D.getDay()]} ${D.getDate()}</button>`; }).join("")}</div>
+  ${days.length ? "" : "<!--"}<div class="mapbar" role="group" aria-label="Día"><button type="button" class="dchip" data-mapday="all" aria-pressed="${mapUi.day==="all"}">Todo el viaje</button>${days.map(d => { const D = pd(d.date);
+    return `<button type="button" class="dchip" data-mapday="${esc(d.id)}" aria-pressed="${mapUi.day===d.id}" style="--dc:${dayColor(t,d.id)}"><i></i>${DOW[D.getDay()]} ${D.getDate()}</button>`; }).join("")}</div>${days.length ? "" : "-->"}
   <div class="mapbar layers" role="group" aria-label="Capas">${MAP_LAYERS.filter(([k]) => k === "ruta" || cnt(k)).map(([k,l]) => `<label class="lchip k-${k}"><input type="checkbox" data-maplayer="${k}" ${L[k] !== false ? "checked" : ""}><span>${l}${k !== "ruta" ? ` <em>${cnt(k)}</em>` : ""}</span></label>`).join("")}</div>
   <div class="mapwrap"><div id="tripmap" aria-label="Mapa del viaje"></div><div class="maploading" id="maploading">Cargando mapa…</div></div>
   <div class="maplegend"><span><i class="k hotel">H</i>Hotel</span><span><i class="k visita"></i>Visita</span><span><i class="k comida">R</i>Restaurante</span><span><i class="k excursion">E</i>Excursión opcional</span><span><i class="k transporte">✈</i>Transporte</span><span class="muted">El color indica el día. Los puntos marcados como aproximados abren la dirección exacta en Google Maps.</span></div>
   <div class="actions" style="margin-top:12px">${mapUi.day !== "all" ? (() => { const u = gmDayRoute(stops.filter(s => s.day === mapUi.day)); return u ? `<a class="btn sea sm" href="${esc(u)}" target="_blank" rel="noopener">Ruta del día en Google Maps ↗</a>` : ""; })() : ""}<button class="btn ghost sm" type="button" data-mapfit>Encuadrar</button><button class="btn ghost sm" type="button" data-kml>Exportar a My Maps (KML)</button></div></section>`;
-  const groups = (mapUi.day === "all" ? [...days.map(d => d.id), null] : [mapUi.day]).map(id => [id, mapVisible(t).filter(s => (s.day || null) === id)]).filter(([,a]) => a.length);
+  const groups = (mapUi.day === "all" ? [...days.map(d => d.id), null] : [mapUi.day]).map(id => [id, mapVisible(t).filter(s => (s.day || null) === id).sort((a,b) => id ? 0 : String(a.date||"~").localeCompare(String(b.date||"~")) || (a.seq||0) - (b.seq||0))]).filter(([,a]) => a.length);
   h += `<section class="card"><div class="sh"><h2>${mapUi.day === "all" ? "Puntos por día" : "Puntos del día"}</h2><span class="d">Filtrados por las capas activas</span></div>${groups.map(([id, arr]) => {
     const d = (t.itinerary||[]).find(x => x.id === id); const D = d ? pd(d.date) : null;
-    return `<div class="mday"><div class="mdh"><i style="background:${id ? dayColor(t,id) : "var(--mute)"}"></i><b>${d ? `${DOW[D.getDay()]} ${D.getDate()} ${MONTHS[D.getMonth()]} · ${esc(d.title)}` : "Sin día fijo"}</b>${d ? (() => { const u = gmDayRoute(mapStops(t).filter(s => s.day === id)); return u ? `<a class="iconbtn" href="${esc(u)}" target="_blank" rel="noopener">Ruta ↗</a>` : ""; })() : ""}</div>
-    ${arr.map(s => `<div class="mstop ${mapUi.sel === s.id ? "sel" : ""}" id="ms-${esc(s.id)}"><button type="button" class="mpin k-${esc(s.kind)}" data-mapsel="${esc(s.id)}" style="--dc:${s.day ? dayColor(t,s.day) : "var(--mute)"}" aria-label="Ver ${esc(s.name)} en el mapa">${MAP_ICON[s.kind] ?? ""}</button>
+    return `<div class="mday"><div class="mdh"><i style="background:${id ? dayColor(t,id) : "var(--mute)"}"></i><b>${d ? `${DOW[D.getDay()]} ${D.getDate()} ${MONTHS[D.getMonth()]} · ${esc(d.title)}` : days.length ? "Sin día fijo" : "Todos los puntos"}</b>${d ? (() => { const u = gmDayRoute(mapStops(t).filter(s => s.day === id)); return u ? `<a class="iconbtn" href="${esc(u)}" target="_blank" rel="noopener">Ruta ↗</a>` : ""; })() : ""}</div>
+    ${arr.map(s => `<div class="mstop ${mapUi.sel === s.id ? "sel" : ""}" id="ms-${esc(s.id)}"><button type="button" class="mpin k-${esc(s.kind)}" data-mapsel="${esc(s.id)}" style="--dc:${s.day ? dayColor(t,s.day) : (t.itinerary||[]).length ? "var(--mute)" : DAY_COLORS[0]}" aria-label="Ver ${esc(s.name)} en el mapa">${MAP_ICON[s.kind] ?? ""}</button>
       <div style="min-width:0"><div class="hrow"><button type="button" class="mname" data-mapsel="${esc(s.id)}">${esc(s.name)}</button>${s.time ? `<span class="w">${esc(s.time)}</span>` : ""}${s.approx ? `<span class="pill idea">aprox.</span>` : ""}</div>
       ${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.addr ? `<p class="muted" style="font-size:12.5px">${esc(s.addr)}</p>` : ""}</div>
       <div class="side"><a class="iconbtn" href="${esc(gmDir(s))}" target="_blank" rel="noopener">Cómo llegar ↗</a><a class="iconbtn" href="${esc(gmSearch(s))}" target="_blank" rel="noopener">Ver ↗</a></div></div>`).join("")}</div>`; }).join("") || `<div class="empty">No hay puntos con estas capas. Activa alguna arriba.</div>`}
@@ -1188,7 +1188,7 @@ async function initMap(){
   let keep = null;
   if (lmap){ if (lmapTrip === tripId) keep = {c: lmap.getCenter(), z: lmap.getZoom()}; lmap.remove(); lmap = null; }
   const myTrip = tripId;
-  lmap = L.map(el, {zoomControl: true, attributionControl: false, preferCanvas: false, zoomSnap: 0.25, maxZoom: 16, minZoom: 6});
+  lmap = L.map(el, {zoomControl: true, attributionControl: false, preferCanvas: false, zoomSnap: 0.25, maxZoom: 16, minZoom: 2});
   lmapTrip = tripId;
   const map = lmap;
   map.getContainer().style.background = tok("--map-sea");
@@ -1220,10 +1220,14 @@ async function initMap(){
       if ((mapUi.day === "all" || mapUi.day === id) && line.length > 1) L.polyline(line, {color: dayColor(t, id), weight: 3, opacity: .85, dashArray: "1 7", lineCap: "round", interactive: false}).addTo(map);
       prev = [pts[pts.length-1].lat, pts[pts.length-1].lng];
     });
+    if (!stops.some(s => s.day)){ /* no daily itinerary: join the stays in date order */
+      const hs = stops.filter(s => s.kind === "hotel").slice().sort((a,b) => String(a.date||"").localeCompare(String(b.date||"")) || (a.seq||0) - (b.seq||0));
+      if (hs.length > 1) L.polyline(hs.map(s => [s.lat, s.lng]), {color: DAY_COLORS[0], weight: 3, opacity: .85, dashArray: "1 7", lineCap: "round", interactive: false}).addTo(map);
+    }
   }
   mapMarkers = {};
   vis.forEach(s => {
-    const col = s.day ? dayColor(t, s.day) : tok("--mute");
+    const col = s.day ? dayColor(t, s.day) : (t.itinerary||[]).length ? tok("--mute") : DAY_COLORS[0];
     const ic = L.divIcon({className: "", iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14],
       html: `<span class="mk k-${esc(s.kind)}" style="--dc:${col}">${MAP_ICON[s.kind] ?? ""}</span>`});
     const d = (t.itinerary||[]).find(x => x.id === s.day);
