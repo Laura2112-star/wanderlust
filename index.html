@@ -450,8 +450,10 @@ textarea.inp{min-height:76px;resize:vertical}
   </div>
 </section>
 
-<script>window.__wlTiles = true;</script>
-<script src="drive-shim.js?v=3"></script>
+<script>window.__wlTiles = true; window.__wlOutside = true;</script>
+<script src="drive-shim.js?v=4"></script>
+<script src="ia.js?v=1"></script>
+<script src="correo.js?v=1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 (() => {
@@ -462,6 +464,7 @@ const uid = () => "i" + Math.random().toString(36).slice(2, 9);
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 
 let db = null, assets = null, sample = null, canWrite = false;
+const OUT = !!window.__wlOutside; const AI = OUT ? "la IA" : "Claude";
 let trips = {}, weather = {}, loaded = false;
 let view = "home", tripId = null, sec = store.get("sec") || "resumen", filter = "proximos";
 let chat = [], pendingImg = null, adding = null, delArm = null, editingMeta = false;
@@ -1053,7 +1056,7 @@ const cxLeftTxt = s => { const D = cxDate(s), d0 = today(); const days = Math.ro
 const cxItems = t => status(t) === "pasado" ? [] : CX_FIELDS.flatMap(f => (t[f]||[]).filter(x => x.cancelBy && x.status !== "cancel").map(x => ({t, f, x})));
 const cxAlerts = t => cxItems(t).filter(({x}) => { const l = cxLeft(x.cancelBy); return !x.cancelKeep && l > 0 && l <= CX_DAYS; })
   .map(({f, x}) => ({id: "cx-" + x.id, auto: f + ":" + x.id, level: "crit", text: `Se acaba la cancelación gratis de ${x.title}: ${cxFmt(x.cancelBy)} (hora local), ${cxLeftTxt(x.cancelBy)}. Decide si la mantienes o la cancelas.`}));
-const allAlerts = t => [...cxAlerts(t), ...(t.alerts||[])];
+const allAlerts = t => [...cxAlerts(t), ...ciAlerts(t), ...(t.alerts||[])];
 const cxTag = (t, x) => { if (!x.cancelBy || x.status === "cancel" || status(t) === "pasado") return "";
   const l = cxLeft(x.cancelBy);
   if (l <= 0) return `<span class="cxtag old">Cancelación gratis vencida (${esc(cxFmt(x.cancelBy))})</span>`;
@@ -1153,7 +1156,7 @@ function mapVisible(t){
 function mapHtml(t){
   if (mapUi.trip !== tripId){ mapUi.trip = tripId; mapUi.day = "all"; mapUi.sel = null; }
   const stops = mapStops(t), L = mapLayersOn();
-  if (!stops.length) return `<section class="card"><div class="sh"><h2>Mapa</h2></div><div class="empty">Este viaje todavía no tiene mapa. Pídeselo a Claude en el chat y lo prepara con los hoteles, visitas, restaurantes y excursiones de cada día.</div></section>`;
+  if (!stops.length) return `<section class="card"><div class="sh"><h2>Mapa</h2></div><div class="empty">Este viaje todavía no tiene mapa. ${OUT ? "Añade los sitios con «+ Añadir punto»." : "Pídeselo a Claude en el chat o añade sitios con «+ Añadir punto»."}</div>${mapAddHtml(t)}</section>`;
   const days = (t.itinerary||[]).filter(d => stops.some(s => s.day === d.id));
   const cnt = k => stops.filter(s => s.kind === k).length;
   let h = `<section class="card mapcard"><div class="sh"><h2>Mapa</h2><span class="d">${stops.length} puntos · toca uno para ver la ficha</span></div>
@@ -1162,7 +1165,7 @@ function mapHtml(t){
   <div class="mapbar layers" role="group" aria-label="Capas">${MAP_LAYERS.filter(([k]) => k === "ruta" || cnt(k)).map(([k,l]) => `<label class="lchip k-${k}"><input type="checkbox" data-maplayer="${k}" ${L[k] !== false ? "checked" : ""}><span>${l}${k !== "ruta" ? ` <em>${cnt(k)}</em>` : ""}</span></label>`).join("")}</div>
   <div class="mapwrap"><div id="tripmap" aria-label="Mapa del viaje"></div><div class="maploading" id="maploading">Cargando mapa…</div></div>
   <div class="maplegend"><span><i class="k hotel">H</i>Hotel</span><span><i class="k visita"></i>Visita</span><span><i class="k comida">R</i>Restaurante</span><span><i class="k excursion">E</i>Excursión opcional</span><span><i class="k transporte">✈</i>Transporte</span><span class="muted">El color indica el día. Los puntos marcados como aproximados abren la dirección exacta en Google Maps.</span></div>
-  <div class="actions" style="margin-top:12px">${mapUi.day !== "all" ? (() => { const u = gmDayRoute(stops.filter(s => s.day === mapUi.day)); return u ? `<a class="btn sea sm" href="${esc(u)}" target="_blank" rel="noopener">Ruta del día en Google Maps ↗</a>` : ""; })() : ""}<button class="btn ghost sm" type="button" data-mapfit>Encuadrar</button><button class="btn ghost sm" type="button" data-kml>Exportar a My Maps (KML)</button></div></section>`;
+  <div class="actions" style="margin-top:12px">${mapUi.day !== "all" ? (() => { const u = gmDayRoute(stops.filter(s => s.day === mapUi.day)); return u ? `<a class="btn sea sm" href="${esc(u)}" target="_blank" rel="noopener">Ruta del día en Google Maps ↗</a>` : ""; })() : ""}<button class="btn ghost sm" type="button" data-mapfit>Encuadrar</button><button class="btn ghost sm" type="button" data-kml>Exportar a My Maps (KML)</button></div>${mapAddHtml(t)}</section>`;
   const groups = (mapUi.day === "all" ? [...days.map(d => d.id), null] : [mapUi.day]).map(id => [id, mapVisible(t).filter(s => (s.day || null) === id).sort((a,b) => id ? 0 : String(a.date||"~").localeCompare(String(b.date||"~")) || (a.seq||0) - (b.seq||0))]).filter(([,a]) => a.length);
   h += `<section class="card"><div class="sh"><h2>${mapUi.day === "all" ? "Puntos por día" : "Puntos del día"}</h2><span class="d">Filtrados por las capas activas</span></div>${groups.map(([id, arr]) => {
     const d = (t.itinerary||[]).find(x => x.id === id); const D = d ? pd(d.date) : null;
@@ -1170,7 +1173,7 @@ function mapHtml(t){
     ${arr.map(s => `<div class="mstop ${mapUi.sel === s.id ? "sel" : ""}" id="ms-${esc(s.id)}"><button type="button" class="mpin k-${esc(s.kind)}" data-mapsel="${esc(s.id)}" style="--dc:${s.day ? dayColor(t,s.day) : (t.itinerary||[]).length ? "var(--mute)" : DAY_COLORS[0]}" aria-label="Ver ${esc(s.name)} en el mapa">${MAP_ICON[s.kind] ?? ""}</button>
       <div style="min-width:0"><div class="hrow"><button type="button" class="mname" data-mapsel="${esc(s.id)}">${esc(s.name)}</button>${s.time ? `<span class="w">${esc(s.time)}</span>` : ""}${s.approx ? `<span class="pill idea">aprox.</span>` : ""}</div>
       ${s.note ? `<p>${esc(s.note)}</p>` : ""}${s.addr ? `<p class="muted" style="font-size:12.5px">${esc(s.addr)}</p>` : ""}</div>
-      <div class="side"><a class="iconbtn" href="${esc(gmDir(s))}" target="_blank" rel="noopener">Cómo llegar ↗</a><a class="iconbtn" href="${esc(gmSearch(s))}" target="_blank" rel="noopener">Ver ↗</a></div></div>`).join("")}</div>`; }).join("") || `<div class="empty">No hay puntos con estas capas. Activa alguna arriba.</div>`}
+      <div class="side"><a class="iconbtn" href="${esc(gmDir(s))}" target="_blank" rel="noopener">Cómo llegar ↗</a><a class="iconbtn" href="${esc(gmSearch(s))}" target="_blank" rel="noopener">Ver ↗</a>${canWrite ? `<button class="iconbtn danger" type="button" data-mapdel="${esc(s.id)}">${delArm === "map:" + s.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div></div>`).join("")}</div>`; }).join("") || `<div class="empty">No hay puntos con estas capas. Activa alguna arriba.</div>`}
   <p class="muted" style="font-size:12px;margin:12px 0 0">Mapa base: ${window.__wlTiles ? "OpenStreetMap" : "Natural Earth"}. Las líneas de ruta unen las paradas en orden; la carretera real la da Google Maps.</p></section>`;
   return h;
 }
@@ -1265,10 +1268,184 @@ async function exportKml(btn){
   const t = cur(); if (!t) return;
   const filename = `Wanderlust - ${t.name}.kml`.replace(/[\\/:*?"<>|]/g, "");
   const blob = new Blob([kmlFor(t)], {type: "application/vnd.google-earth.kml+xml"});
+  if (await saveFile(filename, blob)) toast("KML listo. En My Maps: Crear mapa › Importar");
+}
+
+/* ---------- flights: terminal, baggage, check-in ---------- */
+/* Online check-in opening (hours before departure). Sources: airline sites and guides, Oct 2026; airlines change these, so the app says "aprox.". */
+const AIRLINES = [
+  [/volotea/i, "Volotea", 96, "T2"], [/\bklm\b/i, "KLM", 30, "T2"], [/air\s*france/i, "Air France", 30, "T2"], [/iberia\s*express/i, "Iberia Express", 24, "T4"],
+  [/iberia/i, "Iberia", 24, "T4"], [/vueling/i, "Vueling", 168, "T4"], [/ryanair/i, "Ryanair", 48, "T1"], [/easyjet/i, "easyJet", 720, "T1"],
+  [/air\s*europa/i, "Air Europa", 24, "T1 o T2"], [/lufthansa/i, "Lufthansa", 23, "T2"], [/\btap\b|tap air portugal/i, "TAP", 36, "T2"],
+  [/british\s*airways/i, "British Airways", 24, "T4"], [/emirates/i, "Emirates", 48, "T4"], [/qatar/i, "Qatar Airways", 24, "T4"],
+  [/finnair/i, "Finnair", 24, "T4"], [/turkish/i, "Turkish Airlines", 24, "T1"], [/swiss/i, "Swiss", 24, "T2"], [/brussels/i, "Brussels Airlines", 24, "T2"],
+  [/ita\s*airways/i, "ITA Airways", 24, "T2"], [/transavia/i, "Transavia", 30, "T2"], [/norwegian/i, "Norwegian", 24, "T2"], [/latam/i, "LATAM", 24, "T4"],
+  [/american\s*airlines/i, "American Airlines", 24, "T4"], [/united/i, "United", 24, "T1"], [/delta/i, "Delta", 24, "T1"], [/aerom[eé]xico/i, "Aeroméxico", 24, "T1"],
+  [/wizz/i, "Wizz Air", 720, "T1 o T2"], [/alaska/i, "Alaska Airlines", 24, ""], [/\bgol\b/i, "GOL", 48, ""], [/copa/i, "Copa", 24, ""], [/vietjet/i, "VietJet", 24, ""], [/finnair/i, "Finnair", 24, "T4"]
+];
+const isMadDep = x => /madrid|\bMAD\b/i.test(String(x.title||"").split(/→|->/)[0] || "");
+const airlineOf = x => { const s = [x.airline, x.title, x.detail].filter(Boolean).join(" "); const a = AIRLINES.find(([re]) => re.test(s)); return a ? {name: a[1], hours: a[2], mad: a[3]} : null; };
+const depUtc = x => x.dep ? toUtc(x.dep, x.depTz || "Europe/Madrid") : null;
+function checkinInfo(x){
+  if ((x.kind || "vuelo") !== "vuelo" || x.status === "cancel" || !x.dep) return null;
+  const dep = depUtc(x); if (!dep) return null;
+  const a = airlineOf(x);
+  const open = x.checkinOpen ? toUtc(x.checkinOpen, x.depTz || "Europe/Madrid") : dep - (a ? a.hours : 24) * 3600e3;
+  return {dep, open, airline: a, exact: !!x.checkinOpen};
+}
+const fmtUtcLocal = (ms, tz) => new Intl.DateTimeFormat("es-ES", {timeZone: tz || "Europe/Madrid", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"}).format(new Date(ms));
+const ciAlerts = t => status(t) === "pasado" ? [] : (t.tickets||[]).map(x => { const c = checkinInfo(x); if (!c || x.checkinDone) return null;
+  const now = Date.now(), left = (c.open - now) / 864e5;
+  if (now >= c.open && now < c.dep) return {id: "ci-" + x.id, ci: x.id, level: "warn", text: `Check-in abierto: ${x.title} (${x.when || ""}). Hazlo cuanto antes para elegir asiento y descargar la tarjeta de embarque.`};
+  if (left > 0 && left <= 3) return {id: "ci-" + x.id, ci: x.id, level: "info", text: `El check-in de ${x.title} abre ${fmtUtcLocal(c.open, x.depTz)} (hora de salida)${c.exact ? "" : ", aprox"}.`};
+  return null; }).filter(Boolean);
+function flightExtras(t, x){
+  if ((x.kind || "vuelo") !== "vuelo") return "";
+  const a = airlineOf(x), c = checkinInfo(x), past = !!(t.past || status(t) === "pasado");
+  const bits = [];
+  const term = x.term || (isMadDep(x) && a && a.mad ? a.mad : "");
+  if (term) bits.push(`<span>Terminal de salida <code>${esc(term)}</code>${x.term ? "" : " · habitual, confírmala el día antes"}</span>`);
+  if (x.bag) bits.push(`<span>Equipaje: ${esc(x.bag)}</span>`);
+  if (c && !past && x.status !== "cancel") bits.push(`<span>Check-in online desde ${esc(fmtUtcLocal(c.open, x.depTz))}${c.exact ? "" : " (aprox.)"}</span>`);
+  if (!bits.length && !(c && !past)) return "";
+  const cal = c && !past && x.status !== "cancel" && c.open > Date.now() ? `<button class="iconbtn" type="button" data-ics="${esc(x.id)}">Aviso de check-in al calendario</button>` : "";
+  return `<div class="meta2">${bits.join("")}${cal}</div>`;
+}
+async function saveFile(filename, blob){
   let dl = null; try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(_){}
-  if (!dl){ toast("La descarga no está disponible aquí"); return; }
-  try { await dl.save({filename, data: blob}); toast("KML listo. En My Maps: Crear mapa › Importar"); }
-  catch(e){ if (e && e.code !== "declined") toast(e && e.code === "rate_limited" ? "Ya hay una descarga pendiente de confirmar" : "No se ha podido guardar el KML"); }
+  if (dl){
+    try { await dl.save({filename, data: blob}); return true; }
+    catch(e){ if (e && e.code !== "declined") toast(e && e.code === "rate_limited" ? "Ya hay una descarga pendiente de confirmar" : "No se ha podido guardar el archivo"); return false; }
+  }
+  const u = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = u; a.download = filename; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); return true;
+}
+async function icsFor(id){
+  const t = cur(); const x = (t && t.tickets || []).find(k => k.id === id); const c = x && checkinInfo(x); if (!c) return;
+  const z = ms => new Date(ms).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  const e = s => String(s||"").replace(/[\\;,]/g, m => "\\" + m).replace(/\n/g, "\\n");
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Wanderlust//ES","CALSCALE:GREGORIAN","BEGIN:VEVENT",`UID:${x.id}-checkin@wanderlust`,`DTSTAMP:${z(Date.now())}`,
+    `DTSTART:${z(c.open)}`,`DTEND:${z(c.open + 30*60e3)}`,`SUMMARY:${e("Check-in online: " + x.title)}`,
+    `DESCRIPTION:${e([x.when, x.ref ? "Ref. " + x.ref : "", c.airline ? c.airline.name : "", c.exact ? "" : "Hora de apertura aproximada; confírmala en la web de la aerolínea."].filter(Boolean).join("\n"))}`,
+    "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${e("Abre el check-in de " + x.title)}`,"TRIGGER:PT0M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  if (await saveFile(`Check-in ${x.title}.ics`.replace(/[\\/:*?"<>|→]/g, "-"), new Blob([ics], {type: "text/calendar"}))) toast("Ábrelo para añadirlo a tu calendario");
+}
+
+/* ---------- paste a whole itinerary ---------- */
+const MES = {ene:0,enero:0,feb:1,febrero:1,mar:2,marzo:2,abr:3,abril:3,may:4,mayo:4,jun:5,junio:5,jul:6,julio:6,ago:7,agosto:7,sep:8,sept:8,septiembre:8,setiembre:8,oct:9,octubre:9,nov:10,noviembre:10,dic:11,diciembre:11};
+function parseItinerary(text, t){
+  const days = []; let curD = null; const y0 = +String(t.start).slice(0,4); const s0 = pd(t.start);
+  const iso = (y, m, d) => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+  for (let raw of String(text).split(/\r?\n/)){
+    let line = raw.replace(/^[\s>*#•\-–]+/, "").replace(/\*\*/g, "").trim(); if (!line) continue;
+    let date = null, rest = "";
+    let m = line.match(/^(\d{4}-\d{2}-\d{2})\s*[|·:,\-–]?\s*(.*)$/);
+    if (m){ date = m[1]; rest = m[2]; }
+    else if ((m = line.match(/^(?:d[ií]a\s*\d+\s*[|·:,\-–]?\s*)?(?:(?:lun|mar|mi[eé]|jue|vie|s[aá]b|dom)[a-zé]*\.?,?\s+)?(\d{1,2})\s*(?:de\s+)?([a-zé]{3,10})\.?(?:\s+(?:de\s+)?(\d{4}))?\s*(?:[|·:,\-–]\s*(.*))?$/i)) && MES[m[2].toLowerCase()] != null){
+      const mo = MES[m[2].toLowerCase()]; let y = m[3] ? +m[3] : y0; if (!m[3] && new Date(y, mo, +m[1]) < new Date(s0.getFullYear(), s0.getMonth(), s0.getDate() - 60)) y++;
+      date = iso(y, mo, +m[1]); rest = m[4] || "";
+    } else if ((m = line.match(/^d[ií]a\s*(\d+)\s*[|·:,\-–]?\s*(.*)$/i))){
+      const D = new Date(s0); D.setDate(D.getDate() + (+m[1] - 1)); date = iso(D.getFullYear(), D.getMonth(), D.getDate()); rest = m[2];
+    }
+    if (date){
+      const parts = rest.split("|").map(s => s.trim());
+      let title = parts[0] || "", sleep = parts[1] || "";
+      const sm = title.match(/^(.*?)[.,;]?\s*duerme(?:s|mos)? en\s+(.+)$/i); if (sm){ title = sm[1]; sleep = sleep || sm[2]; }
+      sleep = sleep.replace(/^duerme(?:s|mos)? en\s+/i, "");
+      curD = {id: uid(), date, title: title || "Día", sleep, items: []}; days.push(curD); continue;
+    }
+    if (!curD) continue;
+    const dm = line.match(/^duerme(?:s|mos)? en\s+(.+)$/i); if (dm){ curD.sleep = dm[1]; continue; }
+    const im = line.match(/^(\d{1,2}[:.h]\d{2}|\d{1,2}\s?h|mañana|mediod[ií]a|tarde|noche|opcional)\s*[|·:,\-–]?\s*(.+)$/i);
+    curD.items.push(im ? {time: im[1].replace(/h$/i, ":00"), text: im[2]} : {time: "", text: line});
+  }
+  return days;
+}
+const PASTE_PROMPT = t => `Hazme un itinerario día a día para un viaje a ${t.place || t.name}, del ${t.start} al ${t.end}${t.travelers ? `, viajeros: ${t.travelers}` : ""}.
+Respeta estas reservas: ${[...(t.tickets||[]), ...(t.stays||[])].filter(x => x.status !== "cancel").map(x => `${x.title} (${x.when || ""})`).join("; ") || "ninguna"}.
+Escríbelo SOLO con este formato, sin nada más:
+6 nov | Título del día | Ciudad donde se duerme
+9:00 Plan de la mañana
+Tarde Plan de la tarde
+Noche Dónde cenar
+(una línea de cabecera por día con la fecha, y debajo una línea por plan empezando por la hora o Mañana/Tarde/Noche)`;
+function pasteHtml(t){
+  return `<form class="add" id="pastef"><div class="f"><label for="ps-text">Pega aquí el itinerario</label><textarea class="inp" id="ps-text" rows="10" placeholder="6 nov | Llegada y Jesi | Jesi&#10;18:50 Llegada al aeropuerto y recogida del coche&#10;Noche Cena en el centro&#10;7 nov | Corinaldo y Urbino | Urbino&#10;Mañana Paseo por el centro histórico"></textarea></div>
+  <p class="muted" style="margin:0;font-size:13px">Una línea por día con la fecha (6 nov, 2026-11-06 o Día 1), el título y dónde se duerme separados por |. Debajo, una línea por plan. Los días con la misma fecha se sustituyen.</p>
+  <details style="font-size:13px"><summary style="cursor:pointer;color:var(--sea-ink)">Texto para pedírselo a cualquier IA (ChatGPT, Gemini…)</summary><pre style="white-space:pre-wrap;background:var(--soft);padding:10px 12px;border-radius:8px;margin:8px 0 6px;user-select:all" id="ps-prompt">${esc(PASTE_PROMPT(t))}</pre><button class="btn ghost sm" type="button" data-copyprompt>Copiar texto</button></details>
+  <div class="actions"><button class="btn sea" type="submit">Añadir al itinerario</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`;
+}
+
+/* ---------- add / remove map points ---------- */
+const parseLatLng = s => { const m = String(s||"").match(/@?(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)/); if (!m) return null; const la = +m[1], lo = +m[2]; return Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? [la, lo] : null; };
+async function geocode(q, t){
+  if (!OUT) return null;
+  const st = mapStops(t); const c = st.length ? [st.reduce((a,s) => a + s.lat, 0) / st.length, st.reduce((a,s) => a + s.lng, 0) / st.length] : null;
+  try {
+    const r = await fetch("https://photon.komoot.io/api/?limit=1&q=" + encodeURIComponent(q) + (c ? `&lat=${c[0]}&lon=${c[1]}` : ""));
+    const j = await r.json(); const f = j.features && j.features[0];
+    return f ? [f.geometry.coordinates[1], f.geometry.coordinates[0]] : null;
+  } catch(e){ return null; }
+}
+function mapAddHtml(t){
+  if (!canWrite) return "";
+  if (adding !== "mappoint") return `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="mappoint">+ Añadir punto</button></div>`;
+  const days = t.itinerary || [];
+  return `<form class="add" id="mapaddf"><div class="fg">
+    <div class="f"><label for="mp-name">Nombre</label><input class="inp" id="mp-name" required placeholder="Museo, restaurante, playa..."></div>
+    <div class="f"><label for="mp-kind">Tipo</label><select class="inp" id="mp-kind">${MAP_LAYERS.filter(([k]) => k !== "ruta").map(([k,l]) => `<option value="${k}" ${k === "visita" ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+    <div class="f"><label for="mp-day">Día</label><select class="inp" id="mp-day"><option value="">Sin día fijo</option>${days.map(d => { const D = pd(d.date); return `<option value="${esc(d.id)}" ${mapUi.day === d.id ? "selected" : ""}>${DOW[D.getDay()]} ${D.getDate()} ${MONTHS[D.getMonth()]} · ${esc(d.title)}</option>`; }).join("")}</select></div>
+    <div class="f"><label for="mp-where">${OUT ? "Dirección o coordenadas" : "Coordenadas"}</label><input class="inp" id="mp-where" ${OUT ? "" : "required"} placeholder="${OUT ? "Vacío = buscar por el nombre" : "43.7239, 12.6364"}"></div></div>
+    <div class="f"><label for="mp-note">Nota</label><input class="inp" id="mp-note" placeholder="Horario, qué pedir..."></div>
+    ${OUT ? "" : `<p class="muted" style="margin:0;font-size:13px">En Google Maps, mantén pulsado el sitio (o clic derecho en el ordenador) y copia las coordenadas que aparecen.</p>`}
+    <div class="actions"><button class="btn sea" type="submit">Añadir al mapa</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`;
+}
+async function addMapPoint(){
+  const t = cur(); const v = id => (document.getElementById(id)?.value || "").trim();
+  const name = v("mp-name"), where = v("mp-where");
+  let ll = parseLatLng(where);
+  if (!ll){ toast("Buscando el sitio…"); ll = await geocode(where || `${name}, ${String(t.place || "").split("·").pop().trim()}`, t); }
+  if (!ll){ toast(OUT ? "No lo encuentro. Prueba con la dirección o pega las coordenadas." : "Pega las coordenadas copiadas de Google Maps"); return; }
+  const s = {id: "u" + uid().slice(1), day: v("mp-day") || undefined, kind: v("mp-kind") || "visita", name, lat: +ll[0].toFixed(5), lng: +ll[1].toFixed(5), note: v("mp-note") || undefined, q: where && !parseLatLng(where) ? where : `${name}, ${String(t.place || "").split("·").pop().trim()}`};
+  Object.keys(s).forEach(k => s[k] === undefined && delete s[k]);
+  adding = null; mapUi.sel = s.id;
+  if (await save(tripId, {map: {...(t.map||{}), stops: [...mapStops(t), s]}})) toast("Añadido al mapa");
+}
+
+/* ---------- live weather and exchange rates (outside Claude only) ---------- */
+const liveBusy = {}; let fxRates = null, fxBusy = false;
+async function liveWeather(t){
+  if (!OUT || liveBusy[t.id]) return; liveBusy[t.id] = true;
+  try {
+    const st = mapStops(t); const hotels = st.filter(s => s.kind === "hotel").slice().sort((a,b) => String(a.date||"").localeCompare(String(b.date||"")));
+    const t0 = today(), last = new Date(t0); last.setDate(last.getDate() + 15);
+    const from = new Date(Math.max(pd(t.start), t0)), to = new Date(Math.min(pd(t.end), last));
+    if (from > to) return;
+    const want = [];
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)){
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      const day = (t.itinerary||[]).find(x => x.date === ds);
+      let pt = null, label = day && day.sleep && !/avi[oó]n|casa|vuelo/i.test(day.sleep) ? day.sleep : (want.length ? want[want.length-1].label : "");
+      const h = hotels.filter(s => (s.date || "") <= ds).pop() || hotels[0];
+      if (h) pt = [h.lat, h.lng]; else if (st[0]) pt = [st[0].lat, st[0].lng];
+      if (!pt && label){ try { const g = await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=1&language=es&name=" + encodeURIComponent(label))).json(); if (g.results && g.results[0]) pt = [g.results[0].latitude, g.results[0].longitude]; } catch(_){} }
+      if (!pt) continue;
+      want.push({ds, pt, label: label || (h ? h.name : t.place)});
+    }
+    const groups = {}; want.forEach(w => { const k = w.pt.map(n => n.toFixed(2)).join(","); (groups[k] = groups[k] || {pt: w.pt, items: []}).items.push(w); });
+    const days = [];
+    for (const g of Object.values(groups)){
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.pt[0]}&longitude=${g.pt[1]}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`);
+      const j = await r.json(); const D = j.daily || {};
+      g.items.forEach(w => { const i = (D.time||[]).indexOf(w.ds); if (i >= 0) days.push({place: w.label, date: w.ds, code: D.weather_code[i], tmax: D.temperature_2m_max[i], tmin: D.temperature_2m_min[i], rain: D.precipitation_probability_max ? D.precipitation_probability_max[i] : null}); });
+    }
+    days.sort((a,b) => a.date.localeCompare(b.date));
+    if (days.length){ weather[t.id] = {updatedAt: new Date().toISOString(), days, live: true}; try { db && canWrite && db.doc("weather/" + t.id).set(weather[t.id]); } catch(_){} }
+  } catch(e){} finally { liveBusy[t.id] = false; if (view === "trip" && tripId === t.id && sec === "tiempo") renderSec(); }
+}
+async function liveFx(){
+  if (!OUT || fxRates || fxBusy) return; fxBusy = true;
+  try { const j = await (await fetch("https://open.er-api.com/v6/latest/EUR")).json(); if (j && j.rates) fxRates = j.rates; } catch(e){}
+  fxBusy = false; if (fxRates && view === "trip" && sec === "util") renderSec();
 }
 
 /* ---------- trip view ---------- */
@@ -1365,7 +1542,7 @@ function itemList(t, field, iconFor){
   const isPast = !!(t.past || status(t) === "pasado");
   const firstCancel = arr.findIndex(x => x.status === "cancel");
   let h = arr.length ? arr.map((x, idx) => `${idx === firstCancel ? `<div class="eyebrow" style="padding:18px 0 4px;border-top:1px solid var(--line)">Canceladas</div>` : ""}<div class="item st-${esc(x.status||"ok")}"><span class="ico">${iconFor(x)}</span>
-    <div style="min-width:0"><h4>${esc(x.title)}</h4>${(x.img || x.rating) ? `<div class="hrow" style="margin-top:6px">${x.img ? `<img class="${isPast ? "hthumb" : "mini"}" src="${esc(x.img)}" alt="">` : ""}${x.rating ? `<span class="score"><b>${esc(x.rating)}</b>${isPast ? ` <span class="muted" style="font-size:12.5px">Booking${x.reviews ? ` · ${esc(x.reviews)} opiniones` : ""}</span>` : ""}</span>` : ""}</div>` : ""}${x.when ? `<div class="w">${esc(x.when)}</div>` : ""}${durHtml(x)}${x.detail ? `<p>${esc(x.detail)}</p>` : ""}
+    <div style="min-width:0"><h4>${esc(x.title)}</h4>${(x.img || x.rating) ? `<div class="hrow" style="margin-top:6px">${x.img ? `<img class="${isPast ? "hthumb" : "mini"}" src="${esc(x.img)}" alt="">` : ""}${x.rating ? `<span class="score"><b>${esc(x.rating)}</b>${isPast ? ` <span class="muted" style="font-size:12.5px">Booking${x.reviews ? ` · ${esc(x.reviews)} opiniones` : ""}</span>` : ""}</span>` : ""}</div>` : ""}${x.when ? `<div class="w">${esc(x.when)}</div>` : ""}${durHtml(x)}${field === "tickets" ? flightExtras(t, x) : ""}${x.detail ? `<p>${esc(x.detail)}</p>` : ""}
     <div class="meta2">${x.ref ? `<span>Ref. <code>${esc(x.ref)}</code></span>` : ""}${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${linkLabel(x.url)}</a>` : ""}${cxTag(t, x)}</div>${attRow(x, field)}</div>
     <div class="side">${x.status && !isPast ? `<span class="pill ${esc(x.status)}">${STLABEL[x.status]||esc(x.status)}</span>` : ""}${x.price ? `<span class="price">${esc(x.price)}</span>` : ""}
     ${canWrite ? `<button class="iconbtn danger" data-del="${field}:${esc(x.id)}">${delArm === field+":"+x.id ? "¿Seguro? Pulsa otra vez" : "Quitar"}</button>` : ""}</div></div>`).join("")
@@ -1417,7 +1594,7 @@ function secHtml(t){
       <section class="card"><div class="sh"><h2>De un vistazo</h2></div><p style="margin:0 0 14px;color:var(--ink2);max-width:65ch">${esc(t.summary||"")}</p>
       <div class="kv"><div><b>${esc(countdown(t))}</b><span>${esc(fmtRange(t.start,t.end))}</span></div><div><b>${nights(t)}</b><span>noches</span></div>
       <div><b>${(t.tickets||[]).filter(x=>x.status==="ok").length}/${(t.tickets||[]).length}</b><span>billetes confirmados</span></div><div><b>${tt-tl}/${tt}</b><span>tareas hechas</span></div></div></section>
-      ${al.length ? `<section class="card"><div class="sh"><h2>Avisos</h2><span class="d">Lo que conviene revisar</span></div><div class="stack">${al.map(a => `<div class="alert ${esc(a.level)}"><span class="ic">${a.level==="info"?"i":"!"}</span><div>${esc(a.text)}${canWrite ? (a.auto ? ` <button class="iconbtn" data-cxkeep="${esc(a.auto)}">La mantengo</button>` : ` <button class="iconbtn" data-del="alerts:${esc(a.id)}">${delArm === "alerts:"+a.id ? "¿Resuelto? Pulsa otra vez" : "Resuelto"}</button>`) : ""}</div></div>`).join("")}</div></section>` : ""}
+      ${al.length ? `<section class="card"><div class="sh"><h2>Avisos</h2><span class="d">Lo que conviene revisar</span></div><div class="stack">${al.map(a => `<div class="alert ${esc(a.level)}"><span class="ic">${a.level==="info"?"i":"!"}</span><div>${esc(a.text)}${canWrite ? (a.ci ? ` <button class="iconbtn" data-cidone="${esc(a.ci)}">Hecho</button>` : a.auto ? ` <button class="iconbtn" data-cxkeep="${esc(a.auto)}">La mantengo</button>` : ` <button class="iconbtn" data-del="alerts:${esc(a.id)}">${delArm === "alerts:"+a.id ? "¿Resuelto? Pulsa otra vez" : "Resuelto"}</button>`) : ""}</div></div>`).join("")}</div></section>` : ""}
     </div><div class="stack">
       <section class="card"><div class="sh"><h2>Día a día</h2><button class="iconbtn" data-sec="itinerario">Ver itinerario</button></div>
       ${days.map(d => { const D = pd(d.date); return `<div style="display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:6px 0;border-top:1px solid var(--line2);font-size:14px"><span class="muted" style="text-transform:capitalize">${DOW[D.getDay()]} ${D.getDate()}</span><span><b style="font-weight:550">${esc(d.title)}</b><br><span class="muted" style="font-size:12.5px">Duerme en ${esc(d.sleep||"")}</span></span></div>`; }).join("") || `<div class="empty">Sin itinerario todavía.</div>`}</section>
@@ -1437,17 +1614,17 @@ function secHtml(t){
       <div style="min-width:0"><h4>${esc(d.title)}</h4><span class="sleep">Duerme en ${esc(d.sleep||"")}</span>
       <ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul>${attRow(d, "itinerary")}
       <div class="actions" style="margin-top:6px"><a class="iconbtn" href="https://www.google.com/maps/search/${encodeURIComponent(d.sleep||t.place||"")}" target="_blank" rel="noopener">Mapa ↗</a>${canWrite ? `<button class="iconbtn danger" data-del="itinerary:${esc(d.id)}">${delArm === "itinerary:"+d.id ? "¿Seguro? Pulsa otra vez" : "Quitar día"}</button>` : ""}</div></div></div>`; }).join("") || `<div class="empty">Sin itinerario todavía.</div>`);
-    if (canWrite) h += adding === "itinerary" ? `<form class="add" id="dayf"><div class="fg"><div class="f"><label for="dy-date">Fecha</label><input class="inp" type="date" id="dy-date" required value="${esc(t.start)}"></div>
+    if (canWrite) h += adding === "paste" ? pasteHtml(t) : adding === "itinerary" ? `<form class="add" id="dayf"><div class="fg"><div class="f"><label for="dy-date">Fecha</label><input class="inp" type="date" id="dy-date" required value="${esc(t.start)}"></div>
       <div class="f"><label for="dy-title">Título del día</label><input class="inp" id="dy-title" required></div><div class="f"><label for="dy-sleep">Duermes en</label><input class="inp" id="dy-sleep"></div></div>
       <div class="f"><label for="dy-items">Planes (una línea por plan; empieza con la hora si quieres, p. ej. «9:00 Museo»)</label><textarea class="inp" id="dy-items"></textarea></div>
       <div class="actions"><button class="btn sea" type="submit">Añadir día</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
-      : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="itinerary">+ Añadir día</button></div>`;
+      : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="itinerary">+ Añadir día</button><button class="btn ghost sm" data-add="paste">Pegar itinerario</button></div>`;
     return h + `</section>` + propHtml(t);
   }
   case "tips": {
     let h = `<section class="card"><div class="sh"><h2>Tips y consejos</h2></div><div class="tipgrid">${(t.tips||[]).map(x => `<div class="tip"><h4>${esc(x.title)}</h4><p>${esc(x.detail)}</p>${canWrite ? `<button class="iconbtn danger" style="justify-self:start" data-del="tips:${esc(x.id)}">${delArm === "tips:"+x.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("")}</div>`;
     if (canWrite) h += adding === "tips" ? `<form class="add" id="tipf"><div class="f"><label for="tp-title">Título</label><input class="inp" id="tp-title" required></div><div class="f"><label for="tp-detail">Consejo</label><textarea class="inp" id="tp-detail" required></textarea></div><div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
-      : `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="tips">+ Añadir consejo</button>${sample ? `<button class="btn ghost sm" data-moretips>Pedir más tips a Claude</button>` : ""}</div>`;
+      : `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="tips">+ Añadir consejo</button>${sample ? `<button class="btn ghost sm" data-moretips>Pedir más tips a ${AI}</button>` : ""}</div>`;
     return h + `</section>`;
   }
   case "pendientes": {
@@ -1618,7 +1795,7 @@ const RPREFS = ["Cocina local","Pescado y marisco","Barato","Con niños","Vegeta
 function restHtml(t){
   const st = restState[t.id] || (restState[t.id] = {place: places(t)[0] || "", prefs: ["Cocina local"], note:"", res:null, busy:false, err:""});
   const saved = t.restaurants || [];
-  let h = `<section class="card"><div class="sh"><h2>Buscar restaurantes</h2><span class="d">Sugerencias de Claude, compruébalas en Google Maps</span></div>`;
+  let h = `<section class="card"><div class="sh"><h2>Buscar restaurantes</h2><span class="d">Sugerencias de ${AI}, compruébalas en Google Maps</span></div>`;
   if (!sample) h += `<p class="muted" style="margin:0 0 10px">El buscador con IA no está disponible en esta vista. Puedes buscar directamente en Google Maps:</p>`;
   h += `<div class="stack"><div class="fg"><div class="f"><label for="r-place">Zona</label><input class="inp" id="r-place" list="r-places" value="${esc(st.place)}"><datalist id="r-places">${places(t).map(p => `<option value="${esc(p)}">`).join("")}</datalist></div>
     <div class="f"><label for="r-note">Algo más</label><input class="inp" id="r-note" value="${esc(st.note)}" placeholder="cerca del puerto, para comer hoy..."></div></div>
@@ -1626,7 +1803,7 @@ function restHtml(t){
     <div class="actions">${sample ? `<button class="btn sea" data-rsearch ${st.busy?"disabled":""}>${st.busy ? "Buscando…" : "Buscar con IA"}</button>` : ""}<a class="btn ghost" target="_blank" rel="noopener" href="https://www.google.com/maps/search/${encodeURIComponent("restaurantes " + st.prefs.join(" ") + " " + st.place)}">Abrir en Google Maps ↗</a></div>
     ${st.err ? `<div class="alert warn"><span class="ic">!</span><div>${esc(st.err)}</div></div>` : ""}
     ${st.busy ? `<div class="loading"><span class="spin"></span>Pensando en sitios para ${esc(st.place)}…</div>` : ""}
-    ${st.res ? `<div class="rest">${st.res.map((r,i) => restCard(r, t, i, false)).join("")}</div><p class="muted" style="font-size:12.5px;margin:0">Claude no consulta internet en tiempo real: confirma horarios y que siguen abiertos antes de ir.</p>` : ""}</div></section>`;
+    ${st.res ? `<div class="rest">${st.res.map((r,i) => restCard(r, t, i, false)).join("")}</div><p class="muted" style="font-size:12.5px;margin:0">${OUT ? "Sugerencias de la IA con búsqueda en Google:" : "Claude no consulta internet en tiempo real:"} confirma horarios y que siguen abiertos antes de ir.</p>` : ""}</div></section>`;
   h += `<section class="card"><div class="sh"><h2>Guardados</h2><span class="d">${saved.length} sitios</span></div>${saved.length ? `<div class="rest">${saved.map((r,i) => restCard(r, t, i, true)).join("")}</div>` : `<div class="empty">Guarda aquí los que te gusten.</div>`}</section>`;
   return h;
 }
@@ -1644,7 +1821,7 @@ async function runRest(t){
 Prioriza sitios con trayectoria que probablemente sigan abiertos. Escribe en español, sin rayas largas.
 Responde solo con un array JSON de objetos {"name","area","city","type","price","why"}: type = tipo de cocina, price = "€", "€€" o "€€€", why = una frase de por qué ir y qué pedir. Ejemplo: [{"name":"Da Michele","area":"Forcella","city":"Nápoles","type":"Pizzería","price":"€","why":"La pizza margherita clásica desde 1870; hay cola."}]`;
   try {
-    const out = await sample.json(prompt, {modelTier:"default"});
+    const out = await sample.json(prompt, OUT ? {modelTier:"default", search:true} : {modelTier:"default"});
     st.res = Array.isArray(out) ? out.filter(r => r && r.name).slice(0,8) : [];
     if (!st.res.length) st.err = "No ha salido ninguna sugerencia. Prueba con otra zona.";
   } catch(e){ st.err = errText(e); }
@@ -1652,7 +1829,7 @@ Responde solo con un array JSON de objetos {"name","area","city","type","price",
 }
 function errText(e){
   const c = e && e.code;
-  return c === "not_granted" ? "Hay que permitir que la página consulte a Claude (menú Permisos del artifact)." : c === "rate_limited" ? "Demasiadas consultas seguidas. Espera un momento." : c === "invalid_json" ? "La respuesta no ha llegado en buen formato. Pulsa otra vez." : "No se ha podido consultar a Claude ahora mismo.";
+  return c === "not_granted" ? (OUT ? "La clave de la IA no es válida. Revísala en Cuenta › Asistente con IA." : "Hay que permitir que la página consulte a Claude (menú Permisos del artifact).") : c === "rate_limited" ? "Demasiadas consultas seguidas. Espera un momento." : c === "invalid_json" ? "La respuesta no ha llegado en buen formato. Pulsa otra vez." : "No se ha podido consultar a " + AI + " ahora mismo.";
 }
 
 
@@ -1661,7 +1838,7 @@ function propHtml(t){
   if (!sample) return "";
   const st = propState[t.id] || (propState[t.id] = {open:false, note:"", busy:false, res:null, err:""});
   const has = (t.itinerary||[]).length;
-  let h = `<section class="card"><div class="sh"><h2>Proponer itinerario con IA</h2><span class="d">Claude lo prepara con tus billetes, hoteles y excursiones</span></div>`;
+  let h = `<section class="card"><div class="sh"><h2>Proponer itinerario con IA</h2><span class="d">${OUT ? "La IA" : "Claude"} lo prepara con tus billetes, hoteles y excursiones</span></div>`;
   if (!st.open && !st.res) return h + `<div class="actions"><button class="btn sea" data-prop-open>Proponer itinerario</button></div></section>`;
   h += `<div class="stack"><div class="f"><label for="pr-note">¿Qué os apetece? (ritmo, intereses, cosas que evitar)</label><textarea class="inp" id="pr-note" placeholder="Ritmo tranquilo, naturaleza y buena comida, nada de caballos...">${esc(st.note)}</textarea></div>
     <div class="actions"><button class="btn sea" data-prop-run ${st.busy?"disabled":""}>${st.busy ? "Preparando…" : (st.res ? "Proponer otro" : "Proponer")}</button><button class="btn ghost" data-prop-close>Cerrar</button></div>
@@ -1698,7 +1875,8 @@ Responde solo con un array JSON, un objeto por día: {"date":"AAAA-MM-DD","title
 const WMO = c => c==null ? ["·",""] : c===0 ? ["☀️","Despejado"] : c<=2 ? ["🌤️","Poco nuboso"] : c===3 ? ["☁️","Nublado"] : c<=48 ? ["🌫️","Niebla"] : c<=57 ? ["🌦️","Llovizna"] : c<=67 ? ["🌧️","Lluvia"] : c<=77 ? ["🌨️","Nieve"] : c<=82 ? ["🌧️","Chubascos"] : ["⛈️","Tormenta"];
 function weatherHtml(t){
   const w = weather[t.id]; const dt = daysTo(t.start);
-  let h = `<section class="card"><div class="sh"><h2>Previsión</h2><span class="d">${w && w.updatedAt ? "Actualizada " + esc(new Date(w.updatedAt).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})) : "Sin datos todavía"}</span></div>`;
+  if (OUT && dt <= 15 && daysTo(t.end) >= 0 && (!w || !w.updatedAt || Date.now() - new Date(w.updatedAt) > 3*3600e3)) setTimeout(() => liveWeather(t), 0);
+  let h = `<section class="card"><div class="sh"><h2>Previsión</h2><span class="d">${w && w.updatedAt ? (liveBusy[t.id] ? "Actualizando… · " : "") + "Actualizada " + esc(new Date(w.updatedAt).toLocaleString("es-ES",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})) : "Sin datos todavía"}</span></div>`;
   if (w && (w.days||[]).length){
     const byPlace = {}; w.days.forEach(d => (byPlace[d.place] = byPlace[d.place] || []).push(d));
     h += Object.entries(byPlace).map(([p, ds]) => `<h3 style="margin:6px 0 8px">${esc(p)}</h3><div class="wx">${ds.map(d => { const [e, txt] = WMO(d.code); const D = pd(d.date);
@@ -1714,13 +1892,14 @@ function weatherHtml(t){
 /* ---------- useful tools ---------- */
 function utilHtml(t){
   const p = t.practical || {}; const cur = (p.currency||[]).filter(c => c.code !== "EUR");
+  if (OUT && cur.length) liveFx(); const rateOf = c => (OUT && fxRates && fxRates[c.code]) || c.rate;
   const tzMap = {"brasil-2027":["America/Sao_Paulo","America/Campo_Grande"], "baja-2027":["America/Los_Angeles","America/Mazatlan"]};
   const zones = tzMap[t.id] || [];
   let h = `<div class="two"><div class="stack">`;
-  if (cur.length) h += `<section class="card"><div class="sh"><h2>Conversor de moneda</h2><span class="d">Cambio aproximado, edítalo si cambia</span></div><div class="conv">${cur.map((c,i) => `
+  if (cur.length) h += `<section class="card"><div class="sh"><h2>Conversor de moneda</h2><span class="d">${OUT && fxRates ? "Cambio de hoy" : "Cambio aproximado, edítalo si cambia"}</span></div><div class="conv">${cur.map((c,i) => `
     <div class="convrow"><div class="f"><label for="cv-eur-${i}">Euros</label><input class="inp big" id="cv-eur-${i}" inputmode="decimal" data-cv="${i}" data-dir="eur" value="10"></div><span class="eq">=</span>
-    <div class="f"><label for="cv-x-${i}">${esc(c.name)} (${esc(c.code)})</label><input class="inp big" id="cv-x-${i}" inputmode="decimal" data-cv="${i}" data-dir="x" value="${(10*c.rate).toFixed(2)}"></div></div>
-    <div class="f" style="max-width:260px"><label for="cv-rate-${i}">1 € = ? ${esc(c.code)}</label><input class="inp" id="cv-rate-${i}" inputmode="decimal" data-rate="${i}" value="${c.rate}"></div>`).join("")}</div></section>`;
+    <div class="f"><label for="cv-x-${i}">${esc(c.name)} (${esc(c.code)})</label><input class="inp big" id="cv-x-${i}" inputmode="decimal" data-cv="${i}" data-dir="x" value="${(10*rateOf(c)).toFixed(2)}"></div></div>
+    <div class="f" style="max-width:260px"><label for="cv-rate-${i}">1 € = ? ${esc(c.code)}</label><input class="inp" id="cv-rate-${i}" inputmode="decimal" data-rate="${i}" value="${+(+rateOf(c)).toFixed(4)}"></div>`).join("")}</div></section>`;
   h += `<section class="card"><div class="sh"><h2>Emergencias</h2></div><p class="big" style="margin:0;user-select:all">${esc(p.emergency || "112")}</p><p class="muted" style="margin:6px 0 0;font-size:13px">Pólizas y teléfonos de asistencia en la pestaña Seguros; contactos de proveedores en Excursiones.</p></section>`;
   h += `</div><div class="stack"><section class="card"><div class="sh"><h2>Hora local</h2></div><div id="clocks" data-z='${esc(JSON.stringify(zones))}'></div><p class="muted" style="margin:8px 0 0;font-size:13px">${esc(p.tz || "")}</p></section>
     <section class="card"><div class="sh"><h2>Enchufes</h2></div><p style="margin:0">${esc(p.plugs || "")}</p>${plugsHtml(p.plugs)}</section>
@@ -1797,6 +1976,10 @@ document.addEventListener("click", async e => {
     document.querySelectorAll(".mstop.sel").forEach(x => x.classList.remove("sel")); document.getElementById("ms-" + d.mapsel)?.classList.add("sel");
     if (s && lmap){ document.getElementById("tripmap")?.scrollIntoView({behavior:"smooth", block:"center"}); lmap.flyTo([s.lat, s.lng], Math.max(lmap.getZoom(), 13), {duration:.6}); setTimeout(() => mapMarkers[s.id]?.openPopup(), 650); }
     return; }
+  if (d.ics){ icsFor(d.ics); return; }
+  if (d.cidone){ const t = cur(); await save(tripId, {tickets: (t.tickets||[]).map(x => x.id === d.cidone ? {...x, checkinDone: true} : x)}); return; }
+  if ("copyprompt" in d){ const el = $("#ps-prompt"); try { await navigator.clipboard.writeText(el.textContent); toast("Copiado"); } catch(_){ const r = document.createRange(); r.selectNodeContents(el); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Texto seleccionado: cópialo"); } return; }
+  if (d.mapdel){ if (delArm !== "map:" + d.mapdel){ delArm = "map:" + d.mapdel; renderSec(); return; } delArm = null; const t = cur(); await save(tripId, {map: {...(t.map||{}), stops: mapStops(t).filter(s => s.id !== d.mapdel)}}); return; }
   if (d.jump){ document.getElementById(d.jump)?.scrollIntoView({behavior:"smooth"}); return; }
   if (d.sec){ sec = d.sec; store.set("sec", sec); adding = null; delArm = null; render(); return; }
   if (b.id === "newtrip"){ adding = "trip"; render(); $("#nt-name")?.focus(); return; }
@@ -1891,6 +2074,11 @@ document.addEventListener("submit", async e => {
     if (field === "tickets") it.kind = v("a-kind");
     Object.keys(it).forEach(k => it[k] === "" && delete it[k]);
     adding = null; await save(tripId, {[field]: [...(t[field]||[]), it]}); return; }
+  if (f.id === "pastef"){ const t = cur(); const days = parseItinerary(v("ps-text"), t);
+    if (!days.length){ toast("No he reconocido ningún día. Revisa que cada día empiece con su fecha."); return; }
+    const m = new Map((t.itinerary||[]).map(d => [d.date, d])); days.forEach(d => m.set(d.date, d));
+    adding = null; if (await save(tripId, {itinerary: [...m.values()].sort((a,b) => a.date.localeCompare(b.date))})) toast(days.length === 1 ? "1 día añadido" : `${days.length} días añadidos`); return; }
+  if (f.id === "mapaddf"){ await addMapPoint(); return; }
   if (f.id === "dayf"){ const t = cur();
     const items = v("dy-items").split("\n").map(s => s.trim()).filter(Boolean).map(s => { const m = s.match(/^(\d{1,2}[:.]\d{2}|mañana|tarde|noche|mediodía)\s+(.*)$/i); return m ? {time: m[1], text: m[2]} : {time: "", text: s}; });
     const day = {id: uid(), date: v("dy-date"), title: v("dy-title"), sleep: v("dy-sleep"), items};
@@ -1932,7 +2120,7 @@ function tripContext(){
   return t ? JSON.stringify(compact(t)) : JSON.stringify(sorted().filter(x => status(x) !== "pasado").map(compact));
 }
 async function ask(q){
-  if (!sample){ chat.push({role:"user", content:q}, {role:"assistant", content:"El asistente no está disponible en esta vista. Abre la app desde claude.ai con tu cuenta."}); renderMsgs(); return; }
+  if (!sample){ chat.push({role:"user", content:q}, {role:"assistant", content: OUT ? "Para usar el asistente, añade tu clave de Gemini en Cuenta › Asistente con IA." : "El asistente no está disponible en esta vista. Abre la app desde claude.ai con tu cuenta."}); renderMsgs(); return; }
   const img = pendingImg; pendingImg = null; $("#thumb").hidden = true; $("#photo").value = ""; $("#q").value = "";
   chat.push({role:"user", content:q, img: !!img}); const ans = {role:"assistant", content:"", busy:true}; chat.push(ans); renderMsgs();
   const sys = `Eres el asistente de viaje de Laura (española, viaja a menudo con su hijo Álex). Hoy es ${today().toISOString().slice(0,10)}. Responde en español, breve y práctico, como un amigo que conoce bien el destino. No uses rayas largas (—), usa comas. Si algo depende de datos en tiempo real (horarios, precios actuales, tiempo), dilo y sugiere comprobarlo. Si te mandan una foto de una carta, cartel o documento, tradúcelo y explícalo.
@@ -1943,7 +2131,7 @@ Datos de sus viajes (JSON): ${tripContext()}`;
     const opts = {cache:false, onText: u => { ans.content = u.text; renderMsgs(); }};
     if (img) opts.images = [img];
     const r = await sample(msgs, opts); ans.content = r.text;
-  } catch(e){ ans.content = e && e.code === "not_granted" ? "Hay que permitir que la página consulte a Claude (menú Permisos del artifact)." : e && /image/i.test(e.message||"") ? "No he podido leer la foto. Prueba con una imagen más pequeña." : errText(e); }
+  } catch(e){ ans.content = e && e.code === "not_granted" ? (OUT ? "La clave de la IA no es válida. Revísala en Cuenta › Asistente con IA." : "Hay que permitir que la página consulte a Claude (menú Permisos del artifact).") : e && /image/i.test(e.message||"") ? "No he podido leer la foto. Prueba con una imagen más pequeña." : errText(e); }
   ans.busy = false; renderMsgs();
   if ($("#speak").checked && ans.content) speak(ans.content);
 }

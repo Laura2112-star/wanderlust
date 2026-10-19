@@ -14,7 +14,7 @@
 
   let token = null, tokenExp = 0, tokenClient = null, pendingAuth = [];
   let folderId = LS.get("wl.folder"), filesFolderId = LS.get("wl.files"), dataId = LS.get("wl.data");
-  let state = { trips: {}, weather: {} }, version = null, ready = false;
+  let state = { trips: {}, weather: {}, settings: {} }, version = null, ready = false;
   const listeners = { trips: [], weather: [] };
   let queue = Promise.resolve();
 
@@ -119,10 +119,10 @@
     const v = await remoteVersion();
     const txt = await api(`${API}/files/${dataId}?alt=media`).then(r => r.text());
     let d = {}; try { d = JSON.parse(txt || "{}"); } catch(e){ d = {}; }
-    state = { trips: d.trips || {}, weather: d.weather || {} }; version = v;
+    state = { trips: d.trips || {}, weather: d.weather || {}, settings: d.settings || {} }; version = v;
   }
   async function writeRemote(){
-    const blob = new Blob([JSON.stringify({ app: "Wanderlust", saved: new Date().toISOString(), trips: state.trips, weather: state.weather })], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ app: "Wanderlust", saved: new Date().toISOString(), trips: state.trips, weather: state.weather, settings: state.settings || {} })], { type: "application/json" });
     const r = await api(`${UPLOAD}/files/${dataId}?uploadType=media&fields=id,version`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: blob }).then(j);
     version = r.version;
   }
@@ -301,11 +301,13 @@
         <button type="button" data-a="drive">Abrir la carpeta en Drive</button>
         <button type="button" data-a="export">Descargar copia de seguridad</button>
         <label>Importar copia…<input type="file" accept="application/json,.json" hidden></label>
+        ${(window.__wlMenu || []).map((m, i) => `<button type="button" data-x="${i}">${m[0]}</button>`).join("")}
         <button type="button" data-a="out">Cerrar sesión</button>`;
       document.body.append(menu);
       menu.onclick = ev => ev.stopPropagation();
       menu.querySelector("[data-a=drive]").onclick = () => { window.open("https://drive.google.com/drive/folders/" + folderId, "_blank", "noopener"); close(); };
       menu.querySelector("[data-a=export]").onclick = () => { exportCopy(); close(); };
+      menu.querySelectorAll("[data-x]").forEach(b2 => b2.onclick = () => { close(); try { window.__wlMenu[+b2.dataset.x][1](); } catch(e){ console.error(e); } });
       menu.querySelector("input").onchange = ev => { const f = ev.target.files[0]; close(); if (f) importCopy(f); };
       menu.querySelector("[data-a=out]").onclick = () => {
         try { if (token && window.google) google.accounts.oauth2.revoke(token, () => {}); } catch(e){}
@@ -346,11 +348,23 @@
   initClient().catch(() => {});
 
   const user = { can: () => true };
+  /* settings kept in the Drive data file (synced across devices), plus helpers for the add-on modules */
+  window.__wlMenu = window.__wlMenu || [];
+  window.__wlStore = {
+    ready: readyP,
+    get: k => (state.settings || {})[k],
+    set: (k, v) => mutate(s => { s.settings = s.settings || {}; if (v === undefined) delete s.settings[k]; else s.settings[k] = v; }),
+    trips: () => state.trips,
+    updateTrip: (id, fn) => mutate(s => { if (s.trips[id]) fn(s.trips[id]); }),
+    note: m => note(m), progress: m => progress(m), clientId: CLIENT_ID, hint: HINT,
+    uploadBlob: async (blob, name) => (await multipart({ name: name || "archivo", parents: [filesFolderId] }, blob, "POST")).id
+  };
   window.claude = {
     use(name){
       if (name === "db") return readyP.then(() => db);
       if (name === "assets") return readyP.then(() => assets);
       if (name === "user") return Promise.resolve(user);
+      if (name === "sample") return readyP.then(() => (window.__wlMakeSample && window.__wlMakeSample()) || null);
       return Promise.reject(Object.assign(new Error("unavailable"), { code: "unavailable" }));
     }
   };
