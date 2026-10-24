@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quiz</title>
+<meta name="apple-mobile-web-app-title" content="Quiz">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="theme-color" content="#e0473b">
+<link rel="apple-touch-icon" sizes="180x180" href="quiz-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="quiz-192.png">
+<style>
+  :root { --bg: #f7f5f0; --ink: #17181c; --muted: #6c6f78; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #121317; --ink: #f1f1ee; --muted: #9294a0; } }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px 16px; box-sizing: border-box; }
+  img { width: 128px; height: 128px; border-radius: 28px; box-shadow: 0 10px 30px rgba(120, 40, 20, .25); }
+  h1 { font-size: 22px; margin: 22px 0 8px; }
+  p { color: var(--muted); margin: 0 auto; max-width: 320px; font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <img src="quiz-512.png" alt="">
+  <h1 id="msg">Abriendo Quiz…</h1>
+  <p id="tip" hidden>Pulsa <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b>. Desde ese icono se abrirá directamente tu artefacto de Claude.</p>
+</main>
+<script>
+  // The home-screen icon is saved with "?go=1" in its address, so only that launch redirects to Claude.
+  // Opening the plain address never redirects, so the page (and its icon) can always be added from Safari.
+  var target = "https://claude.ai/artifact/ANKcozRJzSfjFkgsaVrzUs";
+  if (/[?&]go=1/.test(location.search)) { location.replace(target); }
+  else {
+    try { history.replaceState(null, "", location.pathname + "?go=1"); } catch (e) {}
+    document.getElementById("msg").textContent = "Acceso a Quiz";
+    document.getElementById("tip").hidden = false;
+  }
+</script>
+</body>
+</html>
