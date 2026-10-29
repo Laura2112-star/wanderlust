@@ -379,19 +379,30 @@ function spokenPop(t){
   else if(v>20000)v=v/1e6;
   return String(Math.round(v*100)/100).replace(".",",");
 }
+const SR_ERR={"not-allowed":"El navegador no tiene permiso para el micrófono. Actívalo en los ajustes del sitio y vuelve a probar.",
+ "service-not-allowed":"El reconocimiento de voz está desactivado. En iPhone activa Ajustes > General > Teclado > Dictado.",
+ "audio-capture":"No se detecta ningún micrófono.",
+ "network":"Hace falta conexión a internet para reconocer la voz.",
+ "no-speech":"No he oído nada. Toca el micrófono y habla justo después.",
+ "language-not-supported":"Este navegador no reconoce voz en español."};
 function listen(k,done,btn){
   if(!SR)return;
-  if(recog){try{recog.abort()}catch(e){}recog=null;btn.classList.remove("on");return}
-  const r=new SR();recog=r;r.lang="es-ES";r.interimResults=false;r.maxAlternatives=3;
-  const heard=$("#heard");btn.classList.add("on");if(heard)heard.textContent="Escuchando…";
-  r.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript.trim());
+  const heard=$("#heard");
+  if(recog){try{recog.abort()}catch(e){}recog=null;btn.classList.remove("on");if(heard)heard.textContent="";return}
+  btn.classList.add("on");if(heard)heard.textContent="Activando el micrófono… si te pide permiso, acéptalo";
+  const r=new SR();recog=r;r.lang="es-ES";r.interimResults=false;r.maxAlternatives=3;r.continuous=false;
+  let got=false,failed=false;
+  const stop=setTimeout(()=>{if(recog===r){try{r.stop()}catch(e){}}},12000);
+  r.onstart=()=>{if(heard)heard.textContent="Escuchando… habla ahora"};
+  r.onresult=e=>{got=true;const alts=[...e.results[0]].map(a=>a.transcript.trim());
     const c=cur();let pick=alts[0];
     if(k!=="poblacion"){const hit=alts.find(a=>check(k,a,c));if(hit)pick=hit}
     else pick=spokenPop(pick);
     if(heard)heard.textContent="Has dicho: «"+alts[0]+"»";done(pick)};
-  r.onerror=e=>{if(heard)heard.textContent=e.error==="not-allowed"?"Permite el micrófono para responder en voz alta.":"No te he entendido. Prueba otra vez o escríbelo.";};
-  r.onend=()=>{recog=null;btn.classList.remove("on")};
-  try{r.start()}catch(e){recog=null;btn.classList.remove("on")}
+  r.onerror=e=>{failed=true;if(e.error==="aborted")return;if(heard)heard.textContent=SR_ERR[e.error]||"No te he entendido. Prueba otra vez o escríbelo."};
+  r.onend=()=>{clearTimeout(stop);if(recog===r)recog=null;btn.classList.remove("on");
+    if(!got&&!failed&&heard)heard.textContent="No he oído nada. Toca el micrófono y habla justo después."};
+  try{r.start()}catch(e){clearTimeout(stop);recog=null;btn.classList.remove("on");if(heard)heard.textContent="No se ha podido activar el micrófono. Recarga la página y prueba otra vez."}
 }
 function renderPlay(){
   const c=cur(),pi=playerIdx(),p=S.players[pi],step=STEPS[S.step],done=S.step>=STEPS.length;
