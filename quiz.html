@@ -140,6 +140,20 @@ h2{font-size:21px;font-weight:550;letter-spacing:-.015em}
 .qi .a{font-size:13px;color:var(--ink2)}
 .qi .a b{color:var(--grn-ink);font-weight:600}
 .qi .a s{color:var(--red-ink)}
+.qi.hf{grid-template-columns:auto minmax(0,1fr) auto}
+.qi .n{font-size:12.5px;color:var(--mute);margin-top:3px}
+.heart{border:0;background:none;padding:4px;margin:-4px -4px 0 0;line-height:0;color:var(--mute);cursor:pointer;align-self:start;border-radius:999px}
+.heart svg{width:22px;height:22px;display:block}
+.heart:hover{color:var(--red)}
+.heart[aria-pressed="true"]{color:var(--red)}
+.heart[aria-pressed="true"] path{fill:currentColor}
+.heart.pop{animation:pop .28s ease}
+@keyframes pop{50%{transform:scale(1.3)}}
+.qcard>.heart{position:absolute;top:16px;right:16px;margin:0}
+.qcard>.row:first-child{padding-right:36px}
+.tab .ic{font-size:13px;line-height:1;color:var(--red)}
+.empty{text-align:center;padding:26px 10px;color:var(--ink2)}
+.empty b{display:block;font-size:17px;color:var(--ink);margin-bottom:4px}
 
 /* play */
 .stage{max-width:760px;width:100%;margin:0 auto;display:grid;gap:16px}
@@ -13586,7 +13600,12 @@ const catVars=k=>{const c=CAT[k].c;return `--c:var(${c});--ci:var(${c}-ink);--cs
 const KEY='quiz.v3';
 let S={seen:{},days:{},best:{minuto:0},hunter:{w:0,l:0}};
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
-for(const id in S.seen)if(!QI[id])delete S.seen[id];
+S.fav=S.fav||{};
+const qh=q=>hash(q.q+'|'+q.ans).toString(36);
+/* preguntas sustituidas por otras más asequibles: su historial antiguo ya no vale */
+const RENEWED=new Set(/*RENEWED*/[]);
+for(const box of [S.seen,S.fav])for(const id in box){const q=QI[id],v=box[id];
+  if(!q||(v.h?v.h!==qh(q):RENEWED.has(id))){delete box[id];continue}v.h=qh(q)}
 for(const k in S.days){const ss=(S.days[k]&&S.days[k].sets)||{};for(const x in ss)if(!Array.isArray(ss[x])||ss[x].some(id=>!QI[id]))delete ss[x];}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function day(){return S.days[TODAY]||(S.days[TODAY]={sets:{},done:{}})}
@@ -13628,9 +13647,11 @@ const GLYPH={
  variado:'<path d="M-10 22 V-24 L28 -32 V14" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><circle cx="-19" cy="22" r="10" fill="#fff"/><circle cx="19" cy="14" r="10" fill="#fff"/>',
  reto:'<text x="0" y="22" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="84" fill="#fff">?</text><rect x="-40" y="34" width="22" height="6" rx="3" fill="#fff"/><rect x="-11" y="34" width="22" height="6" rx="3" fill="#fff"/><rect x="18" y="34" width="22" height="6" rx="3" fill="#fff"/>',
  minuto:'<circle r="32" fill="none" stroke="#fff" stroke-width="6"/><path d="M0 -20 V0 L14 10" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><rect x="-7" y="-46" width="14" height="8" rx="2" fill="#fff"/>',
+ fallos:'<circle r="32" fill="none" stroke="#fff" stroke-width="6"/><path d="M-14 -14 L14 14 M14 -14 L-14 14" stroke="#fff" stroke-width="7" stroke-linecap="round"/>',
+ favs:'<path d="M0 30 C-22 16 -38 2 -38 -14 C-38 -28 -27 -36 -16 -36 C-8 -36 -3 -32 0 -26 C3 -32 8 -36 16 -36 C27 -36 38 -28 38 -14 C38 2 22 16 0 30 Z" fill="#fff"/>',
  cazador:'<path d="M-20 -36 V36 M20 -36 V36 M-20 -22 H20 M-20 -4 H20 M-20 14 H20 M-20 32 H20" stroke="#fff" stroke-width="6" stroke-linecap="round"/>'
 };
-const GRADS={arte:['#e23b3b','#f2b705','#b02a6a'],literatura:['#2654c4','#18a05c','#6a3fc4'],geografia:['#18a05c','#2654c4','#a9c63a'],historia:['#f2b705','#c62f3c','#ef7a1a'],ciencia:['#7b4fd6','#1f9ab8','#c04aa0'],variado:['#ef7a1a','#18a05c','#f6be1e'],reto:['#dc2a3d','#f6be1e','#2654c4','#18a05c'],minuto:['#f6be1e','#e0503a','#ef7a1a'],cazador:['#2654c4','#dc2a3d','#7b4fd6']};
+const GRADS={fallos:['#dc2a3d','#ef7a1a','#b02a6a'],favs:['#e23b3b','#c04aa0','#f6be1e'],arte:['#e23b3b','#f2b705','#b02a6a'],literatura:['#2654c4','#18a05c','#6a3fc4'],geografia:['#18a05c','#2654c4','#a9c63a'],historia:['#f2b705','#c62f3c','#ef7a1a'],ciencia:['#7b4fd6','#1f9ab8','#c04aa0'],variado:['#ef7a1a','#18a05c','#f6be1e'],reto:['#dc2a3d','#f6be1e','#2654c4','#18a05c'],minuto:['#f6be1e','#e0503a','#ef7a1a'],cazador:['#2654c4','#dc2a3d','#7b4fd6']};
 const gradCss=k=>{const g=GRADS[k]||GRADS.reto;return `linear-gradient(120deg,${g.join(',')})`};
 let UID=0;
 function cover(key,_c,wide){
@@ -13644,12 +13665,12 @@ function cover(key,_c,wide){
 /* ---------- navegación ---------- */
 let view={tab:'hoy'};
 function renderTabs(){
-  const t=[{k:'hoy',name:'Hoy',c:null},...CATS];
-  $('#tabs').innerHTML=t.map(x=>`<button class="tab" role="tab" data-k="${x.k}" aria-selected="${view.tab===x.k}" style="${x.c?'--c:var('+x.c+');--cg:'+gradCss(x.k):''}">${x.c?'<i></i>':''}${x.name}</button>`).join('');
+  const t=[{k:'hoy',name:'Hoy',c:null},...CATS,{k:'fallos',name:'Errores',ic:'✗'},{k:'favs',name:'Favoritas',ic:'♥'}];
+  $('#tabs').innerHTML=t.map(x=>`<button class="tab" role="tab" data-k="${x.k}" aria-selected="${view.tab===x.k}" style="${x.c?'--c:var('+x.c+');--cg:'+gradCss(x.k):x.ic?'--cg:'+gradCss(x.k):''}">${x.c?'<i></i>':x.ic?`<span class="ic">${x.ic}</span>`:''}${x.name}</button>`).join('');
 }
 $('#tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b)go(b.dataset.k)});
 $('#home').addEventListener('click',()=>go('hoy'));
-function go(tab){stopTimers();view={tab};renderTabs();refreshMeta();(tab==='hoy'?renderHome:renderCat)(tab);window.scrollTo({top:0})}
+function go(tab){stopTimers();view={tab};renderTabs();refreshMeta();({hoy:renderHome,fallos:renderErrors,favs:renderFavs}[tab]||renderCat)(tab);window.scrollTo({top:0})}
 
 function fmtDate(){const s=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});return s.charAt(0).toUpperCase()+s.slice(1)}
 
@@ -13712,7 +13733,7 @@ function renderCat(k){
   <div class="two" style="${catVars(k)}">
     <section class="card">
       <div class="sh"><h2>Las cinco de hoy</h2>${d?`<span class="pill ${d.score>=3?'ok':'ko'}">${d.score}/${d.total}</span>`:'<span class="pill todo">Pendiente</span>'}</div>
-      <div class="qlist">${ids.map((id,i)=>{const q=QI[id];const sv=d&&S.seen[id];return `<div class="qi ${sv?(sv.ok?'ok':'ko'):''}"><span class="dot">${sv?(sv.ok?'✓':'✗'):i+1}</span><div>${sv?`<p>${esc(q.q)}</p><div class="a">Respuesta: <b>${esc(q.ans)}</b></div>`:`<p class="muted">Pregunta ${i+1} · ${q.scope==='E'?'España':'Mundo'}${ERA[q.era]?' · '+ERA[q.era]:''}</p>`}</div></div>`}).join('')}</div>
+      <div class="qlist">${ids.map((id,i)=>{const q=QI[id];const sv=d&&S.seen[id];return `<div class="qi ${sv?'hf '+(sv.ok?'ok':'ko'):''}"><span class="dot">${sv?(sv.ok?'✓':'✗'):i+1}</span><div>${sv?`<p>${esc(q.q)}</p><div class="a">Respuesta: <b>${esc(q.ans)}</b></div>`:`<p class="muted">Pregunta ${i+1} · ${q.scope==='E'?'España':'Mundo'}${ERA[q.era]?' · '+ERA[q.era]:''}</p>`}</div>${sv?heartBtn(id):''}</div>`}).join('')}</div>
       <div class="btns" style="margin-top:14px"><button class="btn c" id="playToday">${d?'Volver a jugarlas':'Jugar las cinco de hoy'}</button></div>
     </section>
     <div class="stack">
@@ -13732,7 +13753,7 @@ function renderCat(k){
     <div class="qlist" id="hl"></div>
   </section>`;
   const drawHist=f=>{const rows=hist.filter(([,v])=>f==='all'||(f==='ok'?v.ok:!v.ok)).slice(0,40);
-    $('#hl').innerHTML=rows.length?rows.map(([id,v])=>{const q=QI[id];return `<div class="qi ${v.ok?'ok':'ko'}"><span class="dot">${v.ok?'✓':'✗'}</span><div><p>${esc(q.q)}</p><div class="a">${!v.ok&&v.a?`Dijiste <s>${esc(v.a)}</s> · `:''}Respuesta: <b>${esc(q.ans)}</b></div></div></div>`}).join(''):'<p class="muted" style="margin:0">Todavía no hay preguntas aquí.</p>'};
+    $('#hl').innerHTML=rows.length?rows.map(([id,v])=>{const q=QI[id];return `<div class="qi hf ${v.ok?'ok':'ko'}"><span class="dot">${v.ok?'✓':'✗'}</span><div><p>${esc(q.q)}</p><div class="a">${!v.ok&&v.a?`Dijiste <s>${esc(v.a)}</s> · `:''}Respuesta: <b>${esc(q.ans)}</b></div></div>${heartBtn(id)}</div>`}).join(''):'<p class="muted" style="margin:0">Todavía no hay preguntas aquí.</p>'};
   drawHist('all');
   $('#hf').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('#hf').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawHist(b.dataset.f)});
   $('#playToday').addEventListener('click',()=>playClassic(ids,{title:c.name+' · hoy',doneKey:k,back:k}));
@@ -13740,13 +13761,63 @@ function renderCat(k){
   const rv=$('#review');if(rv)rv.addEventListener('click',()=>playClassic(shuffle(wrong,rng(Date.now())).slice(0,10),{title:c.name+' · repaso',back:k}));
 }
 
+/* ---------- corazones: preguntas favoritas ---------- */
+const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.4-4.5-9.3-9C1.4 8.2 3.4 4.5 7 4.5c2.2 0 3.6 1.3 5 3 1.4-1.7 2.8-3 5-3 3.6 0 5.6 3.7 4.3 7-1.9 4.5-9.3 9-9.3 9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+function heartBtn(id){const on=!!S.fav[id];return `<button class="heart" data-fav="${id}" aria-pressed="${on}" aria-label="${on?'Quitar de favoritas':'Guardar en favoritas'}" title="${on?'Quitar de favoritas':'Guardar en favoritas'}">${HEART}</button>`}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.heart[data-fav]');if(!b)return;e.preventDefault();e.stopPropagation();
+  const id=b.dataset.fav,q=QI[id];if(!q)return;
+  if(S.fav[id])delete S.fav[id];else S.fav[id]={t:Date.now(),h:qh(q)};save();
+  const on=!!S.fav[id];
+  document.querySelectorAll(`.heart[data-fav="${id}"]`).forEach(x=>{x.setAttribute('aria-pressed',on);x.setAttribute('aria-label',on?'Quitar de favoritas':'Guardar en favoritas');x.title=on?'Quitar de favoritas':'Guardar en favoritas';x.classList.remove('pop');void x.offsetWidth;if(on)x.classList.add('pop')});
+  if(view.tab==='favs'&&$('#favlist')&&!on){const row=b.closest('.qi');if(row){row.style.transition='opacity .25s';row.style.opacity='0';setTimeout(()=>renderFavs(),260)}}
+});
+
+/* ---------- pestañas de Errores y Favoritas ---------- */
+function catFilter(ids,sel){
+  const counts=Object.fromEntries(CATS.map(c=>[c.k,ids.filter(id=>QI[id].cat===c.k).length]));
+  return `<div class="secnav" id="cf"><button aria-pressed="${sel==='all'}" data-f="all">Todas · ${ids.length}</button>${CATS.filter(c=>counts[c.k]).map(c=>`<button aria-pressed="${sel===c.k}" data-f="${c.k}" style="${catVars(c.k)}">${c.name} · ${counts[c.k]}</button>`).join('')}</div>`;
+}
+let errF='all',favF='all';
+function renderErrors(){
+  const all=Object.entries(S.seen).filter(([id,v])=>!v.ok&&QI[id]).sort((a,b)=>(b[1].t||0)-(a[1].t||0));
+  if(errF!=='all'&&!all.some(([id])=>QI[id].cat===errF))errF='all';
+  const rows=all.filter(([id])=>errF==='all'||QI[id].cat===errF);
+  const fixed=Object.values(S.seen).filter(v=>v.ok&&v.fx).length;
+  $('#app').innerHTML=`
+  <div class="banner">${cover('fallos',null,true)}<div class="txt"><div class="eyebrow" style="color:#fff;opacity:.85">Para repasar</div><h1>Errores</h1><div class="s">${all.length?`${all.length} ${all.length===1?'pregunta fallada pendiente':'preguntas falladas pendientes'}`:'Sin fallos pendientes'}${fixed?` · ${fixed} ya corregidas`:''}</div></div></div>
+  <section class="card">
+    <div class="sh"><h2>Repasar</h2><span class="d">Cuando aciertes una, sale de esta lista</span></div>
+    ${all.length?`${catFilter(all.map(x=>x[0]),errF)}<div class="btns" style="margin-top:14px"><button class="btn" id="rv">Repasar ${Math.min(rows.length,10)} ${rows.length===1?'fallo':'fallos'}</button></div>`:'<div class="empty"><b>Todo en orden</b>Aquí aparecerán las preguntas que falles en cualquier modo de juego, para volver a intentarlas.</div>'}
+  </section>
+  ${rows.length?`<section class="card"><div class="sh"><h2>Tus fallos</h2><span class="d">Los más recientes primero</span></div>
+    <div class="qlist">${rows.map(([id,v])=>{const q=QI[id];return `<div class="qi hf ko" style="${catVars(q.cat)}"><span class="dot">✗</span><div><p>${esc(q.q)}</p><div class="a">${v.a?`Dijiste <s>${esc(v.a)}</s> · `:''}Respuesta: <b>${esc(q.ans)}</b></div><div class="n">${CAT[q.cat].name} · ${esc(q.note)}</div></div>${heartBtn(id)}</div>`}).join('')}</div></section>`:''}`;
+  const cf=$('#cf');if(cf)cf.addEventListener('click',e=>{const b=e.target.closest('button');if(b){errF=b.dataset.f;renderErrors()}});
+  const rv=$('#rv');if(rv)rv.addEventListener('click',()=>playClassic(shuffle(rows.map(x=>x[0]),rng(Date.now())).slice(0,10),{title:'Repaso de errores',back:'fallos'}));
+}
+function renderFavs(){
+  const all=Object.entries(S.fav).filter(([id])=>QI[id]).sort((a,b)=>(b[1].t||0)-(a[1].t||0));
+  if(favF!=='all'&&!all.some(([id])=>QI[id].cat===favF))favF='all';
+  const rows=all.filter(([id])=>favF==='all'||QI[id].cat===favF);
+  $('#app').innerHTML=`
+  <div class="banner">${cover('favs',null,true)}<div class="txt"><div class="eyebrow" style="color:#fff;opacity:.85">Dignas de recordar</div><h1>Favoritas</h1><div class="s">${all.length?`${all.length} ${all.length===1?'pregunta guardada':'preguntas guardadas'}`:'Aún no has guardado ninguna'}</div></div></div>
+  <section class="card">
+    <div class="sh"><h2>Tus favoritas</h2>${all.length?'<span class="d">Toca el corazón para quitarla</span>':''}</div>
+    ${all.length?`${catFilter(all.map(x=>x[0]),favF)}<div class="btns" style="margin:14px 0 6px"><button class="btn" id="pf">Jugar ${Math.min(rows.length,10)} favoritas</button></div>
+    <div class="qlist" id="favlist">${rows.map(([id])=>{const q=QI[id];return `<div class="qi hf" style="${catVars(q.cat)}"><span class="dot" style="background:var(--cs);color:var(--ci)">♥</span><div><p>${esc(q.q)}</p><div class="a">Respuesta: <b>${esc(q.ans)}</b></div><div class="n">${CAT[q.cat].name} · ${esc(q.note)}</div></div>${heartBtn(id)}</div>`}).join('')}</div>`
+    :`<div class="empty"><b>Guarda las que merezcan la pena</b>Mientras juegas, toca el corazón ${HEART.replace('<svg','<svg style="width:16px;height:16px;vertical-align:-3px"')} de una pregunta y aparecerá aquí.</div>`}
+  </section>`;
+  const cf=$('#cf');if(cf)cf.addEventListener('click',e=>{const b=e.target.closest('button');if(b){favF=b.dataset.f;renderFavs()}});
+  const pf=$('#pf');if(pf)pf.addEventListener('click',()=>playClassic(shuffle(rows.map(x=>x[0]),rng(Date.now())).slice(0,10),{title:'Mis favoritas',back:'favs'}));
+}
+
 /* ---------- modos ---------- */
 function startMode(m){stopTimers();if(m==='reto')playClassic(dailySet('reto'),{title:'Reto diario',doneKey:'reto',back:'hoy'});else if(m==='minuto')playMinuto();else playCazador()}
-function record(q,chosen){const ok=chosen===q.ans;S.seen[q.id]={ok,a:ok?undefined:chosen,t:Date.now(),d:TODAY};return ok}
+function record(q,chosen){const ok=chosen===q.ans;const was=S.seen[q.id];const fx=ok&&was&&(!was.ok||was.fx);S.seen[q.id]={ok,a:ok?undefined:chosen,t:Date.now(),d:TODAY,h:qh(q),fx:fx||undefined};return ok}
 
 function qChips(q){return `<span class="pill cat" style="${catVars(q.cat)}">${CAT[q.cat].name}</span><span class="pill plain">${q.scope==='E'?'España':'Mundo'}</span>${ERA[q.era]?`<span class="pill plain">${ERA[q.era]}</span>`:''}${q.img?'<span class="pill img plain">Con imagen</span>':''}`}
 function qCard(q,order,extra=''){
-  return `<div class="qcard" style="${catVars(q.cat)}"><div class="row" style="margin:0">${qChips(q)}</div>${q.img&&IMG[q.img]?`<div class="qimg">${IMG[q.img]()}</div>`:''}<div class="qtext">${esc(q.q)}</div><div class="opts">${order.map((o,i)=>`<button class="opt" data-o="${esc(o)}"><span class="k">${'ABC'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>${extra}<div id="fbx"></div></div>`;
+  return `<div class="qcard" style="${catVars(q.cat)}">${heartBtn(q.id)}<div class="row" style="margin:0">${qChips(q)}</div>${q.img&&IMG[q.img]?`<div class="qimg">${IMG[q.img]()}</div>`:''}<div class="qtext">${esc(q.q)}</div><div class="opts">${order.map((o,i)=>`<button class="opt" data-o="${esc(o)}"><span class="k">${'ABC'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>${extra}<div id="fbx"></div></div>`;
 }
 function markOpts(chosen,ans){document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;const o=b.dataset.o;if(o===ans)b.classList.add('right');else if(o===chosen)b.classList.add('wrong');else b.classList.add('dim')})}
 
@@ -13788,7 +13859,7 @@ function playClassic(ids,opt){
         <div class="big">${score}<span class="muted" style="font-size:.45em">/${qs.length}</span></div><p style="margin:0;font-size:17px">${msg}</p>
         <div class="btns" style="justify-content:center;margin-top:12px"><button class="btn" id="again">Volver al inicio</button>${opt.back!=='hoy'?'':'<button class="btn ghost" id="mm">Probar el minuto rápido</button>'}</div>
       </section>
-      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${res.map(r=>`<div class="qi ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b></div><div class="a muted" style="margin-top:2px">${esc(r.q.note)}</div></div></div>`).join('')}</div></section></div>`;
+      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${res.map(r=>`<div class="qi hf ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b></div><div class="a muted" style="margin-top:2px">${esc(r.q.note)}</div></div>${heartBtn(r.q.id)}</div>`).join('')}</div></section></div>`;
     $('#quit').onclick=()=>go(opt.back);$('#again').onclick=()=>go('hoy');const mm=$('#mm');if(mm)mm.onclick=()=>playMinuto();
   };
   draw();
@@ -13826,7 +13897,7 @@ function playMinuto(){
       <section class="card" style="text-align:center;display:grid;gap:6px;justify-items:center;padding:30px 18px">
         <div class="eyebrow">${rec?'¡Nuevo récord!':'Tiempo'}</div><div class="big">${ok}</div><p style="margin:0">aciertos de ${res.length} respuestas</p>
         <div class="btns" style="justify-content:center;margin-top:12px"><button class="btn" id="again">Otra vez</button><button class="btn ghost" id="hc">Jugar contra el Cazador</button></div></section>
-      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${res.map(r=>`<div class="qi ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b></div></div></div>`).join('')||'<p class="muted">No respondiste ninguna.</p>'}</div></section></div>`;
+      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${res.map(r=>`<div class="qi hf ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b></div></div>${heartBtn(r.q.id)}</div>`).join('')||'<p class="muted">No respondiste ninguna.</p>'}</div></section></div>`;
     $('#quit').onclick=()=>go('hoy');$('#again').onclick=playMinuto;$('#hc').onclick=playCazador;
   };
 }
@@ -13868,7 +13939,7 @@ function playCazador(){
         <p style="margin:0">${win?'Llegaste a casa antes de que el Cazador te alcanzara.':'El Cazador te alcanzó en la escalera.'} Acertaste ${ok} de ${log.length}.</p>
         <p class="muted" style="margin:0">Balance: ${S.hunter.w} ganadas y ${S.hunter.l} perdidas</p>
         <div class="btns" style="justify-content:center;margin-top:12px"><button class="btn" id="again">Revancha</button><button class="btn ghost" id="hm">Volver al inicio</button></div></section>
-      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${log.map(r=>`<div class="qi ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b> · Cazador: ${r.hOk?'acertó':'falló'}</div></div></div>`).join('')}</div></section></div>`;
+      <section class="card"><div class="sh"><h2>Repaso</h2></div><div class="qlist">${log.map(r=>`<div class="qi hf ${r.ok?'ok':'ko'}"><span class="dot">${r.ok?'✓':'✗'}</span><div><p>${esc(r.q.q)}</p><div class="a">${r.ok?'':`Dijiste <s>${esc(r.o)}</s> · `}Respuesta: <b>${esc(r.q.ans)}</b> · Cazador: ${r.hOk?'acertó':'falló'}</div></div>${heartBtn(r.q.id)}</div>`).join('')}</div></section></div>`;
     $('#quit').onclick=()=>go('hoy');$('#again').onclick=playCazador;$('#hm').onclick=()=>go('hoy');
   };
   $('#app').innerHTML=`<div class="stage">
@@ -13882,7 +13953,7 @@ function playCazador(){
 
 /* ---------- arranque ---------- */
 const startTab=(location.hash||'').slice(1);
-go(CAT[startTab]?startTab:'hoy');
+go(CAT[startTab]||startTab==='fallos'||startTab==='favs'?startTab:'hoy');
 </script>
 
 </body></html>
