@@ -295,7 +295,7 @@ function render(){
 
 /* ---------------- SETUP ---------------- */
 function renderSetup(){
-  const n=COUNTRIES.filter(c=>S.regions.includes(c.r)).length;
+  const n=COUNTRIES.length;
   $("#app").innerHTML=`
   <div class="setup">
     <div class="panel">
@@ -308,8 +308,6 @@ function renderSetup(){
       ${S.players.length<6?`<button class="ghost" id="add" style="margin-top:10px">+ Añadir jugador</button>`:""}
       <div class="label">Rondas por jugador</div>
       <div class="chips">${[3,5,8,10].map(r=>`<button class="chip" data-r="${r}" aria-pressed="${S.rounds===r}">${r}</button>`).join("")}</div>
-      <div class="label">Continentes (${n} países)</div>
-      <div class="chips">${REGIONS.map(r=>`<button class="chip" data-reg="${r}" aria-pressed="${S.regions.includes(r)}">${r}</button>`).join("")}</div>
       <button class="go" id="start" ${n<1?"disabled":""}>¡A jugar!</button>
     </div>
     <div class="panel">
@@ -327,17 +325,15 @@ function renderSetup(){
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{S.players.splice(+b.dataset.del,1);render()});
   $("#add")&&($("#add").onclick=()=>{S.players.push({n:"Jugador "+(S.players.length+1)});render();$("#pn"+(S.players.length-1)).select()});
   document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{S.rounds=+b.dataset.r;render()});
-  document.querySelectorAll("[data-reg]").forEach(b=>b.onclick=()=>{const r=b.dataset.reg;
-    S.regions=S.regions.includes(r)?S.regions.filter(x=>x!==r):[...S.regions,r];render()});
   $("#start").onclick=start;
 }
 function start(){
   S.players.forEach((p,i)=>{p.n=(p.n||"").trim()||"Jugador "+(i+1);p.s=0});
-  HIST=[];S.deck=d3.shuffle(COUNTRIES.filter(c=>S.regions.includes(c.r)).map(c=>c.c3));
+  HIST=[];S.deck=d3.shuffle(COUNTRIES.map(c=>c.c3));
   S.turn=0;S.phase="play";newTurn();render();
 }
 function newTurn(){
-  if(!S.deck.length)S.deck=d3.shuffle(COUNTRIES.filter(c=>S.regions.includes(c.r)).map(c=>c.c3));
+  if(!S.deck.length)S.deck=d3.shuffle(COUNTRIES.map(c=>c.c3));
   S.card=S.deck.pop();zoomState=d3.zoomIdentity;
   S.step=0;S.revealed=false;S.res={};S.typed={};S.nbTyped=[];S.nbSel=[];S.click=null;S.last=null;S.mapMsg="";
 }
