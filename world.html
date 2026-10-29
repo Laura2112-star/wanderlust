@@ -232,7 +232,6 @@ const STEPS=[
   {k:"pais",label:"País",q:"¿Qué país es?",pts:2,c:"red",ph:"Escribe el país"},
   {k:"capital",label:"Capital",q:"¿Cuál es su capital?",pts:1,c:"yellow",ph:"Escribe la capital"},
   {k:"poblacion",label:"Población",q:"¿Cuántos habitantes tiene?",pts:1,c:"green",ph:"En millones, p. ej. 47",hint:"En millones. Vale si te acercas un 20 % arriba o abajo."},
-  {k:"vecinos",label:"Países colindantes",q:"¿Con qué países tiene frontera?",pts:null,c:"blue",ph:"Escribe un país y pulsa Intro",hint:"Escribe uno a uno (Intro para añadir). 1 punto por cada vecino acertado."},
   {k:"mapa",label:"Localización",q:"Sitúalo en el mapa",pts:2,c:"violet",hint:"Toca el país en el mapa. Usa + y − o pellizca para hacer zoom."}
 ];
 /* nombres alternativos que también se aceptan */
@@ -317,9 +316,9 @@ function renderSetup(){
       <h2>Cómo se juega</h2>
       <ol class="rules">
         <li>Cada turno sale una carta con <b>solo la bandera</b>.</li>
-        <li>Se contesta por orden: <b>país</b>, <b>capital</b>, <b>población</b> y <b>países colindantes</b>. Puedes <b>escribir</b> la respuesta y la carta la corrige sola, o <b>decirla en voz alta</b> y marcar tú si es acierto o fallo.</li>
+        <li>Se contesta por orden: <b>país</b>, <b>capital</b> y <b>población</b>. Puedes <b>escribir</b> la respuesta y la carta la corrige sola, o <b>decirla en voz alta</b> y marcar tú si es acierto o fallo.</li>
         <li>Al final hay que <b>situarlo en el mapa</b>, que solo muestra fronteras.</li>
-        <li>Puntos: país 2, capital 1, población 1, cada vecino 1, mapa 2.</li>
+        <li>Puntos: país 2, capital 1, población 1, mapa 2.</li>
         <li>Si te equivocas al marcar, usa <b>← Atrás</b>.</li>
       </ol>
     </div>
