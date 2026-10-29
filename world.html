@@ -95,6 +95,11 @@ input.txt:focus{border-color:var(--garnet);outline:none}
 .host .hint{color:var(--muted);font-size:13px}
 .ansrow{display:flex;gap:8px}
 .ansrow input{flex:1}
+button.mic{width:46px;min-width:46px;padding:0;display:grid;place-items:center;background:var(--white);color:var(--garnet);border:1px solid var(--line);box-shadow:none}
+button.mic svg{width:20px;height:20px}
+button.mic.on{background:var(--garnet);color:#fff;border-color:var(--garnet);animation:micpulse 1.2s ease-in-out infinite}
+@keyframes micpulse{50%{box-shadow:0 0 0 6px rgba(122,31,43,.18)}}
+.listening{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .verdict{border-radius:14px;padding:8px 12px;font-weight:700;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
 .verdict.ok{background:var(--ok-soft);color:var(--ok)}
@@ -319,7 +324,7 @@ function renderSetup(){
       <h2>Cómo se juega</h2>
       <ol class="rules">
         <li>Cada turno sale una carta con <b>solo la bandera</b>.</li>
-        <li>Se contesta por orden: <b>país</b>, <b>capital</b> y <b>población</b>. Puedes <b>escribir</b> la respuesta y la carta la corrige sola, o <b>decirla en voz alta</b> y marcar tú si es acierto o fallo.</li>
+        <li>Se contesta por orden: <b>país</b>, <b>capital</b> y <b>población</b>. Puedes <b>escribirla</b> o <b>decirla al micrófono</b> 🎤, y la carta la corrige sola. Si lo prefieres, dila sin micrófono y marca tú si es acierto o fallo.</li>
         <li>Al final hay que <b>situarlo en el mapa</b>, que solo muestra fronteras.</li>
         <li>Puntos: país 2, capital 1, población 1, mapa 2.</li>
         <li>Si te equivocas al marcar, usa <b>← Atrás</b>.</li>
@@ -359,6 +364,35 @@ function nbMatchIdx(typed,c){return c.nb.findIndex(n=>matches(typed,nameOpts(n))
 
 /* ---------------- PLAY ---------------- */
 function answer(k,c){return {pais:c.n,capital:c.cap,poblacion:fmtPop(c.pop)}[k]}
+/* ---------- respuesta por voz ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recog=null;
+const NUMW={un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,veinte:20,treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90,cien:100,ciento:100,doscientos:200,trescientos:300};
+function spokenPop(t){
+  t=String(t).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9.,]/g," ").replace(/\by\b/g," ").replace(/\s+/g," ").trim();
+  let m=t.match(/(\d+(?:[.,]\d+)*)/);let v;
+  if(m){v=parseFloat(m[1].replace(/\.(?=\d{3}\b)/g,"").replace(",","."))}
+  else{v=0;let found=false;t.split(" ").forEach(w=>{if(NUMW[w]!=null){v+=NUMW[w];found=true}});if(!found)return t}
+  if(/mil millones/.test(t))v*=1000;
+  else if(/millon/.test(t)){}
+  else if(/\bmil\b/.test(t))v=v/1000;
+  else if(v>20000)v=v/1e6;
+  return String(Math.round(v*100)/100).replace(".",",");
+}
+function listen(k,done,btn){
+  if(!SR)return;
+  if(recog){try{recog.abort()}catch(e){}recog=null;btn.classList.remove("on");return}
+  const r=new SR();recog=r;r.lang="es-ES";r.interimResults=false;r.maxAlternatives=3;
+  const heard=$("#heard");btn.classList.add("on");if(heard)heard.textContent="Escuchando…";
+  r.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript.trim());
+    const c=cur();let pick=alts[0];
+    if(k!=="poblacion"){const hit=alts.find(a=>check(k,a,c));if(hit)pick=hit}
+    else pick=spokenPop(pick);
+    if(heard)heard.textContent="Has dicho: «"+alts[0]+"»";done(pick)};
+  r.onerror=e=>{if(heard)heard.textContent=e.error==="not-allowed"?"Permite el micrófono para responder en voz alta.":"No te he entendido. Prueba otra vez o escríbelo.";};
+  r.onend=()=>{recog=null;btn.classList.remove("on")};
+  try{r.start()}catch(e){recog=null;btn.classList.remove("on")}
+}
 function renderPlay(){
   const c=cur(),pi=playerIdx(),p=S.players[pi],step=STEPS[S.step],done=S.step>=STEPS.length;
   $("#round").textContent=`Ronda ${Math.floor(S.turn/S.players.length)+1} de ${S.rounds}`;
@@ -406,7 +440,8 @@ function renderPlay(){
       <div class="actions"><button class="ok" id="nbok">Confirmar (+${S.nbSel.length})</button></div>`;
   }else if(!S.revealed){
     host=`${verdict}<div class="q">${step.q}</div>${step.hint?`<div class="hint">${step.hint}</div>`:""}
-      <div class="ansrow"><input class="txt" id="ans" placeholder="${step.ph}" autocomplete="off" ${step.k==="poblacion"?'inputmode="decimal"':""} aria-label="${step.label}"><button id="check">Comprobar</button></div>
+      <div class="ansrow"><input class="txt" id="ans" placeholder="${step.ph}" autocomplete="off" ${step.k==="poblacion"?'inputmode="decimal"':""} aria-label="${step.label}">${SR?`<button class="mic" id="mic" aria-label="Responder en voz alta" title="Responder en voz alta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}<button id="check">Comprobar</button></div>
+      <div class="listening" id="heard">${SR?"Toca el micrófono y di la respuesta: se corrige sola.":""}</div>
       <div class="actions"><button class="link" id="reveal">Lo he dicho en voz alta: revelar</button></div>`;
   }else{
     host=`<div class="q">¿Ha acertado ${esc(p.n)}?</div>
@@ -428,6 +463,8 @@ function renderPlay(){
 
   const ans=$("#ans");
   if(ans&&matchMedia("(pointer:fine)").matches)ans.focus();
+  const mic=$("#mic");
+  if(mic&&ans)mic.onclick=()=>listen(step.k,txt=>{ans.value=txt;doCheck()},mic);
   const doCheck=()=>{const v=ans.value.trim();if(!v)return;const ok=check(step.k,v,c);
     save();S.typed[step.k]=v;S.last={k:step.k,ok,pts:step.pts,ans:answer(step.k,c)};award(ok?step.pts:0)};
   $("#check")&&($("#check").onclick=doCheck);
