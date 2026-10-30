@@ -32,7 +32,8 @@
   // The home-screen icon is saved with "?go=1" in its address, so only that launch redirects to Claude.
   // Opening the plain address never redirects, so the page (and its icon) can always be added from Safari.
   var target = "https://claude.ai/artifact/NQSwqeWNJZF96cxhJgQes3";
-  if (/[?&]go=1/.test(location.search)) { location.replace(target); }
+  var asApp = window.matchMedia && (matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: minimal-ui)").matches || matchMedia("(display-mode: window-controls-overlay)").matches);
+  if (asApp || /[?&]go=1/.test(location.search)) { location.replace(target); }
   else {
     try { history.replaceState(null, "", location.pathname + "?go=1"); } catch (e) {}
     document.getElementById("msg").textContent = "Acceso a USA";
