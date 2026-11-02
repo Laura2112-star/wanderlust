@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Italiano</title>
 <meta name="apple-mobile-web-app-title" content="Italiano">
+<meta name="theme-color" content="#008c45">
+<link rel="manifest" href="it.webmanifest">
 <link rel="apple-touch-icon" href="italiano-180.png?v=2">
-<link rel="icon" type="image/png" href="italiano-192.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="italiano-192.png?v=2">
+<link rel="icon" type="image/png" sizes="512x512" href="italiano-512.png?v=2">
 <style>
   body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(90deg,#008c45,#f5f2eb 50%,#cd212a);color:#1c1c1c;text-align:center;padding:24px;box-sizing:border-box}
   .box{display:grid;gap:14px;justify-items:center;max-width:360px}
@@ -24,7 +27,8 @@
 <script>
   // Only the home-screen icon (saved with "?go=1") redirects; opening the plain address never does.
   var target = "https://claude.ai/artifact/Q4PDbvoHYrGPCDGMSXdAqJ";
-  if (/[?&]go=1/.test(location.search)) { location.replace(target); }
+  var asApp = window.matchMedia && (matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: minimal-ui)").matches || matchMedia("(display-mode: window-controls-overlay)").matches);
+  if (asApp || /[?&]go=1/.test(location.search)) { location.replace(target); }
   else {
     try { history.replaceState(null, "", location.pathname + "?go=1"); } catch(e){}
     document.getElementById("msg").textContent = "Acceso a Italiano in Viaggio";
