@@ -1826,7 +1826,7 @@ function curioPlace(t, p){
   const ui = cUi[p.id] || (cUi[p.id] = {cat: "", busy: false, err: ""});
   const items = p.items || [];
   const cats = CCATS.filter(c => items.some(x => x.cat === c[0]));
-  const shown = ui.cat ? items.filter(x => x.cat === ui.cat) : items;
+  const shown = ui.cat ? items.filter(x => x.cat === ui.cat) : items.slice();
   const order = CCATS.map(c => c[0]); shown.sort((a,b) => order.indexOf(a.cat) - order.indexOf(b.cat));
   const pArm = delArm === "cpdel:" + p.id;
   let h = `<article class="cplace" id="cp-${esc(p.id)}"><div class="cphead"><div><div class="eyebrow">${items.length} curiosidades y tips</div><h3>${esc(p.place)}</h3>${p.note ? `<div class="sub">${esc(p.note)}</div>` : ""}</div>
