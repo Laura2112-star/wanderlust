@@ -192,6 +192,27 @@ h3{font-size:16px;font-weight:550}
 .tip{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--surf);display:grid;gap:4px;align-content:start}
 .tip h4{margin:0;font-size:14px;font-weight:600;color:var(--green-ink)}
 .tip p{margin:0;font-size:14px;color:var(--ink2)}
+.cplaces{display:grid;gap:16px}
+.cplace{border:1px solid var(--line);border-radius:12px;background:var(--surf);overflow:hidden;min-width:0}
+.cphead{display:flex;justify-content:space-between;align-items:flex-end;gap:8px 16px;flex-wrap:wrap;padding:16px 18px 12px;background:linear-gradient(100deg,var(--sea-soft) 0%,var(--surf) 55%,var(--green-soft) 100%)}
+.cphead h3{font-family:var(--disp);font-size:24px;font-weight:450;letter-spacing:-.01em;line-height:1.1}
+.cphead .sub{font-size:13px;color:var(--ink2);margin-top:3px;max-width:70ch}
+.cpbody{padding:12px 18px 16px;display:grid;gap:12px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.citem{border:1px solid var(--line2);border-radius:10px;padding:12px 14px;display:grid;gap:5px;align-content:start;background:var(--surf);min-width:0}
+.citem .ct{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.citem .ct i{font-style:normal;font-size:14px;letter-spacing:0}
+.citem h4{margin:0;font-size:15px;font-weight:600;line-height:1.3}
+.citem .wh{font-size:12.5px;color:var(--mute)}
+.citem p{margin:0;font-size:13.5px;color:var(--ink2)}
+.citem .actions{margin-top:4px;gap:6px}
+.c-comer .ct{color:#b5591c}.c-rest .ct{color:var(--sea-ink)}.c-bar .ct{color:#7a3fb0}.c-rincon .ct{color:var(--green-ink)}
+.c-historia .ct{color:#8a6a12}.c-museo .ct{color:var(--info)}.c-tienda .ct{color:#a3195f}.c-tip .ct{color:var(--ink2)}
+.c-museo{border-color:var(--info-soft)}
+.btn.tix{background:var(--info);color:#fff}
+.cnav{display:flex;flex-wrap:wrap;gap:6px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .c-comer .ct{color:#ffb27a}:root:not([data-theme="light"]) .c-bar .ct{color:#c9a2f0}:root:not([data-theme="light"]) .c-historia .ct{color:#e9cd73}}
+:root[data-theme="dark"] .c-comer .ct{color:#ffb27a}:root[data-theme="dark"] .c-bar .ct{color:#c9a2f0}:root[data-theme="dark"] .c-historia .ct{color:#e9cd73}
 
 .btn{border:0;border-radius:999px;padding:9px 18px;font-weight:500;background:var(--ink);color:var(--bg);font-size:14px;display:inline-flex;align-items:center;gap:6px}
 .btn.sea{background:var(--sea);color:#fff}
@@ -1034,7 +1055,7 @@ const attachBtn = (key, label) => assets && canWrite ? `<label class="attbtn">${
 const itemFiles = (x, field) => [...(x.doc ? [{id: "__doc", asset: x.doc, title: "Copia de la reserva", type: "application/pdf"}] : []), ...(x.files || [])];
 const attRow = (x, field) => { const fl = itemFiles(x, field); const b = attachBtn(field + ":" + x.id); return fl.length || b ? `<div class="att">${attChips(fl, field + ":" + x.id)}${b}</div>` : ""; };
 const linkLabel = u => /booking\.com\/mytrips/.test(u) ? "Ver viaje en Booking ↗" : /booking\.com/.test(u) ? "Ver reserva en Booking ↗" : "Ver reserva ↗";
-const SECNAME = {resumen:"Resumen", billetes:"Billetes", alojamiento:"Alojamiento", itinerario:"Itinerario", opciones:"Itinerarios posibles", excursiones:"Excursiones", restaurantes:"Restaurantes", tiempo:"Tiempo", util:"Útil", seguros:"Seguros", maleta:"Checklist", tips:"Tips", pendientes:"Pendientes"};
+const SECNAME = {resumen:"Resumen", billetes:"Billetes", alojamiento:"Alojamiento", itinerario:"Itinerario", opciones:"Itinerarios posibles", excursiones:"Excursiones", restaurantes:"Restaurantes", tiempo:"Tiempo", util:"Útil", seguros:"Seguros", maleta:"Checklist", tips:"Curiosidades", pendientes:"Pendientes"};
 function secDocs(t, s){
   const list = (t.docs || []).filter(d => d.sec === s);
   if (!list.length && !(assets && canWrite)) return "";
@@ -1451,10 +1472,10 @@ async function liveFx(){
 /* ---------- trip view ---------- */
 const SECTIONS = [
   ["resumen","Resumen"],["billetes","Billetes"],["alojamiento","Alojamiento"],["itinerario","Itinerario"],["mapa","Mapa"],["opciones","Itinerarios posibles"],["excursiones","Excursiones"],
-  ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Checklist"],["tips","Tips"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
+  ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Checklist"],["tips","Curiosidades"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
 ];
 const secCount = (t,k) => ({opciones:((t.options||{}).items||[]).length, billetes:(t.tickets||[]).length, alojamiento:(t.stays||[]).length, itinerario:(t.itinerary||[]).length, mapa:((t.map||{}).stops||[]).length, excursiones:(t.excursions||[]).length,
-  restaurantes:(t.restaurants||[]).length, tips:(t.tips||[]).length, seguros:(t.insurance||[]).length, maleta:packLeft(t), documentos:(t.docs||[]).length + (t.links||[]).length, pendientes:todoLeft(t)}[k]);
+  restaurantes:(t.restaurants||[]).length, tips:curioCount(t), seguros:(t.insurance||[]).length, maleta:packLeft(t), documentos:(t.docs||[]).length + (t.links||[]).length, pendientes:todoLeft(t)}[k]);
 
 function renderTrip(){
   const t = cur(); if (!t){ view = "home"; return render(); }
@@ -1621,12 +1642,7 @@ function secHtml(t){
       : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="itinerary">+ Añadir día</button><button class="btn ghost sm" data-add="paste">Pegar itinerario</button></div>`;
     return h + `</section>` + propHtml(t);
   }
-  case "tips": {
-    let h = `<section class="card"><div class="sh"><h2>Tips y consejos</h2></div><div class="tipgrid">${(t.tips||[]).map(x => `<div class="tip"><h4>${esc(x.title)}</h4><p>${esc(x.detail)}</p>${canWrite ? `<button class="iconbtn danger" style="justify-self:start" data-del="tips:${esc(x.id)}">${delArm === "tips:"+x.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("")}</div>`;
-    if (canWrite) h += adding === "tips" ? `<form class="add" id="tipf"><div class="f"><label for="tp-title">Título</label><input class="inp" id="tp-title" required></div><div class="f"><label for="tp-detail">Consejo</label><textarea class="inp" id="tp-detail" required></textarea></div><div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
-      : `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="tips">+ Añadir consejo</button>${sample ? `<button class="btn ghost sm" data-moretips>Pedir más tips a ${AI}</button>` : ""}</div>`;
-    return h + `</section>`;
-  }
+  case "tips": return curiosHtml(t);
   case "pendientes": {
     const arr = t.todo || [], left = todoLeft(t);
     return `<section class="card"><div class="sh"><h2>Pendientes</h2><span class="d">${arr.length-left} de ${arr.length} hechos</span></div><div class="bar" style="margin-bottom:8px"><span style="width:${arr.length ? Math.round((arr.length-left)/arr.length*100) : 0}%"></span></div>
@@ -1789,6 +1805,78 @@ function packHtml(t){
   return h;
 }
 
+/* ---------- curiosidades ---------- */
+const CCATS = [["comer","🍝","Qué comer y beber"],["rest","🍽","Restaurante"],["bar","🍷","Bar o café"],["rincon","✨","Rincón curioso"],["historia","📜","Historia"],["museo","🏛","Museo y visitas"],["tienda","🛍","Tienda"],["tip","💡","Consejo"]];
+const ccat = k => CCATS.find(c => c[0] === k) || CCATS[7];
+const curioCount = t => (t.curios||[]).reduce((n,p) => n + (p.items||[]).length, 0) + (t.tips||[]).length;
+const cUi = {};
+function curioPlaceSuggestions(t){
+  const have = new Set((t.curios||[]).map(p => p.place.toLowerCase()));
+  return places(t).filter(p => !have.has(p.toLowerCase()));
+}
+function curioItem(t, p, x){
+  const [k, ic, label] = ccat(x.cat);
+  const q = encodeURIComponent([x.title, x.where || p.place].filter(Boolean).join(" "));
+  const physical = !["comer","historia","tip"].includes(k);
+  const armed = delArm === "cdel:" + p.id + ":" + x.id;
+  return `<div class="citem c-${k}"><span class="ct"><i aria-hidden="true">${ic}</i>${esc(label)}</span><h4>${esc(x.title)}</h4>${x.where ? `<span class="wh">${esc(x.where)}</span>` : ""}<p>${esc(x.detail||"")}</p>
+  <div class="actions">${x.url ? `<a class="btn sm ${k === "museo" ? "tix" : "ghost"}" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.urlLabel || (k === "museo" ? "Entradas" : "Web"))} ↗</a>` : ""}${physical ? `<a class="btn ghost sm" href="https://www.google.com/maps/search/${q}" target="_blank" rel="noopener">Mapa ↗</a>` : ""}${canWrite ? `<button class="iconbtn danger" data-cdel="${esc(p.id)}:${esc(x.id)}">${armed ? "¿Seguro?" : "Quitar"}</button>` : ""}</div></div>`;
+}
+function curioPlace(t, p){
+  const ui = cUi[p.id] || (cUi[p.id] = {cat: "", busy: false, err: ""});
+  const items = p.items || [];
+  const cats = CCATS.filter(c => items.some(x => x.cat === c[0]));
+  const shown = ui.cat ? items.filter(x => x.cat === ui.cat) : items;
+  const order = CCATS.map(c => c[0]); shown.sort((a,b) => order.indexOf(a.cat) - order.indexOf(b.cat));
+  const pArm = delArm === "cpdel:" + p.id;
+  let h = `<article class="cplace" id="cp-${esc(p.id)}"><div class="cphead"><div><div class="eyebrow">${items.length} curiosidades y tips</div><h3>${esc(p.place)}</h3>${p.note ? `<div class="sub">${esc(p.note)}</div>` : ""}</div>
+  ${cats.length > 1 ? `<div class="cnav">${[["","Todo"], ...cats.map(c => [c[0], c[1] + " " + c[2]])].map(([k,l]) => `<button class="tchip" data-ccat="${esc(p.id)}|${k}" aria-pressed="${ui.cat === k}">${esc(l)}</button>`).join("")}</div>` : ""}</div><div class="cpbody">`;
+  h += shown.length ? `<div class="cgrid">${shown.map(x => curioItem(t, p, x)).join("")}</div>` : `<div class="empty">Todavía no hay nada aquí.</div>`;
+  if (ui.err) h += `<div class="alert warn"><span class="ic">!</span><div>${esc(ui.err)}</div></div>`;
+  if (ui.busy) h += `<div class="loading"><span class="spin"></span>Buscando curiosidades de ${esc(p.place)}…</div>`;
+  if (canWrite) h += adding === "curio:" + p.id ? `<form class="add" id="curiof" data-place="${esc(p.id)}"><div class="fg"><div class="f"><label for="cu-cat">Tipo</label><select class="inp" id="cu-cat">${CCATS.map(c => `<option value="${c[0]}">${c[1]} ${esc(c[2])}</option>`).join("")}</select></div><div class="f"><label for="cu-title">Nombre</label><input class="inp" id="cu-title" required></div><div class="f"><label for="cu-where">Dónde</label><input class="inp" id="cu-where" placeholder="Calle, barrio o pueblo"></div><div class="f"><label for="cu-url">Enlace (entradas, web)</label><input class="inp" id="cu-url" type="url" placeholder="https://"></div></div>
+    <div class="f"><label for="cu-detail">Qué tiene de especial</label><textarea class="inp" id="cu-detail"></textarea></div><div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
+    : `<div class="actions"><button class="btn ghost sm" data-add="curio:${esc(p.id)}">+ Añadir</button>${sample ? `<button class="btn ghost sm" data-cai="${esc(p.id)}" ${ui.busy ? "disabled" : ""}>Buscar más con ${AI}</button>` : ""}<button class="iconbtn danger" data-cpdel="${esc(p.id)}">${pArm ? "¿Quitar el sitio entero?" : "Quitar sitio"}</button></div>`;
+  return h + `</div></article>`;
+}
+function curiosHtml(t){
+  const list = t.curios || [];
+  let h = `<section class="card"><div class="sh"><h2>Curiosidades y tips</h2><span class="d">Qué comer, dónde ir, rincones, historias, museos y tiendas de cada sitio</span></div>`;
+  if (list.length > 1) h += `<div class="chips" style="margin-bottom:14px">${list.map(p => `<button class="tchip" data-jump="cp-${esc(p.id)}">${esc(p.place)}</button>`).join("")}</div>`;
+  h += list.length ? `<div class="cplaces">${list.map(p => curioPlace(t, p)).join("")}</div>` : `<div class="empty">Añade los sitios del viaje para guardar sus curiosidades.</div>`;
+  if (canWrite){
+    const sug = curioPlaceSuggestions(t);
+    h += adding === "cplace" ? `<form class="add" id="cplacef" style="margin-top:14px"><div class="f"><label for="cp-name">Sitio (ciudad, pueblo o zona)</label><input class="inp" id="cp-name" required list="cp-sug"><datalist id="cp-sug">${sug.map(x => `<option value="${esc(x)}">`).join("")}</datalist></div><div class="actions"><button class="btn sea" type="submit">Añadir sitio</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
+      : `<div class="actions" style="margin-top:14px"><button class="btn ghost sm" data-add="cplace">+ Añadir sitio</button>${sug.length ? sug.slice(0,4).map(x => `<button class="btn ghost sm" data-cnew="${esc(x)}">+ ${esc(x)}</button>`).join("") : ""}</div>`;
+  }
+  h += `</section>`;
+  const tips = t.tips || [];
+  if (tips.length || canWrite){
+    h += `<section class="card"><div class="sh"><h2>Consejos del viaje</h2><span class="d">Lo práctico de todo el viaje</span></div><div class="tipgrid">${tips.map(x => `<div class="tip"><h4>${esc(x.title)}</h4><p>${esc(x.detail)}</p>${canWrite ? `<button class="iconbtn danger" style="justify-self:start" data-del="tips:${esc(x.id)}">${delArm === "tips:"+x.id ? "¿Seguro?" : "Quitar"}</button>` : ""}</div>`).join("")}</div>`;
+    if (canWrite) h += adding === "tips" ? `<form class="add" id="tipf"><div class="f"><label for="tp-title">Título</label><input class="inp" id="tp-title" required></div><div class="f"><label for="tp-detail">Consejo</label><textarea class="inp" id="tp-detail" required></textarea></div><div class="actions"><button class="btn sea" type="submit">Guardar</button><button class="btn ghost" type="button" data-cancel>Cancelar</button></div></form>`
+      : `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-add="tips">+ Añadir consejo</button></div>`;
+    h += `</section>`;
+  }
+  return h;
+}
+async function curioAI(t, pid){
+  const p = (t.curios||[]).find(x => x.id === pid); if (!p) return;
+  const ui = cUi[pid] || (cUi[pid] = {cat: ""}); ui.busy = true; ui.err = ""; renderSec();
+  const have = (p.items||[]).map(x => x.title).join("; ");
+  const prompt = `Eres un guía local muy curioso. Para "${p.place}" (viaje: ${t.place}, del ${t.start} al ${t.end}; viajeros: ${t.travelers || ""}) propón 8 cosas nuevas y concretas que no estén ya en esta lista: ${have || "(vacía)"}.
+Mezcla tipos: platos o bebidas típicas, restaurantes y bares con historia, rincones curiosos, historias de casas, calles o de la ciudad, museos chulos, tiendas. Solo sitios reales que probablemente sigan abiertos. Para museos y visitas, pon en "url" la web oficial donde se compran las entradas si la conoces seguro; si no, déjala vacía. Escribe en español, sin rayas largas.
+Responde solo con un array JSON de objetos {"cat","title","where","detail","url"}: cat = "comer","rest","bar","rincon","historia","museo","tienda" o "tip"; where = calle o barrio; detail = una o dos frases con lo curioso y qué pedir o ver.`;
+  try {
+    const out = await sample.json(prompt, OUT ? {modelTier:"default", search:true} : {modelTier:"default"});
+    const add = (Array.isArray(out) ? out : []).filter(x => x && x.title).slice(0,10).map(x => {
+      const it = {id: uid(), cat: CCATS.some(c => c[0] === x.cat) ? x.cat : "tip", title: String(x.title), where: String(x.where||""), detail: String(x.detail||""), url: /^https?:\/\//.test(x.url||"") ? x.url : "", src: "ia"};
+      Object.keys(it).forEach(k => it[k] === "" && delete it[k]); return it; });
+    if (!add.length) ui.err = "No ha salido nada nuevo. Prueba otra vez.";
+    else { const cur2 = cur(); await save(tripId, {curios: (cur2.curios||[]).map(x => x.id === pid ? {...x, items: [...(x.items||[]), ...add]} : x)}); toast(`${add.length} añadidas, revisa los horarios antes de ir`); }
+  } catch(e){ ui.err = errText(e); }
+  ui.busy = false; renderSec();
+}
+
 /* ---------- restaurants ---------- */
 const places = t => [...new Set((t.itinerary||[]).map(d => d.sleep).filter(s => s && !/avi[oó]n|casa|confirmar|según|vuelo/i.test(s)))];
 const RPREFS = ["Cocina local","Pescado y marisco","Barato","Con niños","Vegetariano","Con vistas","Para cenar tarde"];
@@ -1939,7 +2027,7 @@ async function exportPdf(btn){
     const filename = `Wanderlust - ${t.name} - ${label}.pdf`.replace(/[\\/:*?"<>|]/g, "");
     const worker = html2pdf().set({margin:[12,12,14,12], filename, image:{type:"jpeg", quality:0.95},
       html2canvas:{scale:2, useCORS:true, backgroundColor:"#ffffff"}, jsPDF:{unit:"mm", format:"a4", orientation:"portrait"},
-      pagebreak:{mode:["css","legacy"], avoid:[".item",".day",".tdrow",".alert",".rcard",".tip",".opt",".doc",".wxd",".kv"]}}).from(wrap);
+      pagebreak:{mode:["css","legacy"], avoid:[".item",".day",".tdrow",".alert",".rcard",".tip",".citem",".opt",".doc",".wxd",".kv"]}}).from(wrap);
     const blob = await worker.outputPdf("blob");
     let dl = null; try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(_){}
     if (dl){
@@ -1983,6 +2071,13 @@ document.addEventListener("click", async e => {
   if (d.jump){ document.getElementById(d.jump)?.scrollIntoView({behavior:"smooth"}); return; }
   if (d.sec){ sec = d.sec; store.set("sec", sec); adding = null; delArm = null; render(); return; }
   if (b.id === "newtrip"){ adding = "trip"; render(); $("#nt-name")?.focus(); return; }
+  if (d.ccat){ const [pid, k] = d.ccat.split("|"); (cUi[pid] || (cUi[pid] = {})).cat = k; renderSec(); return; }
+  if (d.cai){ curioAI(cur(), d.cai); return; }
+  if (d.cnew){ const t = cur(); await save(tripId, {curios: [...(t.curios||[]), {id: uid(), place: d.cnew, items: []}]}); return; }
+  if (d.cdel){ const k = "cdel:" + d.cdel; if (delArm !== k){ delArm = k; renderSec(); return; } delArm = null; const [pid, iid] = d.cdel.split(":"), t = cur();
+    await save(tripId, {curios: (t.curios||[]).map(p => p.id === pid ? {...p, items: (p.items||[]).filter(x => x.id !== iid)} : p)}); return; }
+  if (d.cpdel){ const k = "cpdel:" + d.cpdel; if (delArm !== k){ delArm = k; renderSec(); return; } delArm = null; const t = cur();
+    await save(tripId, {curios: (t.curios||[]).filter(p => p.id !== d.cpdel)}); return; }
   if (d.add){ adding = d.add; renderSec(); document.querySelector("#secbody form.add input")?.focus(); return; }
   if ("cancel" in d){ adding = null; view === "trip" ? renderSec() : render(); return; }
   if ("editmeta" in d){ editingMeta = true; render(); return; }
@@ -2083,6 +2178,11 @@ document.addEventListener("submit", async e => {
     const items = v("dy-items").split("\n").map(s => s.trim()).filter(Boolean).map(s => { const m = s.match(/^(\d{1,2}[:.]\d{2}|mañana|tarde|noche|mediodía)\s+(.*)$/i); return m ? {time: m[1], text: m[2]} : {time: "", text: s}; });
     const day = {id: uid(), date: v("dy-date"), title: v("dy-title"), sleep: v("dy-sleep"), items};
     adding = null; await save(tripId, {itinerary: [...(t.itinerary||[]), day].sort((a,b) => a.date.localeCompare(b.date))}); return; }
+  if (f.id === "curiof"){ const pid = f.dataset.place, t = cur();
+    const it = {id: uid(), cat: v("cu-cat"), title: v("cu-title"), where: v("cu-where"), url: v("cu-url"), detail: v("cu-detail")};
+    Object.keys(it).forEach(k => it[k] === "" && delete it[k]);
+    adding = null; await save(tripId, {curios: (t.curios||[]).map(p => p.id === pid ? {...p, items: [...(p.items||[]), it]} : p)}); return; }
+  if (f.id === "cplacef"){ const t = cur(); adding = null; await save(tripId, {curios: [...(t.curios||[]), {id: uid(), place: v("cp-name"), items: []}]}); return; }
   if (f.id === "tipf"){ const t = cur(); adding = null; await save(tripId, {tips: [...(t.tips||[]), {id: uid(), title: v("tp-title"), detail: v("tp-detail")}]}); return; }
   if (f.id === "packf"){ const t = cur(), P = t.packing || {}; await save(tripId, {packing: {...P, extra: [...(P.extra||[]), {id: uid(), n: v("pk-new"), c: v("pk-cat") || "otros"}]}}); return; }
   if (f.id === "todof"){ const t = cur(); await save(tripId, {todo: [...(t.todo||[]), {id: uid(), text: v("td-new"), done: false}]}); return; }
@@ -2115,7 +2215,7 @@ function tripContext(){
   const compact = t => ({nombre: t.name, destinos: t.place, ida: t.start, vuelta: t.end, viajeros: t.travelers, avisos: allAlerts(t).map(a => a.text), plazos_cancelacion_gratis: cxItems(t).map(({x}) => x.title + ": " + x.cancelBy),
     billetes: (t.tickets||[]).map(x => [x.title, x.when, x.status, x.ref].filter(Boolean).join(" | ")), alojamiento: (t.stays||[]).map(x => [x.title, x.when, x.status].join(" | ")),
     itinerario: (t.itinerary||[]).map(d => `${d.date} ${d.title} (duerme en ${d.sleep}): ` + (d.items||[]).map(i => `${i.time} ${i.text}`).join("; ")),
-    excursiones: (t.excursions||[]).map(x => [x.title, x.when, x.status].join(" | ")), pendientes: (t.todo||[]).filter(x => !x.done).map(x => x.text), tips: (t.tips||[]).map(x => x.title + ": " + x.detail), practico: t.practical});
+    excursiones: (t.excursions||[]).map(x => [x.title, x.when, x.status].join(" | ")), pendientes: (t.todo||[]).filter(x => !x.done).map(x => x.text), tips: (t.tips||[]).map(x => x.title + ": " + x.detail), curiosidades: (t.curios||[]).map(p => p.place + ": " + (p.items||[]).map(x => x.title).join(", ")), practico: t.practical});
   const t = view === "trip" ? cur() : null;
   return t ? JSON.stringify(compact(t)) : JSON.stringify(sorted().filter(x => status(x) !== "pasado").map(compact));
 }
