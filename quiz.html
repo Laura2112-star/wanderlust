@@ -14531,11 +14531,12 @@ function renderFavs(){
   <div class="banner">${cover('favs',null,true)}<div class="txt"><div class="eyebrow" style="color:#fff;opacity:.85">Dignas de recordar</div><h1>Favoritas</h1><div class="s">${all.length?`${all.length} ${all.length===1?'pregunta guardada':'preguntas guardadas'}`:'Aún no has guardado ninguna'}</div></div></div>
   <section class="card">
     <div class="sh"><h2>Tus favoritas</h2>${all.length?'<span class="d">Toca el corazón para quitarla</span>':''}</div>
-    ${all.length?`${catFilter(all.map(x=>x[0]),favF)}<div class="btns" style="margin:14px 0 6px"><button class="btn" id="pf">Jugar ${Math.min(rows.length,10)} favoritas</button></div>
+    ${all.length?`${catFilter(all.map(x=>x[0]),favF)}<div class="btns" style="margin:14px 0 6px"><button class="btn" id="pf">Jugar ${Math.min(rows.length,10)} favoritas</button><button class="btn" id="cpf" style="margin-left:8px">Copiar mis favoritas</button></div>
     <div class="qlist" id="favlist">${rows.map(([id])=>{const q=QI[id];return `<div class="qi hf" style="${catVars(q.cat)}"><span class="dot" style="background:var(--cs);color:var(--ci)">♥</span><div><p>${esc(q.q)}</p><div class="a">Respuesta: <b>${esc(q.ans)}</b></div><div class="n">${CAT[q.cat].name} · ${esc(q.note)}</div></div>${heartBtn(id)}</div>`}).join('')}</div>`
     :`<div class="empty"><b>Guarda las que merezcan la pena</b>Mientras juegas, toca el corazón ${HEART.replace('<svg','<svg style="width:16px;height:16px;vertical-align:-3px"')} de una pregunta y aparecerá aquí.</div>`}
   </section>`;
   const cf=$('#cf');if(cf)cf.addEventListener('click',e=>{const b=e.target.closest('button');if(b){favF=b.dataset.f;renderFavs()}});
+  const cpf=$('#cpf');if(cpf)cpf.addEventListener('click',()=>{const txt=all.map(([id])=>{const q=QI[id];return `${CAT[q.cat].name} | ${q.q} | ${q.ans}`}).join('\n');const done=()=>{cpf.textContent='¡Copiadas! Pégalas en Claude'};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,()=>fb())}else fb();function fb(){const a=document.createElement('textarea');a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}a.remove()}});
   const pf=$('#pf');if(pf)pf.addEventListener('click',()=>playClassic(shuffle(rows.map(x=>x[0]),rng(Date.now())).slice(0,10),{title:'Mis favoritas',back:'favs'}));
 }
 
