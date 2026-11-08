@@ -1601,7 +1601,8 @@ function optionsHtml(t){
       <div class="pc"><div><h4 class="pro">A favor</h4><ul>${(x.pros||[]).map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>
       <div><h4 class="con">En contra</h4><ul>${(x.cons||[]).map(p => `<li>${esc(p)}</li>`).join("")}</ul></div></div>
       ${x.bestIf ? `<div class="bestif"><b>Elígela si…</b> ${esc(x.bestIf)}</div>` : ""}
-      ${canWrite ? `<div class="actions" style="margin-top:auto;padding-top:6px">${isC ? `<button class="btn ghost sm" data-pickopt="">Quitar elección</button>` : `<button class="btn sea sm" data-pickopt="${esc(x.id)}">Elegir esta</button>`}</div>` : ""}
+      ${(x.days||[]).length ? `<details class="optdays"><summary style="cursor:pointer;color:var(--sea-ink);font-size:13.5px;font-weight:500">Ver día a día (${x.days.length} días)</summary>${x.days.map(d => { const D = pd(d.date); return `<div class="day"><div class="dd"><b>${D.getDate()}</b><span>${DOW[D.getDay()]} · ${MONTHS[D.getMonth()]}</span></div><div style="min-width:0"><h4>${esc(d.title)}</h4>${d.sleep ? `<span class="sleep">Duerme en ${esc(d.sleep)}</span>` : ""}<ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul></div></div>`; }).join("")}</details>` : ""}
+      ${canWrite ? `<div class="actions" style="margin-top:auto;padding-top:6px">${isC ? `<button class="btn ghost sm" data-pickopt="">Quitar elección</button>` : `<button class="btn sea sm" data-pickopt="${esc(x.id)}">Elegir esta</button>`}${(x.days||[]).length ? `<button class="btn ghost sm" data-optuse="${esc(x.id)}">${delArm === "optuse:" + x.id ? "Pulsa otra vez: sustituye el itinerario" : "Pasar al itinerario"}</button>` : ""}<button class="iconbtn danger" data-optdel="${esc(x.id)}">${delArm === "optdel:" + x.id ? "¿Seguro?" : "Quitar"}</button></div>` : ""}
     </article>`; }).join("") + `</div>`;
   return h;
 }
@@ -1935,7 +1936,7 @@ function propHtml(t){
   if (st.res){
     h += `<div style="border:1px dashed var(--line);border-radius:10px;padding:4px 14px">${st.res.map(d => { const D = pd(d.date);
       return `<div class="day"><div class="dd"><b>${D.getDate()}</b><span>${DOW[D.getDay()]} · ${MONTHS[D.getMonth()]}</span></div><div style="min-width:0"><h4>${esc(d.title)}</h4><span class="sleep">Duerme en ${esc(d.sleep||"")}</span><ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul></div></div>`; }).join("")}</div>
-      ${canWrite ? `<div class="actions">${has ? `<button class="btn sea" data-prop-save="missing">Añadir solo los días que faltan</button><button class="btn ghost" data-prop-save="replace">${delArm === "prop-replace" ? "Pulsa otra vez para sustituir el itinerario" : "Sustituir el itinerario actual"}</button>` : `<button class="btn sea" data-prop-save="replace">Guardar en la ficha</button>`}</div>` : ""}`;
+      ${canWrite ? `<div class="actions">${has ? `<button class="btn sea" data-prop-save="missing">Añadir solo los días que faltan</button><button class="btn ghost" data-prop-save="replace">${delArm === "prop-replace" ? "Pulsa otra vez para sustituir el itinerario" : "Sustituir el itinerario actual"}</button>` : `<button class="btn sea" data-prop-save="replace">Guardar en la ficha</button>`}<button class="btn ghost" data-prop-save="option">Guardar como opción ${(((t.options||{}).items||[]).length || (has ? 1 : 0)) + 1}</button></div>` : ""}`;
   }
   return h + `</div></section>`;
 }
@@ -2095,6 +2096,12 @@ document.addEventListener("click", async e => {
     try { await db.doc("trips/" + tripId).delete(); toast("Viaje borrado"); view = "home"; editingMeta = false; delArm = null; } catch(err){ toast("No se ha podido borrar"); }
     return;
   }
+  if (d.optuse){ const t = cur(), o = t.options || {}, x = (o.items||[]).find(i => i.id === d.optuse); if (!x) return;
+    if ((t.itinerary||[]).length && delArm !== "optuse:" + x.id){ delArm = "optuse:" + x.id; renderSec(); return; } delArm = null;
+    const days = (x.days||[]).map(dd => ({...dd, id: uid()})).sort((a,b) => a.date.localeCompare(b.date));
+    if (await save(tripId, {itinerary: days, options: {...o, chosen: x.id}})) toast("Itinerario sustituido por esta opción"); return; }
+  if (d.optdel){ if (delArm !== "optdel:" + d.optdel){ delArm = "optdel:" + d.optdel; renderSec(); return; } delArm = null; const t = cur(), o = t.options || {};
+    await save(tripId, {options: {...o, items: (o.items||[]).filter(i => i.id !== d.optdel), chosen: o.chosen === d.optdel ? null : (o.chosen || null)}}); return; }
   if ("pickopt" in d){ const t = cur(); if (t){ const o = {...(t.options||{}), chosen: d.pickopt || null}; if (await save(tripId, {options: o})) toast(d.pickopt ? "Opción elegida" : "Elección quitada"); } return; }
   if ("uncover" in d){ await save(tripId, {cover: null}); return; }
   if (d.del){
@@ -2121,6 +2128,16 @@ document.addEventListener("click", async e => {
     if (d.propSave === "replace" && (t.itinerary||[]).length && delArm !== "prop-replace"){ delArm = "prop-replace"; renderSec(); return; }
     delArm = null;
     let next;
+    if (d.propSave === "option"){
+      const o = t.options || {}, items = [...(o.items || [])];
+      const route = days => [...new Set(days.map(x => x.sleep).filter(Boolean))].join(" → ");
+      const copy = days => days.map(x => ({id: uid(), date: x.date, title: x.title, sleep: x.sleep || "", items: (x.items||[]).map(i => ({time: i.time||"", text: i.text||""}))}));
+      if (!items.length && (t.itinerary||[]).length) items.push({id: uid(), title: "Itinerario actual", route: route(t.itinerary), days: copy(t.itinerary), src: "itinerario"});
+      const D = new Date(); const note = (st.thread||[]).slice(-1)[0] || st.note || "";
+      items.push({id: uid(), title: "Propuesta de " + AI + " · " + D.getDate() + " " + MONTHS[D.getMonth()], route: route(st.res) + (note ? " · " + note : ""), days: copy(st.res), src: "ia"});
+      if (await save(tripId, {options: {...o, items}})){ propState[tripId] = {open:false, note:"", busy:false, res:null, err:""}; toast("Guardado como opción " + items.length + " en Itinerarios posibles"); }
+      return;
+    }
     if (d.propSave === "missing"){ const have = new Set((t.itinerary||[]).map(x => x.date)); next = [...(t.itinerary||[]), ...st.res.filter(x => !have.has(x.date))]; }
     else next = st.res;
     next.sort((a,b) => a.date.localeCompare(b.date));
