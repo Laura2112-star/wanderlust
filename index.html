@@ -1939,8 +1939,11 @@ function propHtml(t){
   }
   return h + `</div></section>`;
 }
-async function runProp(t){
-  const st = propState[t.id]; st.note = ($("#pr-note")?.value || "").trim(); st.busy = true; st.err = ""; renderSec();
+async function runProp(t, reply){
+  const st = propState[t.id]; const nEl = $("#pr-note"); if (nEl) st.note = nEl.value.trim();
+  const prev = reply && st.res ? st.res.map(d => ({date: d.date, title: d.title, sleep: d.sleep, items: d.items})) : null;
+  if (reply){ st.thread = [...(st.thread||[]), reply]; st.reply = ""; } else { st.thread = []; st.reply = ""; }
+  st.busy = true; st.err = ""; renderSec();
   const ctx = {destinos: t.place, ida: t.start, vuelta: t.end, viajeros: t.travelers,
     billetes: (t.tickets||[]).filter(x => x.status !== "cancel").map(x => [x.title, x.when].join(" | ")),
     alojamiento: (t.stays||[]).filter(x => x.status !== "cancel").map(x => [x.title, x.when, x.detail].join(" | ")),
@@ -1950,12 +1953,17 @@ async function runProp(t){
 Respeta los vuelos, alojamientos y excursiones ya reservados (fechas y horas). Incluye tiempos de traslado realistas y deja huecos para descansar. Escribe en español, frases cortas, sin rayas largas.
 Preferencias: ${st.note || "ninguna en particular"}.
 Datos del viaje (JSON): ${JSON.stringify(ctx)}
-Responde solo con un array JSON, un objeto por día: {"date":"AAAA-MM-DD","title":"título corto","sleep":"ciudad donde se duerme","items":[{"time":"9:00 o Mañana/Tarde/Noche","text":"plan"}]}. Entre 2 y 5 items por día.`;
+${prev ? `Esta es tu propuesta anterior (JSON): ${JSON.stringify(prev)}
+Laura te ha respondido con estos cambios, en orden (el último es el más reciente): ${JSON.stringify(st.thread)}
+Rehaz la propuesta aplicando todos sus cambios y conserva lo demás tal cual.
+` : ""}Responde solo con un array JSON, un objeto por día: {"date":"AAAA-MM-DD","title":"título corto","sleep":"ciudad donde se duerme","items":[{"time":"9:00 o Mañana/Tarde/Noche","text":"plan"}]}. Entre 2 y 5 items por día.`;
+  const keep = st.res;
   try {
     const out = await sample.json(prompt, {modelTier:"complex"});
     st.res = (Array.isArray(out) ? out : []).filter(d => d && /^\d{4}-\d{2}-\d{2}$/.test(d.date || "")).map(d => ({id: uid(), date: d.date, title: String(d.title||""), sleep: String(d.sleep||""), items: (d.items||[]).map(i => ({time: String(i.time||""), text: String(i.text||"")}))}));
-    if (!st.res.length){ st.res = null; st.err = "No ha salido ninguna propuesta. Prueba otra vez."; }
-  } catch(e){ st.err = errText(e); }
+    if (!st.res.length){ st.res = prev ? keep : null; st.err = "No ha salido ninguna propuesta. Prueba otra vez."; }
+  } catch(e){ st.err = errText(e); if (prev) st.res = keep; }
+  if (prev && st.err){ st.reply = st.thread.pop(); }
   st.busy = false; renderSec();
 }
 
@@ -2198,6 +2206,8 @@ document.addEventListener("submit", async e => {
     return; }
   if (f.id === "askf"){ const q = $("#q").value.trim(); if (q || pendingImg) ask(q || "¿Qué pone en esta foto? Tradúcelo y explícamelo."); }
 });
+document.addEventListener("keydown", e => { if (e.target.id === "pr-reply" && e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("#propreplyf")?.requestSubmit(); } });
+document.addEventListener("input", e => { if (e.target.id === "pr-reply" && tripId && propState[tripId]) propState[tripId].reply = e.target.value; });
 
 /* ---------- assistant ---------- */
 const SUGG = { home: ["¿Qué tengo pendiente en los próximos viajes?","¿Qué documentación necesito para cada viaje?","Haz una lista de equipaje para Brasil"],
