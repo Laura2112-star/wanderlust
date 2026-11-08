@@ -1918,7 +1918,7 @@ Responde solo con un array JSON de objetos {"name","area","city","type","price",
 }
 function errText(e){
   const c = e && e.code;
-  return c === "not_granted" ? (OUT ? "La clave de la IA no es válida. Revísala en Cuenta › Asistente con IA." : "Hay que permitir que la página consulte a Claude (menú Permisos del artifact).") : c === "rate_limited" ? "Demasiadas consultas seguidas. Espera un momento." : c === "invalid_json" ? "La respuesta no ha llegado en buen formato. Pulsa otra vez." : "No se ha podido consultar a " + AI + " ahora mismo.";
+  return c === "not_granted" ? (OUT ? "La clave de la IA no es válida. Revísala en Cuenta › Asistente con IA." : "Hay que permitir que la página consulte a Claude (menú Permisos del artifact).") : c === "rate_limited" ? "Demasiadas consultas seguidas. Espera un momento." : c === "timeout" ? "La IA ha tardado demasiado en contestar. Pulsa otra vez." : c === "invalid_json" ? "La respuesta no ha llegado en buen formato. Pulsa otra vez." : "No se ha podido consultar a " + AI + " ahora mismo.";
 }
 
 
@@ -1932,7 +1932,7 @@ function propHtml(t){
   h += `<div class="stack"><div class="f"><label for="pr-note">¿Qué os apetece? (ritmo, intereses, cosas que evitar)</label><textarea class="inp" id="pr-note" placeholder="Ritmo tranquilo, naturaleza y buena comida, nada de caballos...">${esc(st.note)}</textarea></div>
     <div class="actions"><button class="btn sea" data-prop-run ${st.busy?"disabled":""}>${st.busy ? "Preparando…" : (st.res ? "Proponer otro" : "Proponer")}</button><button class="btn ghost" data-prop-close>Cerrar</button></div>
     ${st.err ? `<div class="alert warn"><span class="ic">!</span><div>${esc(st.err)}</div></div>` : ""}
-    ${st.busy ? `<div class="loading"><span class="spin"></span>Pensando el viaje día a día…</div>` : ""}`;
+    ${st.busy ? `<div class="loading"><span class="spin"></span>Pensando el viaje día a día… puede tardar hasta un minuto</div>` : ""}`;
   if (st.res){
     h += `<div style="border:1px dashed var(--line);border-radius:10px;padding:4px 14px">${st.res.map(d => { const D = pd(d.date);
       return `<div class="day"><div class="dd"><b>${D.getDate()}</b><span>${DOW[D.getDay()]} · ${MONTHS[D.getMonth()]}</span></div><div style="min-width:0"><h4>${esc(d.title)}</h4><span class="sleep">Duerme en ${esc(d.sleep||"")}</span><ul>${(d.items||[]).map(i => `<li><span class="t">${esc(i.time||"")}</span><span>${esc(i.text)}</span></li>`).join("")}</ul></div></div>`; }).join("")}</div>

@@ -20,14 +20,21 @@
     : input.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: String(m.content || "") }] }));
   /* If a model is overloaded (Google answers 503 "high demand"), try the next one. */
   const FALLBACK = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash-lite"];
-  async function call(method, body, key, model){
+  /* timeoutMs: give up on a model that takes too long and try the next one (only for non-streaming calls) */
+  async function call(method, body, key, model, timeoutMs){
     const models = [...new Set([model || MODEL(), ...FALLBACK])];
     let last = null;
     for (const m of models){
       const url = `${BASE}${encodeURIComponent(m)}:${method}${method.startsWith("stream") ? "?alt=sse&" : "?"}key=${encodeURIComponent(key || KEY())}`;
       let r;
-      try { r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
-      catch(e){ throw err("network", "Sin conexión con la IA"); }
+      const ac = timeoutMs ? new AbortController() : null; const tm = ac ? setTimeout(() => ac.abort(), timeoutMs) : null;
+      try { r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ac ? ac.signal : undefined }); }
+      catch(e){ clearTimeout(tm); if (ac && ac.signal.aborted){ last = err("timeout", "La IA ha tardado demasiado"); continue; } throw err("network", "Sin conexión con la IA"); }
+      if (r.ok && ac){ /* also limit the time to read the answer */
+        try { const txt = await Promise.race([r.text(), new Promise((_, rej) => ac.signal.addEventListener("abort", () => rej(err("timeout")), { once: true }))]); clearTimeout(tm); return new Response(txt, { status: 200 }); }
+        catch(e){ clearTimeout(tm); last = err("timeout", "La IA ha tardado demasiado"); continue; }
+      }
+      clearTimeout(tm);
       if (r.ok) return r;
       let msg = ""; try { msg = (await r.json()).error.message || ""; } catch(_){}
       if ((r.status === 400 || r.status === 401 || r.status === 403) && /api key|permission|API_KEY|unauth/i.test(msg)) throw err("not_granted", msg);
@@ -60,13 +67,13 @@
       }
       return { text, truncated: false };
     }
-    const j = await (await call("generateContent", body)).json();
+    const j = await (await call("generateContent", body, null, null, 75000)).json();
     return { text: textOf(j), truncated: !!(j.candidates && j.candidates[0] && j.candidates[0].finishReason === "MAX_TOKENS") };
   }
   sample.json = async (input, opts = {}) => {
     const body = { contents: toContents(input) };
     if (opts.search) body.tools = [{ google_search: {} }]; else body.generationConfig = { responseMimeType: "application/json" };
-    let text = textOf(await (await call("generateContent", body)).json()).trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+    let text = textOf(await (await call("generateContent", body, null, null, 75000)).json()).trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
     try { return JSON.parse(text); } catch(_){}
     const m = text.match(/[\[{][\s\S]*[\]}]/); if (m){ try { return JSON.parse(m[0]); } catch(_){} }
     throw err("invalid_json");
