@@ -4,7 +4,7 @@ App personal de viajes de Laura: viajes, billetes, alojamientos, itinerarios, ex
 
 - **App (copia en GitHub):** https://laura2112-star.github.io/wanderlust/
 - **Versión principal:** el artefacto de Claude "Wanderlust". Esta app es la **copia de seguridad**, independiente de Claude.
-- **Accesos directos para el iPhone:** `acceso.html` (abre el artefacto de Wanderlust en Claude) , `italiano.html` (abre el artefacto de Italiano en Claude) y `cary.html` (abre el artefacto Cary 2027 en Claude; el código de esa app está en el repo privado cary-2027), con sus iconos.
+- **Accesos directos para el iPhone:** `acceso.html` (abre el artefacto de Wanderlust en Claude), `italiano.html` (abre el artefacto de Italiano en Claude) y `cary.html` (abre el artefacto Cary 2027 en Claude; el código de esa app está en el repo privado cary-2027), con sus iconos.
 - **Datos:** se guardan en el Google Drive de quien inicia sesión (ahora perezdelemalaura@gmail.com), en la carpeta `Wanderlust`:
   - `wanderlust-datos.json`: todos los viajes.
   - `Adjuntos/`: los PDFs e imágenes de las reservas.
