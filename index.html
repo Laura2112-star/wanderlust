@@ -1022,6 +1022,48 @@ const NEWART = (() => {
     h+=`<g transform="translate(60 ${G+34})" fill="#8a5a3a"><path d="M0 0 v-14 q2 -10 12 -10 q6 -10 14 -2 q6 -6 12 2 v8 q8 -10 12 -14 l4 2 q-2 8 -10 16 v12 h-3 v-10 h-26 v10 h-3 v-10 h-6 v10z"/></g>`;
     return h; };
 
+  /* ---- Niza: Promenade des Anglais, pastel facades, palms, blue chairs, Baie des Anges ---- */
+  A.niza = () => { let h=sky("nz1","#f7b6d8","#fde3ef","#fff4e8")+sun(330,62,18,"#ffb347",.25)+cloud(120,44,.9,"#fff",.7)+cloud(250,64,.7,"#fff",.6); const G=150;
+    h+=P("M0 118 Q70 84 150 104 T300 92 T400 100 V"+G+" H0Z","#9cb89a")+P("M300 92 L318 80 L340 92Z","#c7b9a0");
+    h+=P("M318 84 h18 v8 h-18z","#e7d8c0");
+    const B=[[0,40,46,"#f3c99c","#c8693f"],[40,36,58,"#f4b3a1","#b85a3b"],[76,46,40,"#f8deb0","#c8693f"],[122,32,52,"#eaa98c","#a8452f"],[154,44,44,"#f7d6bb","#c8693f"],[198,38,60,"#f3c99c","#b85a3b"],[236,48,42,"#f4b3a1","#c8693f"],[284,36,50,"#f8deb0","#a8452f"],[320,40,46,"#eaa98c","#c8693f"],[360,40,56,"#f7d6bb","#b85a3b"]];
+    B.forEach(([x,w,ht,f,r])=>{ h+=bld(x,G,w,ht,f)+R(x-1,G-ht-4,w+2,5,r); for(let i=0;i<Math.floor(w/12);i++) for(let j=0;j<Math.floor((ht-10)/14);j++){ const wx=x+5+i*12, wy=G-ht+6+j*14; h+=R(wx,wy,6,9,"#fdf6ea")+R(wx-2,wy,2,9,"#4f8a6a")+R(wx+6,wy,2,9,"#4f8a6a"); } });
+    h+=R(0,G,400,16,"#ece4d4")+R(0,G+16,400,3,"#cfc5b3");
+    [30,110,190,270,350].forEach(x=>{ h+=palm(x,G+6,46,"#3a8a54"); });
+    const chair=x=>`<g transform="translate(${x} ${G+15})" fill="#2a6fc0"><rect x="0" y="-7" width="10" height="3" rx="1"/><rect x="8" y="-15" width="3" height="11" rx="1" transform="rotate(-12 9 -10)"/><rect x="0" y="-4" width="2" height="5"/><rect x="8" y="-4" width="2" height="5"/></g>`;
+    [60,78,150,226,300,318].forEach(x=>{ h+=chair(x); });
+    h+=sea(G+19,"#1f93cc","#d9f1fb","#0d6aa2");
+    h+=P("M0 222 Q120 212 240 220 T400 216 V250 H0Z","#d9d2c4")+P("M0 236 Q200 228 400 238 V250 H0Z","#cbc2b1");
+    h+=boat(250,G+44,1,"#ffffff","#e0368f");
+    return h; };
+
+  /* ---- Este de EE. UU.: road trip through the Smoky Mountains, Route 66 shield, skyline far away ---- */
+  A.esteusa = () => { let h=sky("eu1","#ffb3cf","#ffe2c9","#fff3e3")+sun(300,92,22,"#ff8a4a",.2);
+    h+=`<g fill="#8a7f9e" opacity=".55">${[[6,26],[16,40],[26,30],[36,52],[48,34],[60,44],[70,28]].map(([x,ht])=>`<rect x="${x}" y="${132-ht}" width="9" height="${ht}"/>`).join("")}</g>`;
+    h+=P("M0 128 Q60 104 120 120 T240 108 T400 118 V250 H0Z","#9fb6c9")+P("M0 146 Q90 116 180 140 T340 128 T400 136 V250 H0Z","#7d9fb5")+P("M0 166 Q100 140 200 162 T400 154 V250 H0Z","#5f8a7a")+P("M0 186 Q120 168 230 184 T400 178 V250 H0Z","#4b7a5a");
+    [[30,192],[70,198],[330,190],[372,196],[110,204],[290,202]].forEach(([x,G])=>{ h+=pine(x,G,22,"#2f5b3a"); });
+    h+=P("M196 150 L206 150 Q230 190 330 250 L120 250 Q200 196 196 150Z","#4a4f57");
+    h+=`<path d="M201 152 Q214 196 226 250" stroke="#ffd166" stroke-width="3" stroke-dasharray="10 9" fill="none"/>`;
+    h+=`<g transform="translate(72 158)"><rect x="-1.5" y="10" width="3" height="40" fill="#6b6f76"/><path d="M-16 -14 H16 V2 Q16 14 0 20 Q-16 14 -16 2Z" fill="#fff" stroke="#2c3440" stroke-width="2.5"/><text x="0" y="-3" font-family="Arial,sans-serif" font-size="7" font-weight="700" text-anchor="middle" fill="#2c3440">US</text><text x="0" y="12" font-family="Arial,sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#2c3440">66</text></g>`;
+    h+=`<g transform="translate(236 222)"><path d="M-30 0 V-12 Q-30 -16 -24 -17 L-14 -19 L-6 -30 H14 L22 -18 L30 -16 Q34 -14 34 -8 V0Z" fill="#e0368f"/><path d="M-4 -27 H12 L18 -19 H-9Z" fill="#cde8f5"/><rect x="-32" y="-4" width="68" height="4" rx="2" fill="#9a0f5f"/><circle cx="-17" cy="1" r="6" fill="#222"/><circle cx="21" cy="1" r="6" fill="#222"/><circle cx="-17" cy="1" r="2.5" fill="#bbb"/><circle cx="21" cy="1" r="2.5" fill="#bbb"/></g>`;
+    return h; };
+
+  /* ---- Eclipse: white Andalusian village under the total solar eclipse of 2 Aug 2027 ---- */
+  A.eclipse = () => { let h=sky("ec1","#141a3a","#4a3f6e","#f2a36b");
+    h+=`<defs><radialGradient id="ecor"><stop offset=".42" stop-color="#ffffff"/><stop offset=".5" stop-color="#fff6e0" stop-opacity=".9"/><stop offset=".68" stop-color="#ffe9c4" stop-opacity=".35"/><stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/></radialGradient></defs>`;
+    h+=`<g fill="#fff">${[[30,26,1.2],[70,58,.8],[120,20,1],[170,44,.7],[220,16,1.1],[370,30,1],[350,78,.7],[250,60,.8],[20,90,.7]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g>`;
+    h+=C(300,62,46,"url(#ecor)")+`<g stroke="#fff6e0" stroke-width="1.4" opacity=".55">${[0,40,85,130,175,220,265,310].map(a=>{const r=Math.PI*a/180;return `<line x1="${300+24*Math.cos(r)}" y1="${62+24*Math.sin(r)}" x2="${300+(40+(a%3)*8)*Math.cos(r)}" y2="${62+(40+(a%3)*8)*Math.sin(r)}"/>`;}).join("")}</g>`;
+    h+=C(300,62,20,"#05070f")+C(282,56,2.2,"#fff");
+    h+=P("M0 120 L60 80 L120 108 L200 62 L280 104 L340 78 L400 96 V250 H0Z","#5b4f62");
+    h+=P("M40 150 H330 V250 H40Z","#7a6a74")+P("M0 176 H400 V250 H0Z","#6e6270")+P("M0 206 H400 V250 H0Z","#4f5848");
+    const top=[[70,30,26],[104,26,34],[134,34,24],[172,22,40],[198,36,28],[238,30,22],[272,40,30]];
+    top.forEach(([x,w,ht])=>{ h+=bld(x,150,w,ht,"#d8d4e2")+P(`M${x-2} ${150-ht} H${x+w+2} L${x+w-2} ${150-ht-6} H${x+2}Z`,"#9a5e4c")+R(x+w*.35,150-ht*.55,5,8,"#ffd27a"); });
+    h+=bld(178,150,14,70,"#d8d4e2")+P("M176 80 L185 66 L194 80Z","#9a5e4c")+R(182,92,6,10,"#ffd27a");
+    const mid=[[20,34,22],[58,28,30],[90,40,20],[300,36,26],[340,30,20],[366,34,28]];
+    mid.forEach(([x,w,ht])=>{ h+=bld(x,176,w,ht,"#e2dfea")+P(`M${x-2} ${176-ht} H${x+w+2} L${x+w-2} ${176-ht-6} H${x+2}Z`,"#93583f")+R(x+w*.4,176-ht*.55,5,8,"#ffd27a"); });
+    [[30,206],[80,212],[140,208],[230,214],[300,207],[360,212]].forEach(([x,G])=>{ h+=R(x-1.5,G-12,3,12,"#3e3428")+`<ellipse cx="${x}" cy="${G-16}" rx="14" ry="8" fill="#3f4a33"/>`; });
+    return h; };
+
   /* ---- generic (new or unknown destinations): small town with church, plane overhead ---- */
   A.__generic = (key) => { const hh = Array.from(String(key)).reduce((a,c) => a + c.charCodeAt(0), 0) % 360; const G=184;
     const c=(l,s=55)=>`hsl(${hh} ${s}% ${l}%)`, c2=(l,s=60)=>`hsl(${(hh+30)%360} ${s}% ${l}%)`;
