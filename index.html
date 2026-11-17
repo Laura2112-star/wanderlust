@@ -1119,7 +1119,12 @@ const cxLeftTxt = s => { const D = cxDate(s), d0 = today(); const days = Math.ro
 const cxItems = t => status(t) === "pasado" ? [] : CX_FIELDS.flatMap(f => (t[f]||[]).filter(x => x.cancelBy && x.status !== "cancel").map(x => ({t, f, x})));
 const cxAlerts = t => cxItems(t).filter(({x}) => { const l = cxLeft(x.cancelBy); return !x.cancelKeep && l > 0 && l <= CX_DAYS; })
   .map(({f, x}) => ({id: "cx-" + x.id, auto: f + ":" + x.id, level: "crit", text: `Se acaba la cancelación gratis de ${x.title}: ${cxFmt(x.cancelBy)} (hora local), ${cxLeftTxt(x.cancelBy)}. Decide si la mantienes o la cancelas.`}));
-const allAlerts = t => [...cxAlerts(t), ...ciAlerts(t), ...(t.alerts||[])];
+const isCar = x => x && x.kind === "coche";
+/* two or more active rental cars in the same trip: warn, they may be duplicated */
+const carAlerts = t => { if (status(t) === "pasado") return [];
+  const cars = (t.tickets||[]).filter(x => isCar(x) && x.status !== "cancel");
+  return cars.length > 1 ? [{id: "car-dup", level: "crit", text: `Tienes ${cars.length} coches de alquiler activos en este viaje: ${cars.map(x => x.title + (x.when ? " (" + x.when + ")" : "")).join(" y ")}. Comprueba que no estén duplicados y cancela el que sobre.`}] : []; };
+const allAlerts = t => [...carAlerts(t), ...cxAlerts(t), ...ciAlerts(t), ...(t.alerts||[])];
 const cxTag = (t, x) => { if (!x.cancelBy || x.status === "cancel" || status(t) === "pasado") return "";
   const l = cxLeft(x.cancelBy);
   if (l <= 0) return `<span class="cxtag old">Cancelación gratis vencida (${esc(cxFmt(x.cancelBy))})</span>`;
@@ -1513,10 +1518,10 @@ async function liveFx(){
 
 /* ---------- trip view ---------- */
 const SECTIONS = [
-  ["resumen","Resumen"],["billetes","Billetes"],["alojamiento","Alojamiento"],["itinerario","Itinerario"],["mapa","Mapa"],["opciones","Itinerarios posibles"],["excursiones","Excursiones"],
+  ["resumen","Resumen"],["billetes","Billetes"],["coche","Coche de alquiler"],["alojamiento","Alojamiento"],["itinerario","Itinerario"],["mapa","Mapa"],["opciones","Itinerarios posibles"],["excursiones","Excursiones"],
   ["restaurantes","Restaurantes"],["tiempo","Tiempo"],["util","Útil"],["seguros","Seguros"],["maleta","Checklist"],["tips","Curiosidades"],["documentos","Reservas y documentos"],["pendientes","Pendientes"]
 ];
-const secCount = (t,k) => ({opciones:((t.options||{}).items||[]).length, billetes:(t.tickets||[]).length, alojamiento:(t.stays||[]).length, itinerario:(t.itinerary||[]).length, mapa:((t.map||{}).stops||[]).length, excursiones:(t.excursions||[]).length,
+const secCount = (t,k) => ({opciones:((t.options||{}).items||[]).length, billetes:(t.tickets||[]).filter(x => !isCar(x)).length, coche:(t.tickets||[]).filter(isCar).length, alojamiento:(t.stays||[]).length, itinerario:(t.itinerary||[]).length, mapa:((t.map||{}).stops||[]).length, excursiones:(t.excursions||[]).length,
   restaurantes:(t.restaurants||[]).length, tips:curioCount(t), seguros:(t.insurance||[]).length, maleta:packLeft(t), documentos:(t.docs||[]).length + (t.links||[]).length, pendientes:todoLeft(t)}[k]);
 
 function renderTrip(){
@@ -1600,8 +1605,9 @@ function plugsHtml(s){
     <p class="fitnote ${fits ? "ok" : "no"}">${fits ? (ks.every(k => PLUGFIT.has(k)) ? "Tus cargadores españoles entran sin adaptador." : "Tus cargadores españoles entran en algunos enchufes; lleva un adaptador por si acaso.") : "Tus cargadores españoles no entran: necesitas adaptador."}</p>`;
 }
 
-function itemList(t, field, iconFor){
-  const arr = (t[field] || []).map((x,i) => [x,i]).sort((a,b) => ((a[0].status==="cancel")-(b[0].status==="cancel")) || (a[1]-b[1])).map(p => p[0]);
+function itemList(t, field, iconFor, opts){
+  opts = opts || {}; const addKey = opts.addKey || field;
+  const arr = (t[field] || []).filter(opts.filter || (() => true)).map((x,i) => [x,i]).sort((a,b) => ((a[0].status==="cancel")-(b[0].status==="cancel")) || (a[1]-b[1])).map(p => p[0]);
   const isPast = !!(t.past || status(t) === "pasado");
   const firstCancel = arr.findIndex(x => x.status === "cancel");
   let h = arr.length ? arr.map((x, idx) => `${idx === firstCancel ? `<div class="eyebrow" style="padding:18px 0 4px;border-top:1px solid var(--line)">Canceladas</div>` : ""}<div class="item st-${esc(x.status||"ok")}"><span class="ico">${iconFor(x)}</span>
@@ -1610,11 +1616,11 @@ function itemList(t, field, iconFor){
     <div class="side">${x.status && !isPast ? `<span class="pill ${esc(x.status)}">${STLABEL[x.status]||esc(x.status)}</span>` : ""}${x.price ? `<span class="price">${esc(x.price)}</span>` : ""}
     ${canWrite ? `<button class="iconbtn danger" data-del="${field}:${esc(x.id)}">${delArm === field+":"+x.id ? "¿Seguro? Pulsa otra vez" : "Quitar"}</button>` : ""}</div></div>`).join("")
     : `<div class="empty">Todavía no hay nada aquí.</div>`;
-  if (canWrite) h += adding === field ? itemForm(field) : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="${field}">+ Añadir</button></div>`;
+  if (canWrite) h += adding === addKey ? itemForm(field, opts.kind) : `<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-add="${addKey}">+ Añadir</button></div>`;
   return h;
 }
-function itemForm(field){
-  const kinds = field === "tickets" ? `<div class="f"><label for="a-kind">Tipo</label><select class="inp" id="a-kind"><option value="vuelo">Vuelo</option><option value="coche">Coche</option><option value="tren">Tren o bus</option><option value="barco">Barco o ferry</option></select></div>` : "";
+function itemForm(field, kind){
+  const kinds = field === "tickets" ? `<div class="f"><label for="a-kind">Tipo</label><select class="inp" id="a-kind"><option value="vuelo">Vuelo</option><option value="coche"${kind === "coche" ? " selected" : ""}>Coche</option><option value="tren">Tren o bus</option><option value="barco">Barco o ferry</option></select></div>` : "";
   return `<form class="add" id="itemf" data-field="${field}"><div class="fg">${kinds}
   <div class="f"><label for="a-title">Título</label><input class="inp" id="a-title" required></div>
   <div class="f"><label for="a-when">Cuándo</label><input class="inp" id="a-when" placeholder="Lun 3 mar · 9:00"></div>
@@ -1666,7 +1672,9 @@ function secHtml(t){
       <div style="margin-top:8px">${(t.todo||[]).filter(x=>!x.done).slice(0,4).map(x => `<div style="font-size:14px;padding:4px 0">○ ${esc(x.text)}</div>`).join("") || `<div class="muted">Todo hecho.</div>`}</div></section>
     </div></div>`;
   }
-  case "billetes": return `<section class="card"><div class="sh"><h2>Billetes y transporte</h2><span class="d">Vuelos, coches, trenes y barcos</span></div>${itemList(t,"tickets", x => ICON[x.kind] || ICON.vuelo)}</section>`;
+  case "billetes": return `<section class="card"><div class="sh"><h2>Billetes y transporte</h2><span class="d">Vuelos, trenes y barcos</span></div>${itemList(t,"tickets", x => ICON[x.kind] || ICON.vuelo, {filter: x => !isCar(x)})}</section>`;
+  case "coche": { const ca = carAlerts(t);
+    return `<section class="card"><div class="sh"><h2>Coche de alquiler</h2><span class="d">Recogida, devolución, seguro y fianza</span></div>${ca.map(a => `<div class="item st-warn" style="border-left:3px solid var(--crit);padding-left:12px"><div><h4 style="color:var(--crit)">Posible duplicado</h4><p>${esc(a.text)}</p></div></div>`).join("")}${itemList(t,"tickets", () => ICON.coche, {filter: isCar, addKey: "tickets:coche", kind: "coche"})}</section>`; }
   case "alojamiento": return `<section class="card"><div class="sh"><h2>Alojamiento</h2><span class="d">Noche a noche</span></div>${itemList(t,"stays", () => ICON.cama)}</section>`;
   case "excursiones": return `<section class="card"><div class="sh"><h2>Excursiones y actividades</h2></div>${itemList(t,"excursions", () => ICON.excursion)}</section>
     ${(t.contacts||[]).length ? `<section class="card"><div class="sh"><h2>Contactos de proveedores</h2></div>${(t.contacts||[]).map(c => `<div class="item"><span class="ico">${ICON.contacto}</span><div style="min-width:0"><h4>${esc(c.title)}</h4><p style="user-select:all">${esc(c.detail)}</p></div><div class="side"></div></div>`).join("")}</section>` : ""}`;
