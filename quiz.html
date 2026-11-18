@@ -14691,7 +14691,7 @@ function playClassic(ids,opt){
     const answer=o=>{
       if(res.length>i)return;
       const ok=record(q,o);res.push({q,o,ok});save();markOpts(o,q.ans);
-      $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'ko'}"><b>${ok?'¡Correcto!':'No era esa. La respuesta es '+esc(q.ans)+'.'}</b><span>${esc(q.note)}</span></div><div class="btns" style="margin-top:14px"><button class="btn" id="next">${i+1<qs.length?'Siguiente pregunta':'Ver resultado'}</button></div>`;
+      $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'ko'}">${ok?'<b>¡Correcto!</b>':''}<span>${esc(q.note)}</span></div><div class="btns" style="margin-top:14px"><button class="btn" id="next">${i+1<qs.length?'Siguiente pregunta':'Ver resultado'}</button></div>`;
       $('#next').onclick=()=>{i++;i<qs.length?draw():finish()};
       $('#next').focus({preventScroll:true});
       document.querySelectorAll('.segs span')[i].className=ok?'ok':'ko';
@@ -14773,7 +14773,7 @@ function playCazador(){
       if(ok)you++;if(hOk)hunter++;
       log.push({q,o,ok,hOk});
       const caught=hunter>=you,home=you>=STEPS;
-      $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'ko'}"><b>${ok?'Aciertas y bajas un peldaño.':'Fallas. La respuesta era '+esc(q.ans)+'.'} ${hOk?'El Cazador también acierta.':'El Cazador falla.'}</b><span>${esc(q.note)}</span></div><div class="btns" style="margin-top:14px"><button class="btn" id="next">${caught||home?'Ver resultado':'Siguiente pregunta'}</button></div>`;
+      $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'ko'}"><b>${ok?'Aciertas y bajas un peldaño. ':''}${hOk?'El Cazador también acierta.':'El Cazador falla.'}</b><span>${esc(q.note)}</span></div><div class="btns" style="margin-top:14px"><button class="btn" id="next">${caught||home?'Ver resultado':'Siguiente pregunta'}</button></div>`;
       document.querySelector('.ladder').innerHTML=ladder();
       $('#next').onclick=()=>{if(caught)end(false);else if(home)end(true);else{i++;draw()}};
       $('#next').focus({preventScroll:true});
