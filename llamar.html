@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Llamar · Wanderlust</title>
+<style>
+  :root{color-scheme:light dark}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;font:17px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:#fde6f2;color:#14181b;text-align:center;padding:24px;box-sizing:border-box}
+  @media (prefers-color-scheme:dark){body{background:#0f1418;color:#eef4f6}}
+  a.call{display:block;text-decoration:none;color:#fff;background:#c2187a;border-radius:18px;padding:22px 26px;margin:12px 0}
+  a.call b{display:block;font-size:clamp(34px,10vw,60px);letter-spacing:.02em;white-space:nowrap}
+  a.call span{font-size:15px;opacity:.9}
+  p{margin:6px 0;color:inherit;opacity:.8;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+  <p id="who"></p>
+  <a class="call" id="call" href="#"><b id="num"></b><span>Toca para llamar</span></a>
+  <p>Wanderlust · si no se abre la llamada sola, toca el número.</p>
+</main>
+<script>
+{
+  const q = new URLSearchParams(location.search);
+  const raw = q.get("n") || "";
+  const n = raw.replace(/[^\d+]/g, "");          /* only digits and + */
+  const who = (q.get("q") || "").slice(0, 80);
+  const pretty = raw.replace(/[^\d+ ]/g, "").trim() || n;
+  document.getElementById("num").textContent = pretty || "Sin número";
+  document.getElementById("who").textContent = who;
+  if (n.length >= 6) {
+    const tel = "tel:" + n;
+    document.getElementById("call").href = tel;
+    location.href = tel;
+  }
+}
+</script>
+</body>
+</html>
